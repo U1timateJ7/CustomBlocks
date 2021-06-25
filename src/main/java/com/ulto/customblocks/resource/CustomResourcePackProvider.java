@@ -10,7 +10,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class CustomResourcePackProvider implements ResourcePackProvider {
-    public static final File customBlocksPath = new File(FabricLoader.getInstance().getConfigDir().toFile().getAbsolutePath(), File.separator + "custom_blocks");
+    public static File customBlocksPath = new File(FabricLoader.getInstance().getConfigDir().toFile().getAbsolutePath(), File.separator + "custom_blocks");
     private final Type type;
     
     public CustomResourcePackProvider(Type type) {
@@ -20,10 +20,10 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
     @Override
     public void register (Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
         File candidate = type.getDirectory();
-        final String packName = candidate.getName();
+        String packName = candidate.getName();
         type.getLogger().info("Loading pack {} from {}.", packName, candidate.getAbsolutePath());
-        final Supplier<ResourcePack> packSupplier = candidate.isDirectory() ? () -> new DirectoryResourcePack(candidate) : () -> new ZipResourcePack(candidate);
-        final ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.field_25347);
+        Supplier<ResourcePack> packSupplier = candidate.isDirectory() ? () -> new DirectoryResourcePack(candidate) : () -> new ZipResourcePack(candidate);
+        ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.field_25347);
         if (profile != null) {
             consumer.accept(profile);
             type.getLogger().info("Loaded pack {}.", packName);
@@ -37,9 +37,9 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
         DATA("Data Pack", "custom_blocks"),
         RESOURCES("Resource Pack", "custom_blocks");
         
-        final String displayName;
-        final String path;
-        final Logger logger;
+        String displayName;
+        String path;
+        Logger logger;
         
         Type(String name, String path) {
             displayName = name;
@@ -52,7 +52,7 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
         }
         
         public File getDirectory () {
-            final File directory = new File(FabricLoader.getInstance().getConfigDir().toFile().getAbsolutePath(), File.separator + path);
+            File directory = FabricLoader.getInstance().getConfigDir().resolve(path).toFile();
             if (!directory.exists()) {
                 directory.mkdirs();
             }
