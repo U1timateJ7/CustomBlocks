@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "id": "custom_blocks",
+  "version": "1.0.1",
+  "name": "Custom Blocks",
+  "description": "Custom Blocks without Coding!",
+  "authors": [
+    "U1timateJ7"
+  ],
+  "contributors": [],
+  "contact": {
+    "homepage": "https://www.curseforge.com/members/u1timatej7/projects",
+    "sources": ""
+  },
+  "license": "All Rights Reserved",
+  "icon": "assets/custom_blocks/icon.png",
+  "environment": "*",
+  "entrypoints": {
+    "main": [
+      "com.ulto.customblocks.CustomBlocksMod"
+    ],
+    "client": [
+      "com.ulto.customblocks.client.CustomBlocksClient"
+    ],
+    "server": []
+  },
+  "mixins": [
+    "custom_blocks.mixins.json"
+  ],
+  "depends": {
+    "fabricloader": ">=0.11.0",
+    "fabric": "*"
+  }
+}

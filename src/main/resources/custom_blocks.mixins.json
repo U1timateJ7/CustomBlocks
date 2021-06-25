@@ -1,0 +1,21 @@
+{
+  "required": true,
+  "package": "com.ulto.customblocks.mixin",
+  "compatibilityLevel": "JAVA_8",
+  "mixins": [
+    "FenceBlockMixin",
+    "WallBlockMixin",
+    "PaneBlockMixin",
+    "FenceGateBlockMixin",
+    "ItemStackMixin",
+    "MixinResourcePackManager",
+    "MixinMinecraftServer"
+  ],
+  "client": [
+    "TitleScreenMixin"
+  ],
+  "server": [],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
