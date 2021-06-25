@@ -30,9 +30,6 @@ public class BlockMakerGUI extends LightweightGuiDescription {
         scroll.setSize(310, 210);
         WLabel topLabel = new WLabel(new TranslatableText("gui.block_maker.label.top"));
         root.add(topLabel, 120, 10);
-        WButton infoButton = new WButton(new TranslatableText("gui.block_maker.button.info"));
-        infoButton.setOnClick(() -> MinecraftClient.getInstance().openScreen(new BlockMakerInfoScreen(new BlockMakerInfoGUI())));
-        if (FabricLoader.getInstance().isDevelopmentEnvironment()) root.add(infoButton, 260, 0, 40, 20);
         WButton openFolderButton = new WButton(new TranslatableText("gui.maker.button.open_folder"));
         openFolderButton.setOnClick(() -> Util.getOperatingSystem().open(GenerateCustomElements.blocksFolder));
         root.add(openFolderButton, 0, 0, 70, 20);
