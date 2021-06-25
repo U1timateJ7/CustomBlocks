@@ -20,7 +20,7 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
     @Override
     public void register (Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
         File candidate = type.getDirectory();
-        String packName = candidate.getName();
+        String packName = "Custom Block Resources";
         type.getLogger().info("Loading pack {} from {}.", packName, candidate.getAbsolutePath());
         Supplier<ResourcePack> packSupplier = candidate.isDirectory() ? () -> new DirectoryResourcePack(candidate) : () -> new ZipResourcePack(candidate);
         ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.field_25347);

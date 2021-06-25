@@ -1,6 +1,13 @@
 package com.ulto.customblocks;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.resource.CustomResourcePackProvider;
@@ -24,7 +31,7 @@ public class ResourcePackGenerator {
 			mcmetabw.write("{\n" +
 					"  \"pack\": {\n" +
 					"    \"pack_format\": 6,\n" +
-					"    \"description\": \"Custom Block Resources\"\n" +
+					"    \"description\": \"In the config folder.\"\n" +
 					"  }\n" +
 					"}");
 			mcmetabw.close();

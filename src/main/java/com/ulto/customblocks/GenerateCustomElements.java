@@ -15,6 +15,7 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
+import java.net.MalformedURLException;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Objects;

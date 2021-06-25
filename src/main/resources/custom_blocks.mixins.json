@@ -9,10 +9,12 @@
     "FenceGateBlockMixin",
     "ItemStackMixin",
     "MixinResourcePackManager",
-    "MixinMinecraftServer"
+    "MixinMinecraftServer",
+    "AbstractFileResourcePackMixin"
   ],
   "client": [
-    "TitleScreenMixin"
+    "TitleScreenMixin",
+    "PackScreenMixin"
   ],
   "server": [],
   "injectors": {
