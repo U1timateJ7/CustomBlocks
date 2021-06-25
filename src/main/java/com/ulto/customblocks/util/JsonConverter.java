@@ -227,7 +227,7 @@ public class JsonConverter {
                                 if (amplifier > 128) amplifier = 128;
                                 if (amplifier < 1) amplifier = 1;
                                 int duration = 3600;
-                                if (effect.has("duration")) duration = effect.get("duration").getAsInt() * 20;
+                                if (effect.has("duration")) duration = (int) (effect.get("duration").getAsFloat() * 20);
                                 if (duration > 20000000) duration = 20000000;
                                 if (duration < 0) duration = 0;
                                 effects.add(new StatusEffectInstance(Registry.STATUS_EFFECT.get(effectId), duration, amplifier));
@@ -235,11 +235,7 @@ public class JsonConverter {
                         }
                         PotionUtil.setCustomPotionEffects(item, effects);
                         if (customPotion.has("color")) {
-                            JsonObject color = customPotion.getAsJsonObject("color");
-                            int r = color.get("red").getAsInt();
-                            int g = color.get("green").getAsInt();
-                            int b = color.get("blue").getAsInt();
-                            item.getOrCreateTag().putInt("CustomPotionColor", MiscConverter.rgbToColor(r, g, b));
+                            item.getOrCreateTag().putInt("CustomPotionColor", MiscConverter.jsonObjectToColor(customPotion.getAsJsonObject("color")));
                         } else {
                             item.getOrCreateTag().putInt("CustomPotionColor", PotionUtil.getColor(effects));
                         }
@@ -248,19 +244,14 @@ public class JsonConverter {
                         item.setDamage(modifiers.get("damage").getAsInt());
                     }
                     if (modifiers.has("unbreakable")) {
-                        byte unbreakable = 0;
-                        if (modifiers.get("unbreakable").getAsBoolean()) unbreakable = 1;
-                        item.getOrCreateTag().putByte("Unbreakable", unbreakable);
+                        boolean unbreakable = modifiers.get("unbreakable").getAsBoolean();
+                        item.getOrCreateTag().putBoolean("Unbreakable", unbreakable);
                     }
                     if (modifiers.has("display")) {
                         JsonObject display = modifiers.getAsJsonObject("display");
                         NbtCompound displayTag = new NbtCompound();
                         if (display.has("color")) {
-                            JsonObject color = display.getAsJsonObject("color");
-                            int r = color.get("red").getAsInt();
-                            int g = color.get("green").getAsInt();
-                            int b = color.get("blue").getAsInt();
-                            displayTag.putInt("color", MiscConverter.rgbToColor(r, g, b));
+                            displayTag.putInt("color", MiscConverter.jsonObjectToColor(display.getAsJsonObject("color")));
                         }
                         if (display.has("name")) {
                             String name;

@@ -20,6 +20,6 @@ public class CustomItem extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.addAll(MiscConverter.stringListToLiteralTextList(tooltips));
+        tooltip.addAll(MiscConverter.stringListToTextList(tooltips));
     }
 }

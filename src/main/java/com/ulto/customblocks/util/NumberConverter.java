@@ -13,7 +13,7 @@ public class NumberConverter {
         try {
             return Float.parseFloat(s.trim());
         } catch (Exception e) {
-            return 1f;
+            return 1;
         }
     }
 
