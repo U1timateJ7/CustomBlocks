@@ -46,7 +46,7 @@ public class ItemGenerator {
             else durability = 0;
             float damage;
             if (item.has("damage")) damage = item.get("damage").getAsFloat();
-            else damage = 0f;
+            else damage = 1f;
             float attackSpeed;
             if (item.has("attack_speed")) attackSpeed = item.get("attack_speed").getAsFloat();
             else attackSpeed = 1.6f;
