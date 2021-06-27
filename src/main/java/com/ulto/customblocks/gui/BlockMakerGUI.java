@@ -2,13 +2,12 @@ package com.ulto.customblocks.gui;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.NumberConverter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.*;
 import net.minecraft.util.Util;
 
@@ -288,20 +287,21 @@ public class BlockMakerGUI extends LightweightGuiDescription {
             block.getAsJsonObject("textures").addProperty("back_texture", backTextureField.getText());
             block.getAsJsonObject("textures").addProperty("right_texture", rightTextureField.getText());
             block.getAsJsonObject("textures").addProperty("left_texture", leftTextureField.getText());
-            for (File value : packs) {
+            for (File file : packs) {
                 try {
-                    BufferedReader packReader = new BufferedReader(new FileReader(value));
+                    BufferedReader packReader = new BufferedReader(new FileReader(file));
                     StringBuilder json = new StringBuilder();
-                    String line = "";
+                    String line;
                     while ((line = packReader.readLine()) != null) {
                         json.append(line);
                     }
                     JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
                     if (pack.get("name").getAsString().equals(packNameField.getText())) {
-                        if (pack.has("blocks")) {
-                            pack.getAsJsonArray("blocks").add(block);
+                        if (!pack.has("blocks")) {
+                            pack.add("blocks", new JsonArray());
                         }
-                        FileWriter valuefw = new FileWriter(value);
+                        pack.getAsJsonArray("blocks").add(block);
+                        FileWriter valuefw = new FileWriter(file);
                         valuefw.write(gson.toJson(pack));
                         valuefw.close();
                     }
@@ -316,7 +316,7 @@ public class BlockMakerGUI extends LightweightGuiDescription {
         root.add(orLabel, 95, 455);
     }
 
-    private static void listFiles(final File folder, List list) {
+    private static void listFiles(final File folder, List<File> list) {
         for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
             if (fileEntry.isDirectory()) {
                 listFiles(fileEntry, list);

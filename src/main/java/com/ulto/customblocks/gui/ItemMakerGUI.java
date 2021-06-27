@@ -2,6 +2,7 @@ package com.ulto.customblocks.gui;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.NumberConverter;
@@ -17,7 +18,6 @@ import java.io.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 
 public class ItemMakerGUI extends LightweightGuiDescription {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -211,17 +211,17 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         createButton.setOnClick(() -> {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");
             try {
-                JsonObject block = new JsonObject();
-                block.addProperty("namespace", namespaceField.getText());
-                block.addProperty("id", idField.getText());
-                block.addProperty("display_name", displayNameField.getText());
-                if (maxStackSizeField.getText().length() > 0) block.addProperty("max_stack_size", NumberConverter.convertInt(maxStackSizeField.getText()));
-                if (fireproofToggle.getToggle()) block.addProperty("fireproof", fireproofToggle.getToggle());
-                if (itemGroupField.getText().length() > 0) block.addProperty("item_group", itemGroupField.getText());
-                if (textureNamespaceField.getText().length() > 0) block.addProperty("texture_namespace", textureNamespaceField.getText());
-                block.addProperty("texture", textureField.getText());
+                JsonObject item = new JsonObject();
+                item.addProperty("namespace", namespaceField.getText());
+                item.addProperty("id", idField.getText());
+                item.addProperty("display_name", displayNameField.getText());
+                if (maxStackSizeField.getText().length() > 0) item.addProperty("max_stack_size", NumberConverter.convertInt(maxStackSizeField.getText()));
+                if (fireproofToggle.getToggle()) item.addProperty("fireproof", fireproofToggle.getToggle());
+                if (itemGroupField.getText().length() > 0) item.addProperty("item_group", itemGroupField.getText());
+                if (textureNamespaceField.getText().length() > 0) item.addProperty("texture_namespace", textureNamespaceField.getText());
+                item.addProperty("texture", textureField.getText());
                 FileWriter blockFileWriter = new FileWriter(itemFile);
-                blockFileWriter.write(gson.toJson(block));
+                blockFileWriter.write(gson.toJson(item));
                 blockFileWriter.close();
             } catch (IOException e) {
                 e.printStackTrace();
@@ -238,29 +238,30 @@ public class ItemMakerGUI extends LightweightGuiDescription {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");
             List<File> packs = new ArrayList<>();
             listFiles(GenerateCustomElements.packsFolder, packs);
-            JsonObject block = new JsonObject();
-            block.addProperty("namespace", namespaceField.getText());
-            block.addProperty("id", idField.getText());
-            block.addProperty("display_name", displayNameField.getText());
-            if (maxStackSizeField.getText().length() > 0) block.addProperty("max_stack_size", NumberConverter.convertInt(maxStackSizeField.getText()));
-            if (fireproofToggle.getToggle()) block.addProperty("fireproof", fireproofToggle.getToggle());
-            if (itemGroupField.getText().length() > 0) block.addProperty("item_group", itemGroupField.getText());
-            if (textureNamespaceField.getText().length() > 0) block.addProperty("texture_namespace", textureNamespaceField.getText());
-            block.addProperty("texture", textureField.getText());
-            for (File value : packs) {
+            JsonObject item = new JsonObject();
+            item.addProperty("namespace", namespaceField.getText());
+            item.addProperty("id", idField.getText());
+            item.addProperty("display_name", displayNameField.getText());
+            if (maxStackSizeField.getText().length() > 0) item.addProperty("max_stack_size", NumberConverter.convertInt(maxStackSizeField.getText()));
+            if (fireproofToggle.getToggle()) item.addProperty("fireproof", fireproofToggle.getToggle());
+            if (itemGroupField.getText().length() > 0) item.addProperty("item_group", itemGroupField.getText());
+            if (textureNamespaceField.getText().length() > 0) item.addProperty("texture_namespace", textureNamespaceField.getText());
+            item.addProperty("texture", textureField.getText());
+            for (File file : packs) {
                 try {
-                    BufferedReader packReader = new BufferedReader(new FileReader(value));
+                    BufferedReader packReader = new BufferedReader(new FileReader(file));
                     StringBuilder json = new StringBuilder();
-                    String line = "";
+                    String line;
                     while ((line = packReader.readLine()) != null) {
                         json.append(line);
                     }
                     JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
                     if (pack.get("name").getAsString().equals(packNameField.getText())) {
-                        if (pack.has("items")) {
-                            pack.getAsJsonArray("items").add(block);
+                        if (!pack.has("items")) {
+                            pack.add("items", new JsonArray());
                         }
-                        FileWriter valuefw = new FileWriter(value);
+                        pack.getAsJsonArray("items").add(item);
+                        FileWriter valuefw = new FileWriter(file);
                         valuefw.write(gson.toJson(pack));
                         valuefw.close();
                     }
@@ -305,7 +306,7 @@ public class ItemMakerGUI extends LightweightGuiDescription {
                 try {
                     BufferedReader packReader = new BufferedReader(new FileReader(value));
                     StringBuilder json = new StringBuilder();
-                    String line = "";
+                    String line;
                     while ((line = packReader.readLine()) != null) {
                         json.append(line);
                     }
@@ -327,7 +328,7 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         foodRoot.add(foodAddToPackButton, 110, 300, 80, 20);
     }
 
-    private static void listFiles(final File folder, List list) {
+    private static void listFiles(final File folder, List<File> list) {
         for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
             if (fileEntry.isDirectory()) {
                 listFiles(fileEntry, list);
