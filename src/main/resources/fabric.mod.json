@@ -22,6 +22,9 @@
     "client": [
       "com.ulto.customblocks.client.CustomBlocksClient"
     ],
+    "modmenu": [
+      "com.ulto.customblocks.gui.ModMenuConfig"
+    ],
     "server": []
   },
   "mixins": [

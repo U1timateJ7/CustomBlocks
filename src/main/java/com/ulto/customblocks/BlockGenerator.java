@@ -327,25 +327,25 @@ public class BlockGenerator {
 					mapColor = MapColor.WHITE_GRAY;
 					break;
 				case "crimson_nylium":
-					mapColor = MapColor.field_25702;
+					mapColor = MapColor.DULL_RED;
 					break;
 				case "crimson_stem":
-					mapColor = MapColor.field_25703;
+					mapColor = MapColor.DULL_PINK;
 					break;
 				case "crimson_hyphae":
-					mapColor = MapColor.field_25704;
+					mapColor = MapColor.DARK_CRIMSON;
 					break;
 				case "warped_nylium":
-					mapColor = MapColor.field_25705;
+					mapColor = MapColor.TEAL;
 					break;
 				case "warped_stem":
-					mapColor = MapColor.field_25706;
+					mapColor = MapColor.DARK_AQUA;
 					break;
 				case "warped_hyphae":
-					mapColor = MapColor.field_25707;
+					mapColor = MapColor.DARK_DULL_PINK;
 					break;
 				case "warped_wart":
-					mapColor = MapColor.field_25708;
+					mapColor = MapColor.BRIGHT_TEAL;
 					break;
 				default:
 					mapColor = material.getColor();
@@ -549,7 +549,7 @@ public class BlockGenerator {
 			}
 
 			Block NEW_BLOCK;
-			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).materialColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
+			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).mapColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
 			if (!breakTool.equals("none")) {
 				blockSettings.breakByTool(efficientTool, harvestLevel);
 				if (requiresTool) blockSettings.requiresTool();

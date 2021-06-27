@@ -14,7 +14,6 @@
     "RecipeManagerMixin"
   ],
   "client": [
-    "TitleScreenMixin",
     "PackScreenMixin"
   ],
   "server": [],

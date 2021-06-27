@@ -11,12 +11,12 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
+import net.minecraft.tag.Tag;
 
 public class CustomMiningToolItem extends MiningToolItem {
     List<String> tooltips;
 
-    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Set<Block> effectiveBlocks, Settings settings, List<String> tooltip) {
+    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, List<String> tooltip) {
         super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
         tooltips = tooltip;
     }

@@ -21,6 +21,7 @@ import net.minecraft.util.registry.Registry;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import net.minecraft.tag.Tag;
 
 public class ItemGenerator {
     public static boolean add(JsonObject item) {
@@ -106,7 +107,8 @@ public class ItemGenerator {
             for (Identifier block : Registry.BLOCK.getIds()) {
                 blocks.add(Registry.BLOCK.get(block));
             }
-            Set<Block> allBlocks = ImmutableSet.copyOf(blocks);
+            Set<Block> allBlocks_old = ImmutableSet.copyOf(blocks);
+            Tag<Block> allBlocks = Tag.of(allBlocks_old);
 
             Item ITEM;
             FabricItemSettings settings = new FabricItemSettings().group(itemGroup).maxCount(maxStackSize);
