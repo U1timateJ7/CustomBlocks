@@ -10,7 +10,8 @@
     "ItemStackMixin",
     "MixinResourcePackManager",
     "MixinMinecraftServer",
-    "AbstractFileResourcePackMixin"
+    "AbstractFileResourcePackMixin",
+    "RecipeManagerMixin"
   ],
   "client": [
     "TitleScreenMixin",

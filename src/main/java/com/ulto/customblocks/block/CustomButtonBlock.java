@@ -1,7 +1,7 @@
 package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.util.JsonConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -30,7 +30,7 @@ public class CustomButtonBlock extends WoodenButtonBlock {
             return dropsOriginal;
         List<ItemStack> realDrops = new ArrayList<>();
         for (JsonObject item : drops) {
-            realDrops.add(JsonConverter.itemStackFromJsonObject(item));
+            realDrops.add(JsonUtils.itemStackFromJsonObject(item));
         }
         return realDrops;
     }

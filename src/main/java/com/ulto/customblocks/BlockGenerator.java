@@ -3,18 +3,20 @@ package com.ulto.customblocks;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.block.*;
-import com.ulto.customblocks.util.JsonConverter;
+import com.ulto.customblocks.util.JsonUtils;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.*;
-import net.minecraft.item.*;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
+import net.minecraft.item.ItemGroup;
+import net.minecraft.item.TallBlockItem;
 import net.minecraft.sound.BlockSoundGroup;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.tag.Tag;
-import net.minecraft.util.DyeColor;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
-import net.minecraft.util.Identifier;
 import net.minecraft.world.BlockView;
 
 import java.util.ArrayList;
@@ -61,7 +63,7 @@ public class BlockGenerator {
 			List<JsonObject> drops = new ArrayList<>();
 			if (block.has("drops")) {
 				JsonArray stacks = block.getAsJsonArray("drops");
-				drops = JsonConverter.jsonArrayToJsonObjectList(stacks);
+				drops = JsonUtils.jsonArrayToJsonObjectList(stacks);
 			}
 			else {
 				JsonObject thisBlock = new JsonObject();
@@ -119,7 +121,7 @@ public class BlockGenerator {
 			List<JsonObject> shape = new ArrayList<>();
 			if (block.has("shape")) {
 				JsonArray stacks = block.getAsJsonArray("shape");
-				shape = JsonConverter.jsonArrayToJsonObjectList(stacks);
+				shape = JsonUtils.jsonArrayToJsonObjectList(stacks);
 			}
 			else {
 				JsonObject fullCube = new JsonObject();

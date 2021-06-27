@@ -1,24 +1,16 @@
 package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.util.JsonConverter;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.ShapeContext;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.shape.VoxelShape;
-import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 public class CustomSlabBlock extends SlabBlock {
@@ -54,7 +46,7 @@ public class CustomSlabBlock extends SlabBlock {
             return dropsOriginal;
         List<ItemStack> realDrops = new ArrayList<>();
         for (JsonObject item : drops) {
-            realDrops.add(JsonConverter.itemStackFromJsonObject(item));
+            realDrops.add(JsonUtils.itemStackFromJsonObject(item));
         }
         return realDrops;
     }

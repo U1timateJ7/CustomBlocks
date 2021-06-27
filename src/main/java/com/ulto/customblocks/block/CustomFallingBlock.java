@@ -1,7 +1,7 @@
 package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.util.JsonConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
@@ -9,10 +9,8 @@ import net.minecraft.block.FallingBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
@@ -51,7 +49,7 @@ public class CustomFallingBlock extends FallingBlock {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         VoxelShape voxelShape = VoxelShapes.empty();
-        for (VoxelShape voxelShape1 : JsonConverter.jsonObjectListToVoxelShapeList(shape)) {
+        for (VoxelShape voxelShape1 : JsonUtils.jsonObjectListToVoxelShapeList(shape)) {
             voxelShape = VoxelShapes.union(voxelShape, voxelShape1);
         }
         return voxelShape;
@@ -64,7 +62,7 @@ public class CustomFallingBlock extends FallingBlock {
             return dropsOriginal;
         List<ItemStack> realDrops = new ArrayList<>();
         for (JsonObject item : drops) {
-            realDrops.add(JsonConverter.itemStackFromJsonObject(item));
+            realDrops.add(JsonUtils.itemStackFromJsonObject(item));
         }
         return realDrops;
     }

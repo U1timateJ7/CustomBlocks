@@ -1,36 +1,21 @@
 package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.BlockGenerator;
-import com.ulto.customblocks.util.JsonConverter;
-import com.ulto.customblocks.util.MiscConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
-import net.minecraft.block.GlassBlock;
 import net.minecraft.block.ShapeContext;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.util.ActionResult;
-import net.minecraft.util.Hand;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
-import net.minecraft.util.shape.ArrayVoxelShape;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
-import net.minecraft.world.World;
-import net.minecraft.world.explosion.Explosion;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class CustomBlock extends Block {
@@ -64,7 +49,7 @@ public class CustomBlock extends Block {
     @Override
     public VoxelShape getOutlineShape(BlockState state, BlockView world, BlockPos pos, ShapeContext context) {
         VoxelShape voxelShape = VoxelShapes.empty();
-        for (VoxelShape voxelShape1 : JsonConverter.jsonObjectListToVoxelShapeList(shape)) {
+        for (VoxelShape voxelShape1 : JsonUtils.jsonObjectListToVoxelShapeList(shape)) {
             voxelShape = VoxelShapes.union(voxelShape, voxelShape1);
         }
         return voxelShape;
@@ -77,7 +62,7 @@ public class CustomBlock extends Block {
             return dropsOriginal;
         List<ItemStack> realDrops = new ArrayList<>();
         for (JsonObject item : drops) {
-            realDrops.add(JsonConverter.itemStackFromJsonObject(item));
+            realDrops.add(JsonUtils.itemStackFromJsonObject(item));
         }
         return realDrops;
     }

@@ -1,9 +1,7 @@
 package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.util.JsonConverter;
-import net.fabricmc.api.EnvType;
-import net.fabricmc.api.Environment;
+import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.FenceGateBlock;
 import net.minecraft.item.ItemStack;
@@ -48,7 +46,7 @@ public class CustomFenceGateBlock extends FenceGateBlock {
             return dropsOriginal;
         List<ItemStack> realDrops = new ArrayList<>();
         for (JsonObject item : drops) {
-            realDrops.add(JsonConverter.itemStackFromJsonObject(item));
+            realDrops.add(JsonUtils.itemStackFromJsonObject(item));
         }
         return realDrops;
     }

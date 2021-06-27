@@ -3,7 +3,9 @@ package com.ulto.customblocks.util;
 import com.google.gson.*;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.*;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtList;
+import net.minecraft.nbt.NbtString;
 import net.minecraft.potion.PotionUtil;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -14,8 +16,9 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
-public class JsonConverter {
+public class JsonUtils {
     public static List<String> jsonArrayToStringList(JsonArray jsonArray) {
         List<String> list = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
@@ -293,5 +296,13 @@ public class JsonConverter {
         } else {
             return ItemStack.EMPTY;
         }
+    }
+
+    public static JsonObject copy(JsonObject objectIn) {
+        JsonObject newObject = new JsonObject();
+        for (Map.Entry<String, JsonElement> entry : objectIn.entrySet()) {
+            newObject.add(entry.getKey(), entry.getValue());
+        }
+        return newObject;
     }
 }

@@ -1,12 +1,7 @@
 package com.ulto.customblocks;
 
-import java.io.IOException;
-import java.io.FileReader;
-import java.io.File;
-import java.io.BufferedReader;
-
-import com.google.gson.JsonObject;
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
@@ -15,9 +10,12 @@ import net.minecraft.client.render.RenderLayer;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.net.MalformedURLException;
-import java.util.List;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class GenerateCustomElements {
@@ -31,6 +29,9 @@ public class GenerateCustomElements {
 	public static List<File> itemGroups = new ArrayList<>();
 	public static File paintingsFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
 	public static List<File> paintings = new ArrayList<>();
+	public static File recipesFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
+	public static List<File> recipes = new ArrayList<>();
+	public static List<JsonObject> jsonRecipes = new ArrayList<>();
 	
 	public static void generate() {
 		blocksFolder.mkdirs();
@@ -43,13 +44,15 @@ public class GenerateCustomElements {
 		listFiles(itemGroupsFolder, itemGroups);
 		paintingsFolder.mkdirs();
 		listFiles(paintingsFolder, paintings);
+		recipesFolder.mkdirs();
+		listFiles(recipesFolder, recipes);
 		LanguageHandler.setupLanguage();
 		ResourcePackGenerator.setupResourcePack();
 		for (File value : blocks) {
 			try {
 				BufferedReader blockReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
-				String line = "";
+				String line;
 				while ((line = blockReader.readLine()) != null) {
 					json.append(line);
 				}
@@ -68,7 +71,7 @@ public class GenerateCustomElements {
 			try {
 				BufferedReader itemReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
-				String line = "";
+				String line;
 				while ((line = itemReader.readLine()) != null) {
 					json.append(line);
 				}
@@ -87,7 +90,7 @@ public class GenerateCustomElements {
 			try {
 				BufferedReader packReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
-				String line = "";
+				String line;
 				while ((line = packReader.readLine()) != null) {
 					json.append(line);
 				}
@@ -104,7 +107,7 @@ public class GenerateCustomElements {
 			try {
 				BufferedReader packReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
-				String line = "";
+				String line;
 				while ((line = packReader.readLine()) != null) {
 					json.append(line);
 				}
@@ -123,7 +126,7 @@ public class GenerateCustomElements {
 			try {
 				BufferedReader packReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
-				String line = "";
+				String line;
 				while ((line = packReader.readLine()) != null) {
 					json.append(line);
 				}
@@ -138,20 +141,32 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			}
 		}
+		for (File value : recipes) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject recipe = new Gson().fromJson(json.toString(), JsonObject.class);
+				jsonRecipes.add(recipe);
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		LanguageHandler.saveLang();
 	}
 
-	public static File blocksFolderClient = new File(System.getProperty("user.dir"), File.separator + "blocks");
-	public static List<File> blocksClient = new ArrayList<>();
-
 	@Environment(EnvType.CLIENT)
 	public static void generateClient() {
-		listFiles(blocksFolderClient, blocksClient);
-		for (File file : blocksClient) {
+		listFiles(blocksFolder, blocks);
+		for (File file : blocks) {
 			try {
 				BufferedReader test_blockReader = new BufferedReader(new FileReader(file));
 				StringBuilder json = new StringBuilder();
-				String line = "";
+				String line;
 				while ((line = test_blockReader.readLine()) != null) {
 					json.append(line);
 				}
@@ -170,7 +185,7 @@ public class GenerateCustomElements {
 		}
 	}
 
-	private static void listFiles(final File folder, List list) {
+	private static void listFiles(final File folder, List<File> list) {
     	for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
 			if (fileEntry.isDirectory()) {
 				listFiles(fileEntry, list);

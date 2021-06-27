@@ -1,7 +1,7 @@
 package com.ulto.customblocks;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.util.JsonConverter;
+import com.ulto.customblocks.util.JsonUtils;
 
 import java.util.List;
 
@@ -297,7 +297,7 @@ public class PackGenerator {
             }
         }
         if (pack.has("blocks")) {
-            List<JsonObject> blocks = JsonConverter.jsonArrayToJsonObjectList(pack.getAsJsonArray("blocks"));
+            List<JsonObject> blocks = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("blocks"));
             for (JsonObject block : blocks) {
                 if (BlockGenerator.add(block) && ResourcePackGenerator.generateBlockResources(block, block.get("textures").getAsJsonObject().get("top_texture").getAsString(), block.get("textures").getAsJsonObject().get("bottom_texture").getAsString(), block.get("textures").getAsJsonObject().get("front_texture").getAsString(), block.get("textures").getAsJsonObject().get("back_texture").getAsString(), block.get("textures").getAsJsonObject().get("right_texture").getAsString(), block.get("textures").getAsJsonObject().get("left_texture").getAsString()) && LanguageHandler.addBlockKey(block)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
@@ -307,7 +307,7 @@ public class PackGenerator {
             }
         }
         if (pack.has("items")) {
-            List<JsonObject> items = JsonConverter.jsonArrayToJsonObjectList(pack.getAsJsonArray("items"));
+            List<JsonObject> items = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("items"));
             for (JsonObject item : items) {
                 if (ItemGenerator.add(item) && ResourcePackGenerator.generateItemResources(item, item.get("namespace").getAsString(), item.get("id").getAsString(), item.get("texture").getAsString()) && LanguageHandler.addItemKey(item)) {
                     CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());

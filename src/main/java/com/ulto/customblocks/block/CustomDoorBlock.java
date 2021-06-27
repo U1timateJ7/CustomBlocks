@@ -1,21 +1,20 @@
 package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.util.JsonConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.*;
+import net.minecraft.block.BlockState;
+import net.minecraft.block.DoorBlock;
 import net.minecraft.block.enums.DoubleBlockHalf;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.world.BlockView;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 
 public class CustomDoorBlock extends DoorBlock {
     List<JsonObject> drops = new ArrayList<>();
@@ -51,7 +50,7 @@ public class CustomDoorBlock extends DoorBlock {
                 return dropsOriginal;
             List<ItemStack> realDrops = new ArrayList<>();
             for (JsonObject item : drops) {
-                realDrops.add(JsonConverter.itemStackFromJsonObject(item));
+                realDrops.add(JsonUtils.itemStackFromJsonObject(item));
             }
             return realDrops;
         }
