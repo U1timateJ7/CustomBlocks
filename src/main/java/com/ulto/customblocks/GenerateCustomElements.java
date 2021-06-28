@@ -19,17 +19,17 @@ import java.util.List;
 import java.util.Objects;
 
 public class GenerateCustomElements {
-	public static File blocksFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "blocks");
+	public static File blocksFolder = new File(MinecraftClient.getInstance().runDirectory.toString() + File.separator + "config" + File.separator + CustomBlocksMod.MOD_ID + "_maker" + File.separator + "blocks");
 	public static List<File> blocks = new ArrayList<>();
-	public static File itemsFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "items");
+	public static File itemsFolder = new File(MinecraftClient.getInstance().runDirectory.toString() + File.separator + "config" + File.separator + CustomBlocksMod.MOD_ID + "_maker" + File.separator + "items");
 	public static List<File> items = new ArrayList<>();
-	public static File packsFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
+	public static File packsFolder = new File(MinecraftClient.getInstance().runDirectory.toString() + File.separator + "config" + File.separator + CustomBlocksMod.MOD_ID + "_maker" + File.separator + "packs");
 	public static List<File> packs = new ArrayList<>();
-	public static File itemGroupsFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
+	public static File itemGroupsFolder = new File(MinecraftClient.getInstance().runDirectory.toString() + File.separator + "config" + File.separator + CustomBlocksMod.MOD_ID + "_maker" + File.separator + "itemgroups");
 	public static List<File> itemGroups = new ArrayList<>();
-	public static File paintingsFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
+	public static File paintingsFolder = new File(MinecraftClient.getInstance().runDirectory.toString() + File.separator + "config" + File.separator + CustomBlocksMod.MOD_ID + "_maker" + File.separator + "paintings");
 	public static List<File> paintings = new ArrayList<>();
-	public static File recipesFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
+	public static File recipesFolder = new File(MinecraftClient.getInstance().runDirectory.toString() + File.separator + "config" + File.separator + CustomBlocksMod.MOD_ID + "_maker" + File.separator + "recipes");
 	public static List<File> recipes = new ArrayList<>();
 	public static List<JsonObject> jsonRecipes = new ArrayList<>();
 	
