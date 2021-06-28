@@ -31,7 +31,6 @@ public class GenerateCustomElements {
 	public static List<File> paintings = new ArrayList<>();
 	public static File recipesFolder = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
 	public static List<File> recipes = new ArrayList<>();
-	public static List<JsonObject> jsonRecipes = new ArrayList<>();
 	
 	public static void generate() {
 		blocksFolder.mkdirs();
@@ -150,7 +149,11 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject recipe = new Gson().fromJson(json.toString(), JsonObject.class);
-				jsonRecipes.add(recipe);
+				if (RecipeGenerator.add(recipe)) {
+					CustomBlocksMod.LOGGER.info("Generated Recipe " + recipe.get("namespace").getAsString() + ":" + recipe.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.info("Failed to generate recipe!");
+				}
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();

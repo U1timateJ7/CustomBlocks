@@ -316,5 +316,43 @@ public class PackGenerator {
                 }
             }
         }
+        if (pack.has("item_groups")) {
+            List<JsonObject> itemGroups = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("item_groups"));
+            for (JsonObject itemGroup : itemGroups) {
+                if (ItemGroupGenerator.add(itemGroup) && LanguageHandler.addItemGroupKey(itemGroup)) {
+                    CustomBlocksMod.LOGGER.info("Generated Item Group " + itemGroup.get("namespace").getAsString() + ":" + itemGroup.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.info("Failed to generate item group!");
+                }
+            }
+        }
+        if (pack.has("paintings")) {
+            List<JsonObject> paintings = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("items"));
+            for (JsonObject painting : paintings) {
+                if (PaintingGenerator.add(painting) && ResourcePackGenerator.generatePaintingResources(painting)) {
+                    CustomBlocksMod.LOGGER.info("Generated Painting " + painting.get("namespace").getAsString() + ":" + painting.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.info("Failed to generate painting!");
+                }
+            }
+        }
+        if (pack.has("recipes")) {
+            List<JsonObject> recipes = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("recipes"));
+            for (JsonObject recipe : recipes) {
+                if (RecipeGenerator.add(recipe)) {
+                    CustomBlocksMod.LOGGER.info("Generated Recipe " + recipe.get("namespace").getAsString() + ":" + recipe.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.info("Failed to generate recipe!");
+                }
+            }
+        }
+        if (pack.has("packs")) {
+            List<JsonObject> packs = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("packs"));
+            for (JsonObject subPack : packs) {
+                CustomBlocksMod.LOGGER.info("Loading sub pack " + subPack.get("name").getAsString() + "...");
+                PackGenerator.add(subPack);
+                CustomBlocksMod.LOGGER.info("Loaded sub pack " + subPack.get("name").getAsString());
+            }
+        }
     }
 }
