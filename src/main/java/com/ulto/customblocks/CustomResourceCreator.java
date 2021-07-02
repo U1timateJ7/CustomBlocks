@@ -1,19 +1,16 @@
 package com.ulto.customblocks;
 
-import java.io.*;
-import java.net.MalformedURLException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.resource.CustomResourcePackProvider;
-import net.minecraft.client.MinecraftClient;
+import com.ulto.customblocks.util.BooleanUtils;
+import net.fabricmc.fabric.api.util.TriState;
 
-public class ResourcePackGenerator {
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+
+public class CustomResourceCreator {
 	static File assets = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "assets");
 
 	public static void setupResourcePack() {
@@ -42,8 +39,8 @@ public class ResourcePackGenerator {
 		assets.mkdirs();
 	}
 
-	public static boolean generateBlockResources(JsonObject _block, String topTexture, String bottomTexture, String frontTexture, String backTexture, String rightTexture, String leftTexture) {
-		if (_block.has("namespace") && _block.has("id") && _block.has("textures")) {
+	public static boolean generateBlockResources(JsonObject _block) {
+		if (BooleanUtils.isValidBlock(_block)) {
 			String _namespace = _block.get("namespace").getAsString();
 			String id = _block.get("id").getAsString();
 			String base;
@@ -57,20 +54,35 @@ public class ResourcePackGenerator {
 			else resourceNamespace = _namespace;
 			String customBlockModel;
 			String customItemModel;
-			String customBlockstate;
+			String customBlockState;
+			TriState differentTextures = BooleanUtils.hasDifferentTextures(_block);
+			String bottomTexture = "";
+			if (differentTextures == TriState.TRUE) bottomTexture = _block.getAsJsonObject("textures").get("bottom_texture").getAsString();
+			String topTexture = bottomTexture;
+			if (differentTextures == TriState.TRUE) topTexture = _block.getAsJsonObject("textures").get("top_texture").getAsString();
+			String frontTexture = bottomTexture;
+			if (differentTextures == TriState.TRUE) frontTexture = _block.getAsJsonObject("textures").get("front_texture").getAsString();
+			String backTexture = bottomTexture;
+			if (differentTextures == TriState.TRUE) backTexture = _block.getAsJsonObject("textures").get("back_texture").getAsString();
+			String rightTexture = bottomTexture;
+			if (differentTextures == TriState.TRUE) rightTexture = _block.getAsJsonObject("textures").get("right_texture").getAsString();
+			String leftTexture = bottomTexture;
+			if (differentTextures == TriState.TRUE) leftTexture = _block.getAsJsonObject("textures").get("left_texture").getAsString();
+			String texture = bottomTexture;
+			if (differentTextures == TriState.FALSE) texture = _block.getAsJsonObject("textures").get("all").getAsString();
 			if (_block.has("custom_model")) {
 				JsonObject customModel = _block.getAsJsonObject("custom_model");
 				if (customModel.has("block")) customBlockModel = customModel.getAsJsonObject("block").toString();
 				else customBlockModel = "none";
 				if (customModel.has("item")) customItemModel = customModel.getAsJsonObject("item").toString();
 				else customItemModel = "none";
-				if (customModel.has("blockstate")) customBlockstate = customModel.getAsJsonObject("blockstate").toString();
-				else customBlockstate = "none";
+				if (customModel.has("blockstate")) customBlockState = customModel.getAsJsonObject("blockstate").toString();
+				else customBlockState = "none";
 			}
 			else {
 				customBlockModel = "none";
 				customItemModel = "none";
-				customBlockstate = "none";
+				customBlockState = "none";
 			}
 			File namespace = new File(assets, File.separator + _namespace);
 			namespace.mkdirs();
@@ -100,35 +112,80 @@ public class ResourcePackGenerator {
 			}
 			//Block Model(s)
 			if (customBlockModel.equals("none")) {
+				String directionalTextures = "  \"textures\": {" +
+						"    \"up\": \"" + resourceNamespace + ":block/" + topTexture + "\"," +
+						"    \"down\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"," +
+						"    \"north\": \"" + resourceNamespace + ":block/" + frontTexture + "\"," +
+						"    \"south\": \"" + resourceNamespace + ":block/" + backTexture + "\"," +
+						"    \"west\": \"" + resourceNamespace + ":block/" + rightTexture + "\"," +
+						"    \"east\": \"" + resourceNamespace + ":block/" + leftTexture + "\"," +
+						"    \"particle\": \"#down\"" +
+						"  },\n";
+				String texturesAll = "  \"textures\": {" +
+						"    \"all\": \"" + resourceNamespace + ":block/" + texture + "\"," +
+						"    \"particle\": \"#all\"" +
+						"  },\n";
+				String directionalTexturesNoComma = "  \"textures\": {" +
+						"    \"up\": \"" + resourceNamespace + ":block/" + topTexture + "\"," +
+						"    \"down\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"," +
+						"    \"north\": \"" + resourceNamespace + ":block/" + frontTexture + "\"," +
+						"    \"south\": \"" + resourceNamespace + ":block/" + backTexture + "\"," +
+						"    \"west\": \"" + resourceNamespace + ":block/" + rightTexture + "\"," +
+						"    \"east\": \"" + resourceNamespace + ":block/" + leftTexture + "\"," +
+						"    \"particle\": \"#down\"" +
+						"  }\n";
+				String texturesAllNoComma = "  \"textures\": {" +
+						"    \"all\": \"" + resourceNamespace + ":block/" + texture + "\"," +
+						"    \"particle\": \"#all\"" +
+						"  }\n";
+				String defaultCube = "{" +
+						"  \"parent\": \"minecraft:block/cube\"," +
+						directionalTexturesNoComma +
+						"}";
+				String cubeAll = "{" +
+						"  \"parent\": \"minecraft:block/cube_all\"," +
+						texturesAllNoComma +
+						"}";
 				switch (base) {
 					case "slab":
 						try {
 							File blockSlabBottom = new File(block, File.separator + id + "_bottom.json");
 							FileWriter blockSlabBottomwriter = new FileWriter(blockSlabBottom);
 							BufferedWriter blockSlabBottombw = new BufferedWriter(blockSlabBottomwriter);
-							{
+							if (differentTextures == TriState.TRUE) {
 								blockSlabBottombw.write("{\n" +
 										"  \"parent\": \"minecraft:block/block\",\n" +
-										"  \"textures\": {\n" +
-										"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"    \"front\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
-										"    \"back\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
-										"    \"right\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
-										"    \"left\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
-										"    \"particle\": \"#bottom\"\n" +
-										"  },\n" +
+										directionalTextures +
 										"  \"elements\": [\n" +
 										"    { \n" +
 										"\t  \"from\": [ 0, 0, 0 ],\n" +
 										"      \"to\": [ 16, 8, 16 ],\n" +
 										"      \"faces\": {\n" +
-										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#bottom\", \"cullface\": \"down\" },\n" +
-										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#top\" },\n" +
-										"        \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"        \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"        \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#right\", \"cullface\": \"west\" },\n" +
-										"        \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+										"        \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"        \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"        \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+										"        \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+										"      }\n" +
+										"    }\n" +
+										"  ]\n" +
+										"}");
+							} else if (differentTextures == TriState.FALSE) {
+								blockSlabBottombw.write("{\n" +
+										"  \"parent\": \"minecraft:block/block\",\n" +
+										texturesAll +
+										"  \"elements\": [\n" +
+										"    { \n" +
+										"\t  \"from\": [ 0, 0, 0 ],\n" +
+										"      \"to\": [ 16, 8, 16 ],\n" +
+										"      \"faces\": {\n" +
+										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
+										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\" },\n" +
+										"        \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
+										"        \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"south\" },\n" +
+										"        \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"west\" },\n" +
+										"        \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"east\" }\n" +
 										"      }\n" +
 										"    }\n" +
 										"  ]\n" +
@@ -139,29 +196,40 @@ public class ResourcePackGenerator {
 							File blockSlabTop = new File(block, File.separator + id + "_top.json");
 							FileWriter blockSlabTopwriter = new FileWriter(blockSlabTop);
 							BufferedWriter blockSlabTopbw = new BufferedWriter(blockSlabTopwriter);
-							{
+							if (differentTextures == TriState.TRUE) {
 								blockSlabTopbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/block\",\n" +
-										"  \"textures\": {\n" +
-										"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"    \"front\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
-										"    \"back\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
-										"    \"right\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
-										"    \"left\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
-										"    \"particle\": \"#bottom\"\n" +
-										"  },\n" +
+										directionalTextures +
 										"  \"elements\": [\n" +
 										"    { \n" +
 										"\t  \"from\": [ 0, 8, 0 ],\n" +
 										"      \"to\": [ 16, 16, 16 ],\n" +
 										"      \"faces\": {\n" +
-										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#bottom\" },\n" +
-										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#top\", \"cullface\": \"up\" },\n" +
-										"        \"north\": { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"        \"south\": { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"        \"west\":  { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#right\", \"cullface\": \"west\" },\n" +
-										"        \"east\":  { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\" },\n" +
+										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+										"        \"north\": { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"        \"south\": { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"        \"west\":  { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+										"        \"east\":  { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+										"      }\n" +
+										"    }\n" +
+										"  ]\n" +
+										"}");
+							} else if (differentTextures == TriState.FALSE) {
+								blockSlabTopbw.write("{\n" +
+										"  \"parent\": \"minecraft:block/block\",\n" +
+										texturesAll +
+										"  \"elements\": [\n" +
+										"    { \n" +
+										"\t  \"from\": [ 0, 8, 0 ],\n" +
+										"      \"to\": [ 16, 16, 16 ],\n" +
+										"      \"faces\": {\n" +
+										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\" },\n" +
+										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"up\" },\n" +
+										"        \"north\": { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
+										"        \"south\": { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"south\" },\n" +
+										"        \"west\":  { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"west\" },\n" +
+										"        \"east\":  { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"east\" }\n" +
 										"      }\n" +
 										"    }\n" +
 										"  ]\n" +
@@ -172,53 +240,8 @@ public class ResourcePackGenerator {
 							File blockSlabDouble = new File(block, File.separator + id + "_double.json");
 							FileWriter blockSlabDoublewriter = new FileWriter(blockSlabDouble);
 							BufferedWriter blockSlabDoublebw = new BufferedWriter(blockSlabDoublewriter);
-							{
-								blockSlabDoublebw.write("{");
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write("  \"parent\": \"minecraft:block/cube\",");
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write("  \"textures\": {");
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"up\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (topTexture) + "" + ("\",")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"down\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (bottomTexture) + "" + ("\",")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"north\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (frontTexture) + "" + ("\",")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"south\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (backTexture) + "" + ("\",")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"west\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (rightTexture) + "" + ("\",")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"east\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (leftTexture) + "" + ("\",")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write((("    \"particle\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (bottomTexture) + "" + ("\"")));
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write("  }");
-								blockSlabDoublebw.newLine();
-							}
-							{
-								blockSlabDoublebw.write("}");
-							}
+							if (differentTextures == TriState.TRUE) blockSlabDoublebw.write(defaultCube);
+							else if (differentTextures == TriState.FALSE) blockSlabDoublebw.write(cubeAll);
 							blockSlabDoublebw.close();
 							blockSlabDoublewriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -231,6 +254,8 @@ public class ResourcePackGenerator {
 							FileWriter blockStairwriter = new FileWriter(blockStair);
 							BufferedWriter blockStairbw = new BufferedWriter(blockStairwriter);
 							{
+								String textures = directionalTextures;
+								if (differentTextures == TriState.FALSE) textures = texturesAll;
 								blockStairbw.write("{   \"parent\": \"block/block\",\n" +
 										"    \"display\": {\n" +
 										"        \"gui\": {\n" +
@@ -249,35 +274,27 @@ public class ResourcePackGenerator {
 										"            \"scale\": [ 0.375, 0.375, 0.375 ]\n" +
 										"        }\n" +
 										"    },\n" +
-										"    \"textures\": {\n" +
-										"        \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"        \"front\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
-										"        \"back\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
-										"        \"right\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
-										"        \"left\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
-										"        \"particle\": \"#bottom\"\n" +
-										"    },\n" +
+										textures +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 0, 0, 0 ],\n" +
 										"            \"to\": [ 16, 8, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#bottom\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#top\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#right\", \"cullface\": \"west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
 										"            }\n" +
 										"        },\n" +
 										"        {   \"from\": [ 8, 8, 0 ],\n" +
 										"            \"to\": [ 16, 16, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#top\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#right\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
+										"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
 										"            }\n" +
 										"        }\n" +
 										"    ]\n" +
@@ -289,45 +306,39 @@ public class ResourcePackGenerator {
 							FileWriter blockStairInnerwriter = new FileWriter(blockStairInner);
 							BufferedWriter blockStairInnerbw = new BufferedWriter(blockStairInnerwriter);
 							{
+								String textures = directionalTextures;
+								if (differentTextures == TriState.FALSE) textures = texturesAll;
 								blockStairInnerbw.write("{\n" +
-										"    \"textures\": {\n" +
-										"        \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"        \"front\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
-										"        \"back\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
-										"        \"right\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
-										"        \"left\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
-										"        \"particle\": \"#bottom\"\n" +
-										"    },\n" +
+										textures +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 0, 0, 0 ],\n" +
 										"            \"to\": [ 16, 8, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#bottom\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#top\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#right\", \"cullface\": \"west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
 										"            }\n" +
 										"        },\n" +
 										"        {   \"from\": [ 8, 8, 0 ],\n" +
 										"            \"to\": [ 16, 16, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#top\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#right\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
+										"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
 										"            }\n" +
 										"        },\n" +
 										"        {   \"from\": [ 0, 8, 8 ],\n" +
 										"            \"to\": [ 8, 16, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 0, 8,  8, 16 ], \"texture\": \"#top\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#front\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#right\", \"cullface\": \"west\" }\n" +
+										"                \"up\":    { \"uv\": [ 0, 8,  8, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+										"                \"north\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#north\" },\n" +
+										"                \"south\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#west\", \"cullface\": \"west\" }\n" +
 										"            }\n" +
 										"        }\n" +
 										"    ]\n" +
@@ -339,36 +350,30 @@ public class ResourcePackGenerator {
 							FileWriter blockStairOuterwriter = new FileWriter(blockStairOuter);
 							BufferedWriter blockStairOuterbw = new BufferedWriter(blockStairOuterwriter);
 							{
+								String textures = directionalTextures;
+								if (differentTextures == TriState.FALSE) textures = texturesAll;
 								blockStairOuterbw.write("{\n" +
-										"    \"textures\": {\n" +
-										"        \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"        \"front\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
-										"        \"back\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
-										"        \"right\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
-										"        \"left\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
-										"        \"particle\": \"#bottom\"\n" +
-										"    },\n" +
+										textures +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 0, 0, 0 ],\n" +
 										"            \"to\": [ 16, 8, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#bottom\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#top\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#front\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#right\", \"cullface\": \"west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
 										"            }\n" +
 										"        },\n" +
 										"        {   \"from\": [ 8, 8, 8 ],\n" +
 										"            \"to\": [ 16, 16, 16 ],\n" +
 										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 8, 8, 16, 16 ], \"texture\": \"#top\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#front\" },\n" +
-										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#back\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#right\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#left\", \"cullface\": \"east\" }\n" +
+										"                \"up\":    { \"uv\": [ 8, 8, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\" },\n" +
+										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+										"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
+										"                \"east\":  { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
 										"            }\n" +
 										"        }\n" +
 										"    ]\n" +
@@ -387,10 +392,7 @@ public class ResourcePackGenerator {
 							BufferedWriter blockWallbw = new BufferedWriter(blockWallwriter);
 							{
 								blockWallbw.write("{\n" +
-										"    \"textures\": {\n" +
-										"        \"all\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"particle\": \"#all\"\n" +
-										"    },\n" +
+										texturesAll +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 4, 0, 4 ],\n" +
 										"            \"to\": [ 12, 16, 12 ],\n" +
@@ -414,10 +416,7 @@ public class ResourcePackGenerator {
 							BufferedWriter blockWallSidebw = new BufferedWriter(blockWallSidewriter);
 							{
 								blockWallSidebw.write("{\n" +
-										"    \"textures\": {\n" +
-										"        \"all\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"particle\": \"#all\"\n" +
-										"    },\n" +
+										texturesAll +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 5, 0, 0 ],\n" +
 										"            \"to\": [ 11, 14, 8 ],\n" +
@@ -440,10 +439,7 @@ public class ResourcePackGenerator {
 							BufferedWriter blockWallSideTallbw = new BufferedWriter(blockWallSideTallwriter);
 							{
 								blockWallSideTallbw.write("{\n" +
-										"    \"textures\": {\n" +
-										"        \"all\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"particle\": \"#all\"\n" +
-										"    },\n" +
+										texturesAll +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 5, 0, 0 ],\n" +
 										"            \"to\": [ 11, 16, 8 ],\n" +
@@ -478,10 +474,7 @@ public class ResourcePackGenerator {
 										"        }\n" +
 										"    },\n" +
 										"    \"ambientocclusion\": false,\n" +
-										"    \"textures\": {\n" +
-										"        \"all\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
-										"        \"particle\": \"#all\"\n" +
-										"    },\n" +
+										texturesAll +
 										"    \"elements\": [\n" +
 										"        {   \"from\": [ 4, 0, 4 ],\n" +
 										"            \"to\": [ 12, 16, 12 ],\n" +
@@ -525,7 +518,7 @@ public class ResourcePackGenerator {
 								blockFencePostbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/fence_post\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -538,7 +531,7 @@ public class ResourcePackGenerator {
 								blockFenceSidebw.write("{\n" +
 										"  \"parent\": \"minecraft:block/fence_side\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -551,7 +544,7 @@ public class ResourcePackGenerator {
 								blockFenceInventorybw.write("{\n" +
 										"  \"parent\": \"minecraft:block/fence_inventory\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -570,7 +563,7 @@ public class ResourcePackGenerator {
 								blockFenceGatebw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_fence_gate\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -583,7 +576,7 @@ public class ResourcePackGenerator {
 								blockFenceGateOpenbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_fence_gate_open\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -596,7 +589,7 @@ public class ResourcePackGenerator {
 								blockFenceGateWallbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_fence_gate_wall\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -609,7 +602,7 @@ public class ResourcePackGenerator {
 								blockFenceGateWallOpenbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_fence_gate_wall_open\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -628,7 +621,7 @@ public class ResourcePackGenerator {
 								blockPaneNosidebw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_glass_pane_noside\",\n" +
 										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -641,7 +634,7 @@ public class ResourcePackGenerator {
 								blockPaneNosideAltbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_glass_pane_noside_alt\",\n" +
 										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -654,7 +647,7 @@ public class ResourcePackGenerator {
 								blockPanePostbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_glass_pane_post\",\n" +
 										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
 										"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
 										"  }\n" +
 										"}");
@@ -668,7 +661,7 @@ public class ResourcePackGenerator {
 								blockPaneSidebw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_glass_pane_side\",\n" +
 										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
 										"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
 										"  }\n" +
 										"}");
@@ -682,7 +675,7 @@ public class ResourcePackGenerator {
 								blockPaneSideAltbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_glass_pane_side_alt\",\n" +
 										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
 										"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
 										"  }\n" +
 										"}");
@@ -701,7 +694,7 @@ public class ResourcePackGenerator {
 								blockModelbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/pressure_plate_up\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -714,7 +707,7 @@ public class ResourcePackGenerator {
 								blockDownbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/pressure_plate_down\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -732,7 +725,7 @@ public class ResourcePackGenerator {
 								blockModelbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/button\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -745,7 +738,7 @@ public class ResourcePackGenerator {
 								blockPressedbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/button_pressed\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -758,7 +751,7 @@ public class ResourcePackGenerator {
 								blockInventorybw.write("{\n" +
 										"  \"parent\": \"minecraft:block/button_inventory\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -777,7 +770,7 @@ public class ResourcePackGenerator {
 								blockBottombw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_orientable_trapdoor_bottom\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -790,7 +783,7 @@ public class ResourcePackGenerator {
 								blockTopbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_orientable_trapdoor_top\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -803,7 +796,7 @@ public class ResourcePackGenerator {
 								blockOpenbw.write("{\n" +
 										"  \"parent\": \"minecraft:block/template_orientable_trapdoor_open\",\n" +
 										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 										"  }\n" +
 										"}");
 							}
@@ -879,53 +872,8 @@ public class ResourcePackGenerator {
 						try {
 							FileWriter blockModelwriter = new FileWriter(blockModel);
 							BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
-							{
-								blockModelbw.write("{");
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write("  \"parent\": \"minecraft:block/cube\",");
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write("  \"textures\": {");
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"up\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (topTexture) + "" + ("\",")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"down\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (bottomTexture) + "" + ("\",")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"north\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (frontTexture) + "" + ("\",")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"south\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (backTexture) + "" + ("\",")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"west\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (rightTexture) + "" + ("\",")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"east\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (leftTexture) + "" + ("\",")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write((("    \"particle\": \"") + "" + (resourceNamespace) + "" + (":block/") + "" + (bottomTexture) + "" + ("\"")));
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write("  }");
-								blockModelbw.newLine();
-							}
-							{
-								blockModelbw.write("}");
-							}
+							if (differentTextures == TriState.TRUE) blockModelbw.write(defaultCube);
+							else if (differentTextures == TriState.FALSE) blockModelbw.write(cubeAll);
 							blockModelbw.close();
 							blockModelwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -990,7 +938,7 @@ public class ResourcePackGenerator {
 							blockItemModelbw.write("{\n" +
 									"  \"parent\": \"minecraft:item/generated\",\n" +
 									"  \"textures\": {\n" +
-									"    \"layer0\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+									"    \"layer0\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
 									"  }\n" +
 									"}");
 							blockItemModelbw.close();
@@ -1053,7 +1001,7 @@ public class ResourcePackGenerator {
 			blockstates.mkdirs();
 			File blockState = new File(blockstates, File.separator + id + ".json");
 			//Block State
-			if (customBlockstate.equals("none")) {
+			if (customBlockState.equals("none")) {
 				switch (base) {
 					case "slab":
 						try {
@@ -2206,7 +2154,7 @@ public class ResourcePackGenerator {
 					FileWriter blockstatewriter = new FileWriter(blockState);
 					BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
 					{
-						blockstatebw.write(customBlockstate);
+						blockstatebw.write(customBlockState);
 					}
 					blockstatebw.close();
 					blockstatewriter.close();
