@@ -1,18 +1,17 @@
 package com.ulto.customblocks;
 
-import java.io.IOException;
-import java.io.FileWriter;
-import java.io.File;
-
-import com.google.gson.JsonObject;
-import com.google.gson.GsonBuilder;
 import com.google.gson.Gson;
-import net.minecraft.client.MinecraftClient;
+import com.google.gson.GsonBuilder;
+import com.google.gson.JsonObject;
+
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class LanguageHandler {
 	static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	static JsonObject languageObject = new JsonObject();
-	static File langNamespace = new File(ResourcePackGenerator.assets, File.separator + "lang");
+	static File langNamespace = new File(CustomResourceCreator.assets, File.separator + "lang");
 	static File lang = new File(langNamespace, File.separator + "lang");
 	static File en_us = new File(lang, File.separator + "en_us.json");
 

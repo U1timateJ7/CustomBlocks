@@ -2,7 +2,7 @@ package com.ulto.customblocks.mixin;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.GenerateCustomElements;
+import com.ulto.customblocks.RecipeGenerator;
 import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.recipe.RecipeManager;
 import net.minecraft.resource.ResourceManager;
@@ -19,7 +19,7 @@ import java.util.Map;
 public class RecipeManagerMixin {
     @Inject(method = "apply", at = @At("HEAD"))
     public void interceptApply(Map<Identifier, JsonElement> map, ResourceManager resourceManager, Profiler profiler, CallbackInfo info) {
-        for (JsonObject recipe : GenerateCustomElements.jsonRecipes) {
+        for (JsonObject recipe : RecipeGenerator.recipes) {
             if (recipe.has("custom")) {
                 JsonObject custom = recipe.getAsJsonObject("custom");
                 if (custom.has("namespace") || custom.has("id")) {

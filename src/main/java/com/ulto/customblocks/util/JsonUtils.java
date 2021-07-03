@@ -157,8 +157,8 @@ public class JsonUtils {
 
     public static List<VoxelShape> jsonObjectListToVoxelShapeList(List<JsonObject> jsonObjectList) {
         List<JsonObject> shape = new ArrayList<>();
-        for (int i = 0; i < jsonObjectList.size(); i++) {
-            shape.add(jsonObjectList.get(i).getAsJsonObject());
+        for (JsonObject jsonObject : jsonObjectList) {
+            shape.add(jsonObject.getAsJsonObject());
         }
         List<VoxelShape> list = new ArrayList<>();
         for (JsonObject obj : shape) {
@@ -216,10 +216,10 @@ public class JsonUtils {
                             }
                         }
                     }
-                    if (modifiers.has("potion_type") && IdentifierUtil.isIdentifierPotion(id)) {
+                    if (modifiers.has("potion_type") && BooleanUtils.isIdentifierPotion(id)) {
                         PotionUtil.setPotion(item, Registry.POTION.get(new Identifier(modifiers.get("potion_type").getAsString())));
                     }
-                    if (modifiers.has("custom_potion") && IdentifierUtil.isIdentifierPotion(id)) {
+                    if (modifiers.has("custom_potion") && BooleanUtils.isIdentifierPotion(id)) {
                         List<StatusEffectInstance> effects = new ArrayList<>();
                         JsonObject customPotion = modifiers.getAsJsonObject("custom_potion");
                         for (JsonObject effect : jsonArrayToJsonObjectList(customPotion.getAsJsonArray("effects"))) {

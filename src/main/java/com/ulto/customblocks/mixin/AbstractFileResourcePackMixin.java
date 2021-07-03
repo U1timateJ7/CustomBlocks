@@ -17,6 +17,6 @@ public class AbstractFileResourcePackMixin {
 
     @Inject(at = @At("RETURN"), method = "getName", cancellable = true)
     private void customName(CallbackInfoReturnable<String> cir) {
-        if (base.getName().equals("custom_blocks")) cir.setReturnValue("Custom Block Resources");
+        if (base.getName().equals("custom_blocks_resources")) cir.setReturnValue("Custom Block Resources");
     }
 }

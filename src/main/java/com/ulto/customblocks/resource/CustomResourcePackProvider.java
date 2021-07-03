@@ -1,5 +1,6 @@
 package com.ulto.customblocks.resource;
 
+import com.ulto.customblocks.CustomBlocksMod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.*;
 import org.apache.logging.log4j.LogManager;
@@ -10,7 +11,7 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class CustomResourcePackProvider implements ResourcePackProvider {
-    public static File customBlocksPath = new File(FabricLoader.getInstance().getConfigDir().toFile().getAbsolutePath(), File.separator + "custom_blocks");
+    public static File customBlocksPath = new File(CustomBlocksMod.customBlocksConfig, File.separator + "custom_blocks_resources");
     private final Type type;
     
     public CustomResourcePackProvider(Type type) {
@@ -34,8 +35,8 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
     }
     
     public enum Type {
-        DATA("Data Pack", "custom_blocks"),
-        RESOURCES("Resource Pack", "custom_blocks");
+        DATA("Data Pack", "custom_blocks/custom_blocks_resources"),
+        RESOURCES("Resource Pack", "custom_blocks/custom_blocks_resources");
         
         String displayName;
         String path;
