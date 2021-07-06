@@ -1,8 +1,11 @@
 package com.ulto.customblocks.gui;
 
+import com.ulto.customblocks.CustomBlocksMod;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
-import io.github.cottonmc.cotton.gui.widget.*;
-import net.fabricmc.loader.api.FabricLoader;
+import io.github.cottonmc.cotton.gui.widget.WButton;
+import io.github.cottonmc.cotton.gui.widget.WLabel;
+import io.github.cottonmc.cotton.gui.widget.WPlainPanel;
+import io.github.cottonmc.cotton.gui.widget.WScrollPanel;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
@@ -27,7 +30,7 @@ public class MakerSelectorGUI extends LightweightGuiDescription {
         packButton.setOnClick(() -> MinecraftClient.getInstance().openScreen(new BlockMakerScreen(new PackTypeSelectorGUI())));
         root.add(packButton, 210, 50, 90, 20);
         WButton configButton = new WButton(new TranslatableText("gui.maker_selector.button.config"));
-        configButton.setOnClick(() -> Util.getOperatingSystem().open(FabricLoader.getInstance().getConfigDir().toFile()));
+        configButton.setOnClick(() -> Util.getOperatingSystem().open(CustomBlocksMod.customBlocksConfig));
         root.add(configButton, 110, 80, 90, 20);
     }
 }
