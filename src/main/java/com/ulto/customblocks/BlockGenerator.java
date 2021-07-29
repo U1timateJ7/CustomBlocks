@@ -100,23 +100,11 @@ public class BlockGenerator {
 			String _itemGroup;
 			if (block.has("item_group")) _itemGroup = block.get("item_group").getAsString();
 			else {
-				switch (base) {
-					case "wall":
-					case "fence":
-					case "pane":
-						_itemGroup = "decorations";
-						break;
-					case "fence_gate":
-					case "pressure_plate":
-					case "button":
-					case "trapdoor":
-					case "door":
-						_itemGroup = "redstone";
-						break;
-					default:
-						_itemGroup = "building_blocks";
-						break;
-				}
+				_itemGroup = switch (base) {
+					case "wall", "fence", "pane" -> "decorations";
+					case "fence_gate", "pressure_plate", "button", "trapdoor", "door" -> "redstone";
+					default -> "building_blocks";
+				};
 			}
 			List<JsonObject> shape = new ArrayList<>();
 			if (block.has("shape")) {
@@ -138,418 +126,181 @@ public class BlockGenerator {
 			BlockSoundGroup sounds;
 			Tag<Item> efficientTool;
 			ItemGroup itemGroup;
-			switch (_material) {
-				case "wood":
-					material = Material.WOOD;
-					break;
-				case "dirt":
-					material = Material.SOIL;
-					break;
-				case "metal":
-					material = Material.METAL;
-					break;
-				case "leaves":
-					material = Material.LEAVES;
-					break;
-				case "air":
-					material = Material.AIR;
-					break;
-				case "glass":
-					material = Material.GLASS;
-					break;
-				default:
-					material = Material.STONE;
-					break;
-			}
-			switch (_mapColor) {
-				case "white":
-					mapColor = MapColor.WHITE;
-					break;
-				case "orange":
-					mapColor = MapColor.ORANGE;
-					break;
-				case "magenta":
-					mapColor = MapColor.MAGENTA;
-					break;
-				case "light_blue":
-					mapColor = MapColor.LIGHT_BLUE;
-					break;
-				case "yellow":
-					mapColor = MapColor.YELLOW;
-					break;
-				case "lime":
-					mapColor = MapColor.LIME;
-					break;
-				case "pink":
-					mapColor = MapColor.PINK;
-					break;
-				case "gray":
-				case "grey":
-					mapColor = MapColor.GRAY;
-					break;
-				case "light_gray":
-				case "light_grey":
-					mapColor = MapColor.LIGHT_GRAY;
-					break;
-				case "cyan":
-					mapColor = MapColor.CYAN;
-					break;
-				case "purple":
-					mapColor = MapColor.PURPLE;
-					break;
-				case "blue":
-					mapColor = MapColor.BLUE;
-					break;
-				case "brown":
-					mapColor = MapColor.BROWN;
-					break;
-				case "green":
-					mapColor = MapColor.GREEN;
-					break;
-				case "red":
-					mapColor = MapColor.RED;
-					break;
-				case "black":
-					mapColor = MapColor.BLACK;
-					break;
-				case "clear":
-					mapColor = MapColor.CLEAR;
-					break;
-				case "bright_red":
-					mapColor = MapColor.BRIGHT_RED;
-					break;
-				case "dark_green":
-					mapColor = MapColor.DARK_GREEN;
-					break;
-				case "dark_red":
-					mapColor = MapColor.DARK_RED;
-					break;
-				case "diamond_blue":
-					mapColor = MapColor.DIAMOND_BLUE;
-					break;
-				case "dirt_brown":
-					mapColor = MapColor.DIRT_BROWN;
-					break;
-				case "emerald_green":
-					mapColor = MapColor.EMERALD_GREEN;
-					break;
-				case "gold":
-					mapColor = MapColor.GOLD;
-					break;
-				case "iron_gray":
-				case "iron_grey":
-					mapColor = MapColor.IRON_GRAY;
-					break;
-				case "lapis_blue":
-					mapColor = MapColor.LAPIS_BLUE;
-					break;
-				case "light_blue_gray":
-				case "light_blue_grey":
-					mapColor = MapColor.LIGHT_BLUE_GRAY;
-					break;
-				case "oak_tan":
-					mapColor = MapColor.OAK_TAN;
-					break;
-				case "off_white":
-					mapColor = MapColor.OFF_WHITE;
-					break;
-				case "pale_green":
-					mapColor = MapColor.PALE_GREEN;
-					break;
-				case "pale_purple":
-					mapColor = MapColor.PALE_PURPLE;
-					break;
-				case "pale_yellow":
-					mapColor = MapColor.PALE_YELLOW;
-					break;
-				case "spruce_brown":
-					mapColor = MapColor.SPRUCE_BROWN;
-					break;
-				case "stone_gray":
-				case "stone_grey":
-					mapColor = MapColor.STONE_GRAY;
-					break;
-				case "terracotta_white":
-					mapColor = MapColor.TERRACOTTA_WHITE;
-					break;
-				case "terracotta_orange":
-					mapColor = MapColor.TERRACOTTA_ORANGE;
-					break;
-				case "terracotta_magenta":
-					mapColor = MapColor.TERRACOTTA_MAGENTA;
-					break;
-				case "terracotta_light_blue":
-					mapColor = MapColor.TERRACOTTA_LIGHT_BLUE;
-					break;
-				case "terracotta_yellow":
-					mapColor = MapColor.TERRACOTTA_YELLOW;
-					break;
-				case "terracotta_lime":
-					mapColor = MapColor.TERRACOTTA_LIME;
-					break;
-				case "terracotta_pink":
-					mapColor = MapColor.TERRACOTTA_PINK;
-					break;
-				case "terracotta_gray":
-				case "terracotta_grey":
-					mapColor = MapColor.TERRACOTTA_GRAY;
-					break;
-				case "terracotta_light_gray":
-				case "terracotta_light_grey":
-					mapColor = MapColor.TERRACOTTA_LIGHT_GRAY;
-					break;
-				case "terracotta_cyan":
-					mapColor = MapColor.TERRACOTTA_CYAN;
-					break;
-				case "terracotta_purple":
-					mapColor = MapColor.TERRACOTTA_PURPLE;
-					break;
-				case "terracotta_blue":
-					mapColor = MapColor.TERRACOTTA_BLUE;
-					break;
-				case "terracotta_brown":
-					mapColor = MapColor.TERRACOTTA_BROWN;
-					break;
-				case "terracotta_green":
-					mapColor = MapColor.TERRACOTTA_GREEN;
-					break;
-				case "terracotta_red":
-					mapColor = MapColor.TERRACOTTA_RED;
-					break;
-				case "terracotta_black":
-					mapColor = MapColor.TERRACOTTA_BLACK;
-					break;
-				case "water_blue":
-					mapColor = MapColor.WATER_BLUE;
-					break;
-				case "white_gray":
-				case "white_grey":
-					mapColor = MapColor.WHITE_GRAY;
-					break;
-				case "crimson_nylium":
-					mapColor = MapColor.field_25702;
-					break;
-				case "crimson_stem":
-					mapColor = MapColor.field_25703;
-					break;
-				case "crimson_hyphae":
-					mapColor = MapColor.field_25704;
-					break;
-				case "warped_nylium":
-					mapColor = MapColor.field_25705;
-					break;
-				case "warped_stem":
-					mapColor = MapColor.field_25706;
-					break;
-				case "warped_hyphae":
-					mapColor = MapColor.field_25707;
-					break;
-				case "warped_wart":
-					mapColor = MapColor.field_25708;
-					break;
-				default:
-					mapColor = material.getColor();
-					break;
-			}
-			switch (_sounds) {
-				case "wood":
-					sounds = BlockSoundGroup.WOOD;
-					break;
-				case "dirt":
-				case "gravel":
-					sounds = BlockSoundGroup.GRAVEL;
-					break;
-				case "grass":
-					sounds = BlockSoundGroup.GRASS;
-					break;
-				case "metal":
-					sounds = BlockSoundGroup.METAL;
-					break;
-				case "sand":
-					sounds = BlockSoundGroup.SAND;
-					break;
-				case "glass":
-					sounds = BlockSoundGroup.GLASS;
-					break;
-				case "lily_pad":
-					sounds = BlockSoundGroup.LILY_PAD;
-					break;
-				case "wool":
-					sounds = BlockSoundGroup.WOOL;
-					break;
-				case "snow":
-					sounds = BlockSoundGroup.SNOW;
-					break;
-				case "ladder":
-					sounds = BlockSoundGroup.LADDER;
-					break;
-				case "anvil":
-					sounds = BlockSoundGroup.ANVIL;
-					break;
-				case "slime":
-					sounds = BlockSoundGroup.SLIME;
-					break;
-				case "honey":
-					sounds = BlockSoundGroup.HONEY;
-					break;
-				case "wet_grass":
-					sounds = BlockSoundGroup.WET_GRASS;
-					break;
-				case "coral":
-					sounds = BlockSoundGroup.CORAL;
-					break;
-				case "bamboo":
-					sounds = BlockSoundGroup.BAMBOO;
-					break;
-				case "bamboo_sapling":
-					sounds = BlockSoundGroup.BAMBOO_SAPLING;
-					break;
-				case "scaffolding":
-					sounds = BlockSoundGroup.SCAFFOLDING;
-					break;
-				case "sweet_berry_bush":
-					sounds = BlockSoundGroup.SWEET_BERRY_BUSH;
-					break;
-				case "crop":
-					sounds = BlockSoundGroup.CROP;
-					break;
-				case "stem":
-					sounds = BlockSoundGroup.STEM;
-					break;
-				case "vine":
-					sounds = BlockSoundGroup.VINE;
-					break;
-				case "nether_wart":
-					sounds = BlockSoundGroup.NETHER_WART;
-					break;
-				case "lantern":
-					sounds = BlockSoundGroup.LANTERN;
-					break;
-				case "nether_stem":
-					sounds = BlockSoundGroup.NETHER_STEM;
-					break;
-				case "nylium":
-					sounds = BlockSoundGroup.NYLIUM;
-					break;
-				case "fungus":
-					sounds = BlockSoundGroup.FUNGUS;
-					break;
-				case "roots":
-					sounds = BlockSoundGroup.ROOTS;
-					break;
-				case "shroomlight":
-					sounds = BlockSoundGroup.SHROOMLIGHT;
-					break;
-				case "weeping_vines":
-					sounds = BlockSoundGroup.WEEPING_VINES;
-					break;
-				case "weeping_vines_low_pitch":
-					sounds = BlockSoundGroup.WEEPING_VINES_LOW_PITCH;
-					break;
-				case "soul_sand":
-					sounds = BlockSoundGroup.SOUL_SAND;
-					break;
-				case "soul_soil":
-					sounds = BlockSoundGroup.SOUL_SOIL;
-					break;
-				case "basalt":
-					sounds = BlockSoundGroup.BASALT;
-					break;
-				case "wart_block":
-					sounds = BlockSoundGroup.WART_BLOCK;
-					break;
-				case "netherrack":
-					sounds = BlockSoundGroup.NETHERRACK;
-					break;
-				case "nether_bricks":
-					sounds = BlockSoundGroup.NETHER_BRICKS;
-					break;
-				case "nether_sprouts":
-					sounds = BlockSoundGroup.NETHER_SPROUTS;
-					break;
-				case "nether_ore":
-					sounds = BlockSoundGroup.NETHER_ORE;
-					break;
-				case "bone":
-					sounds = BlockSoundGroup.BONE;
-					break;
-				case "netherite":
-					sounds = BlockSoundGroup.NETHERITE;
-					break;
-				case "ancient_debris":
-					sounds = BlockSoundGroup.ANCIENT_DEBRIS;
-					break;
-				case "lodestone":
-					sounds = BlockSoundGroup.LODESTONE;
-					break;
-				case "chain":
-					sounds = BlockSoundGroup.CHAIN;
-					break;
-				case "nether_gold_ore":
-					sounds = BlockSoundGroup.NETHER_GOLD_ORE;
-					break;
-				case "gilded_blackstone":
-					sounds = BlockSoundGroup.GILDED_BLACKSTONE;
-					break;
-				default:
-					sounds = BlockSoundGroup.STONE;
-					break;
-			}
-			switch (breakTool) {
-				case "sword":
-					efficientTool = FabricToolTags.SWORDS;
-					break;
-				case "axe":
-					efficientTool = FabricToolTags.AXES;
-					break;
-				case "shovel":
-					efficientTool = FabricToolTags.SHOVELS;
-					break;
-				case "hoe":
-					efficientTool = FabricToolTags.HOES;
-					break;
-				case "shears":
-					efficientTool = FabricToolTags.SHEARS;
-					break;
-				default:
-					efficientTool = FabricToolTags.PICKAXES;
-					break;
-			}
-			switch (_itemGroup) {
-				case "decorations":
-					itemGroup = ItemGroup.DECORATIONS;
-					break;
-				case "redstone":
-					itemGroup = ItemGroup.REDSTONE;
-					break;
-				case "transportation":
-					itemGroup = ItemGroup.TRANSPORTATION;
-					break;
-				case "misc":
-					itemGroup = ItemGroup.MISC;
-					break;
-				case "food":
-					itemGroup = ItemGroup.FOOD;
-					break;
-				case "tools":
-					itemGroup = ItemGroup.TOOLS;
-					break;
-				case "combat":
-					itemGroup = ItemGroup.COMBAT;
-					break;
-				case "brewing":
-					itemGroup = ItemGroup.BREWING;
-					break;
-				case "none":
-					itemGroup = null;
-					break;
-				default:
-					itemGroup = ItemGroup.BUILDING_BLOCKS;
-					break;
-			}
+			material = switch (_material) {
+				case "wood" -> Material.WOOD;
+				case "dirt" -> Material.SOIL;
+				case "metal" -> Material.METAL;
+				case "leaves" -> Material.LEAVES;
+				case "air" -> Material.AIR;
+				case "glass" -> Material.GLASS;
+				default -> Material.STONE;
+			};
+			mapColor = switch (_mapColor) {
+				case "white" -> MapColor.WHITE;
+				case "orange" -> MapColor.ORANGE;
+				case "magenta" -> MapColor.MAGENTA;
+				case "light_blue" -> MapColor.LIGHT_BLUE;
+				case "yellow" -> MapColor.YELLOW;
+				case "lime" -> MapColor.LIME;
+				case "pink" -> MapColor.PINK;
+				case "gray", "grey" -> MapColor.GRAY;
+				case "light_gray", "light_grey" -> MapColor.LIGHT_GRAY;
+				case "cyan" -> MapColor.CYAN;
+				case "purple" -> MapColor.PURPLE;
+				case "blue" -> MapColor.BLUE;
+				case "brown" -> MapColor.BROWN;
+				case "green" -> MapColor.GREEN;
+				case "red" -> MapColor.RED;
+				case "black" -> MapColor.BLACK;
+				case "clear" -> MapColor.CLEAR;
+				case "bright_red" -> MapColor.BRIGHT_RED;
+				case "dark_green" -> MapColor.DARK_GREEN;
+				case "dark_red" -> MapColor.DARK_RED;
+				case "diamond_blue" -> MapColor.DIAMOND_BLUE;
+				case "dirt_brown" -> MapColor.DIRT_BROWN;
+				case "emerald_green" -> MapColor.EMERALD_GREEN;
+				case "gold" -> MapColor.GOLD;
+				case "iron_gray", "iron_grey" -> MapColor.IRON_GRAY;
+				case "lapis_blue" -> MapColor.LAPIS_BLUE;
+				case "light_blue_gray", "light_blue_grey" -> MapColor.LIGHT_BLUE_GRAY;
+				case "oak_tan" -> MapColor.OAK_TAN;
+				case "off_white" -> MapColor.OFF_WHITE;
+				case "pale_green" -> MapColor.PALE_GREEN;
+				case "pale_purple" -> MapColor.PALE_PURPLE;
+				case "pale_yellow" -> MapColor.PALE_YELLOW;
+				case "spruce_brown" -> MapColor.SPRUCE_BROWN;
+				case "stone_gray", "stone_grey" -> MapColor.STONE_GRAY;
+				case "terracotta_white" -> MapColor.TERRACOTTA_WHITE;
+				case "terracotta_orange" -> MapColor.TERRACOTTA_ORANGE;
+				case "terracotta_magenta" -> MapColor.TERRACOTTA_MAGENTA;
+				case "terracotta_light_blue" -> MapColor.TERRACOTTA_LIGHT_BLUE;
+				case "terracotta_yellow" -> MapColor.TERRACOTTA_YELLOW;
+				case "terracotta_lime" -> MapColor.TERRACOTTA_LIME;
+				case "terracotta_pink" -> MapColor.TERRACOTTA_PINK;
+				case "terracotta_gray", "terracotta_grey" -> MapColor.TERRACOTTA_GRAY;
+				case "terracotta_light_gray", "terracotta_light_grey" -> MapColor.TERRACOTTA_LIGHT_GRAY;
+				case "terracotta_cyan" -> MapColor.TERRACOTTA_CYAN;
+				case "terracotta_purple" -> MapColor.TERRACOTTA_PURPLE;
+				case "terracotta_blue" -> MapColor.TERRACOTTA_BLUE;
+				case "terracotta_brown" -> MapColor.TERRACOTTA_BROWN;
+				case "terracotta_green" -> MapColor.TERRACOTTA_GREEN;
+				case "terracotta_red" -> MapColor.TERRACOTTA_RED;
+				case "terracotta_black" -> MapColor.TERRACOTTA_BLACK;
+				case "water_blue" -> MapColor.WATER_BLUE;
+				case "white_gray", "white_grey" -> MapColor.WHITE_GRAY;
+				case "dull_red" -> MapColor.DULL_RED;
+				case "dull_pink" -> MapColor.DULL_PINK;
+				case "dark_crimson" -> MapColor.DARK_CRIMSON;
+				case "teal" -> MapColor.TEAL;
+				case "dark_aqua" -> MapColor.DARK_AQUA;
+				case "dark_dull_pink" -> MapColor.DARK_DULL_PINK;
+				case "bright_teal" -> MapColor.BRIGHT_TEAL;
+				case "deepslate_gray", "deepslate_grey" -> MapColor.DEEPSLATE_GRAY;
+				case "raw_iron_pink" -> MapColor.RAW_IRON_PINK;
+				case "lichen_green" -> MapColor.LICHEN_GREEN;
+				default -> material.getColor();
+			};
+			sounds = switch (_sounds) {
+				case "wood" -> BlockSoundGroup.WOOD;
+				case "dirt", "gravel" -> BlockSoundGroup.GRAVEL;
+				case "grass" -> BlockSoundGroup.GRASS;
+				case "metal" -> BlockSoundGroup.METAL;
+				case "sand" -> BlockSoundGroup.SAND;
+				case "glass" -> BlockSoundGroup.GLASS;
+				case "lily_pad" -> BlockSoundGroup.LILY_PAD;
+				case "wool" -> BlockSoundGroup.WOOL;
+				case "snow" -> BlockSoundGroup.SNOW;
+				case "ladder" -> BlockSoundGroup.LADDER;
+				case "anvil" -> BlockSoundGroup.ANVIL;
+				case "slime" -> BlockSoundGroup.SLIME;
+				case "honey" -> BlockSoundGroup.HONEY;
+				case "wet_grass" -> BlockSoundGroup.WET_GRASS;
+				case "coral" -> BlockSoundGroup.CORAL;
+				case "bamboo" -> BlockSoundGroup.BAMBOO;
+				case "bamboo_sapling" -> BlockSoundGroup.BAMBOO_SAPLING;
+				case "scaffolding" -> BlockSoundGroup.SCAFFOLDING;
+				case "sweet_berry_bush" -> BlockSoundGroup.SWEET_BERRY_BUSH;
+				case "crop" -> BlockSoundGroup.CROP;
+				case "stem" -> BlockSoundGroup.STEM;
+				case "vine" -> BlockSoundGroup.VINE;
+				case "nether_wart" -> BlockSoundGroup.NETHER_WART;
+				case "lantern" -> BlockSoundGroup.LANTERN;
+				case "nether_stem" -> BlockSoundGroup.NETHER_STEM;
+				case "nylium" -> BlockSoundGroup.NYLIUM;
+				case "fungus" -> BlockSoundGroup.FUNGUS;
+				case "roots" -> BlockSoundGroup.ROOTS;
+				case "shroomlight" -> BlockSoundGroup.SHROOMLIGHT;
+				case "weeping_vines" -> BlockSoundGroup.WEEPING_VINES;
+				case "weeping_vines_low_pitch" -> BlockSoundGroup.WEEPING_VINES_LOW_PITCH;
+				case "soul_sand" -> BlockSoundGroup.SOUL_SAND;
+				case "soul_soil" -> BlockSoundGroup.SOUL_SOIL;
+				case "basalt" -> BlockSoundGroup.BASALT;
+				case "wart_block" -> BlockSoundGroup.WART_BLOCK;
+				case "netherrack" -> BlockSoundGroup.NETHERRACK;
+				case "nether_bricks" -> BlockSoundGroup.NETHER_BRICKS;
+				case "nether_sprouts" -> BlockSoundGroup.NETHER_SPROUTS;
+				case "nether_ore" -> BlockSoundGroup.NETHER_ORE;
+				case "bone" -> BlockSoundGroup.BONE;
+				case "netherite" -> BlockSoundGroup.NETHERITE;
+				case "ancient_debris" -> BlockSoundGroup.ANCIENT_DEBRIS;
+				case "lodestone" -> BlockSoundGroup.LODESTONE;
+				case "chain" -> BlockSoundGroup.CHAIN;
+				case "nether_gold_ore" -> BlockSoundGroup.NETHER_GOLD_ORE;
+				case "gilded_blackstone" -> BlockSoundGroup.GILDED_BLACKSTONE;
+				case "candle" -> BlockSoundGroup.CANDLE;
+				case "amethyst_block" -> BlockSoundGroup.AMETHYST_BLOCK;
+				case "amethyst_cluster" -> BlockSoundGroup.AMETHYST_CLUSTER;
+				case "small_amethyst_bud" -> BlockSoundGroup.SMALL_AMETHYST_BUD;
+				case "medium_amethyst_bud" -> BlockSoundGroup.MEDIUM_AMETHYST_BUD;
+				case "large_amethyst_bud" -> BlockSoundGroup.LARGE_AMETHYST_BUD;
+				case "tuff" -> BlockSoundGroup.TUFF;
+				case "calcite" -> BlockSoundGroup.CALCITE;
+				case "copper" -> BlockSoundGroup.COPPER;
+				case "powder_snow" -> BlockSoundGroup.POWDER_SNOW;
+				case "dripstone_block" -> BlockSoundGroup.DRIPSTONE_BLOCK;
+				case "pointed_dripstone" -> BlockSoundGroup.POINTED_DRIPSTONE;
+				case "sculk_sensor" -> BlockSoundGroup.SCULK_SENSOR;
+				case "glow_lichen" -> BlockSoundGroup.GLOW_LICHEN;
+				case "cave_vines" -> BlockSoundGroup.CAVE_VINES;
+				case "spore_blossom" -> BlockSoundGroup.SPORE_BLOSSOM;
+				case "azalea" -> BlockSoundGroup.AZALEA;
+				case "flowering_azalea" -> BlockSoundGroup.FLOWERING_AZALEA;
+				case "moss_carpet" -> BlockSoundGroup.MOSS_CARPET;
+				case "moss_block" -> BlockSoundGroup.MOSS_BLOCK;
+				case "big_dripleaf" -> BlockSoundGroup.BIG_DRIPLEAF;
+				case "small_dripleaf" -> BlockSoundGroup.SMALL_DRIPLEAF;
+				case "rooted_dirt" -> BlockSoundGroup.ROOTED_DIRT;
+				case "hanging_roots" -> BlockSoundGroup.HANGING_ROOTS;
+				case "azalea_leaves" -> BlockSoundGroup.AZALEA_LEAVES;
+				case "deepslate" -> BlockSoundGroup.DEEPSLATE;
+				case "deepslate_bricks" -> BlockSoundGroup.DEEPSLATE_BRICKS;
+				case "deepslate_tiles" -> BlockSoundGroup.DEEPSLATE_TILES;
+				case "polished_deepslate" -> BlockSoundGroup.POLISHED_DEEPSLATE;
+				default -> BlockSoundGroup.STONE;
+			};
+			efficientTool = switch (breakTool) {
+				case "sword" -> FabricToolTags.SWORDS;
+				case "axe" -> FabricToolTags.AXES;
+				case "shovel" -> FabricToolTags.SHOVELS;
+				case "hoe" -> FabricToolTags.HOES;
+				case "shears" -> FabricToolTags.SHEARS;
+				default -> FabricToolTags.PICKAXES;
+			};
+			itemGroup = switch (_itemGroup) {
+				case "decorations" -> ItemGroup.DECORATIONS;
+				case "redstone" -> ItemGroup.REDSTONE;
+				case "transportation" -> ItemGroup.TRANSPORTATION;
+				case "misc" -> ItemGroup.MISC;
+				case "food" -> ItemGroup.FOOD;
+				case "tools" -> ItemGroup.TOOLS;
+				case "combat" -> ItemGroup.COMBAT;
+				case "brewing" -> ItemGroup.BREWING;
+				case "none" -> null;
+				default -> ItemGroup.BUILDING_BLOCKS;
+			};
 
 			Block NEW_BLOCK;
-			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).materialColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
+			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).mapColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
 			if (!breakTool.equals("none")) {
 				blockSettings.breakByTool(efficientTool, harvestLevel);
 				if (requiresTool) blockSettings.requiresTool();
@@ -659,80 +410,68 @@ public class BlockGenerator {
 				default:
 					if (hasGravity) {
 						switch (rotationType) {
-							case "axis": {
+							case "axis" -> {
 								CustomFallingPillarBlock BLOCK = new CustomFallingPillarBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "y_axis_player": {
+							case "y_axis_player" -> {
 								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "y_axis": {
+							case "y_axis" -> {
 								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "all_player": {
+							case "all_player" -> {
 								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "all": {
+							case "all" -> {
 								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							default: {
+							default -> {
 								FallingBlock BLOCK = new CustomFallingBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
 						}
 					} else {
 						switch (rotationType) {
-							case "axis": {
+							case "axis" -> {
 								PillarBlock BLOCK = new CustomPillarBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "y_axis_player": {
+							case "y_axis_player" -> {
 								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "y_axis": {
+							case "y_axis" -> {
 								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "all_player": {
+							case "all_player" -> {
 								Block BLOCK = new CustomFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							case "all": {
+							case "all" -> {
 								Block BLOCK = new CustomFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
-							default: {
+							default -> {
 								Block BLOCK = new CustomBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
 							}
 						}
 					}

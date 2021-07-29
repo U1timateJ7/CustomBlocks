@@ -24,7 +24,7 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
         String packName = "Custom Block Resources";
         type.getLogger().info("Loading pack {} from {}.", packName, candidate.getAbsolutePath());
         Supplier<ResourcePack> packSupplier = candidate.isDirectory() ? () -> new DirectoryResourcePack(candidate) : () -> new ZipResourcePack(candidate);
-        ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.field_25347);
+        ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.PACK_SOURCE_BUILTIN);
         if (profile != null) {
             consumer.accept(profile);
             type.getLogger().info("Loaded pack {}.", packName);

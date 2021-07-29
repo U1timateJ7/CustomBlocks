@@ -6,17 +6,17 @@ import net.minecraft.client.item.TooltipContext;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.ToolMaterial;
+import net.minecraft.tag.Tag;
 import net.minecraft.text.Text;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
 public class CustomMiningToolItem extends MiningToolItem {
     List<String> tooltips;
 
-    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Set<Block> effectiveBlocks, Settings settings, List<String> tooltip) {
+    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, List<String> tooltip) {
         super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
         tooltips = tooltip;
     }

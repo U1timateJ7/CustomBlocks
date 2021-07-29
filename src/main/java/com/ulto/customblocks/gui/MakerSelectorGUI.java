@@ -21,13 +21,13 @@ public class MakerSelectorGUI extends LightweightGuiDescription {
         WLabel topLabel = new WLabel(new TranslatableText("gui.maker_selector.label.top"));
         root.add(topLabel, 120, 10);
         WButton blockButton = new WButton(new TranslatableText("gui.maker_selector.button.block"));
-        blockButton.setOnClick(() -> MinecraftClient.getInstance().openScreen(new BlockMakerScreen(new BlockMakerGUI())));
+        blockButton.setOnClick(() -> MinecraftClient.getInstance().setScreen(new BlockMakerScreen(new BlockMakerGUI())));
         root.add(blockButton, 10, 50, 90, 20);
         WButton itemButton = new WButton(new TranslatableText("gui.maker_selector.button.item"));
-        itemButton.setOnClick(() -> MinecraftClient.getInstance().openScreen(new BlockMakerScreen(new ItemMakerGUI())));
+        itemButton.setOnClick(() -> MinecraftClient.getInstance().setScreen(new BlockMakerScreen(new ItemMakerGUI())));
         root.add(itemButton, 110, 50, 90, 20);
         WButton packButton = new WButton(new TranslatableText("gui.maker_selector.button.pack"));
-        packButton.setOnClick(() -> MinecraftClient.getInstance().openScreen(new BlockMakerScreen(new PackTypeSelectorGUI())));
+        packButton.setOnClick(() -> MinecraftClient.getInstance().setScreen(new BlockMakerScreen(new PackTypeSelectorGUI())));
         root.add(packButton, 210, 50, 90, 20);
         WButton configButton = new WButton(new TranslatableText("gui.maker_selector.button.config"));
         configButton.setOnClick(() -> Util.getOperatingSystem().open(CustomBlocksMod.customBlocksConfig));

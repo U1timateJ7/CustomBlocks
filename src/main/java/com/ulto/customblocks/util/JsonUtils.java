@@ -238,9 +238,9 @@ public class JsonUtils {
                         }
                         PotionUtil.setCustomPotionEffects(item, effects);
                         if (customPotion.has("color")) {
-                            item.getOrCreateTag().putInt("CustomPotionColor", MiscConverter.jsonObjectToColor(customPotion.getAsJsonObject("color")));
+                            item.getOrCreateNbt().putInt("CustomPotionColor", MiscConverter.jsonObjectToColor(customPotion.getAsJsonObject("color")));
                         } else {
-                            item.getOrCreateTag().putInt("CustomPotionColor", PotionUtil.getColor(effects));
+                            item.getOrCreateNbt().putInt("CustomPotionColor", PotionUtil.getColor(effects));
                         }
                     }
                     if (modifiers.has("damage")) {
@@ -248,7 +248,7 @@ public class JsonUtils {
                     }
                     if (modifiers.has("unbreakable")) {
                         boolean unbreakable = modifiers.get("unbreakable").getAsBoolean();
-                        item.getOrCreateTag().putBoolean("Unbreakable", unbreakable);
+                        item.getOrCreateNbt().putBoolean("Unbreakable", unbreakable);
                     }
                     if (modifiers.has("display")) {
                         JsonObject display = modifiers.getAsJsonObject("display");
@@ -284,11 +284,11 @@ public class JsonUtils {
                             lore.add(NbtString.of(loreValue));
                             displayTag.put("Lore", lore);
                         }
-                        item.getOrCreateTag().put("display", displayTag);
+                        item.getOrCreateNbt().put("display", displayTag);
                     }
                     if (modifiers.has("nbt")) {
                         List<JsonObject> nbtObjects = jsonArrayToJsonObjectList(modifiers.getAsJsonArray("nbt"));
-                        item.setTag(jsonObjectListToNbtCompound(nbtObjects));
+                        item.setNbt(jsonObjectListToNbtCompound(nbtObjects));
                     }
                 }
                 return item;

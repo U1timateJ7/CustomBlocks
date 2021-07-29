@@ -3,8 +3,8 @@ package com.ulto.customblocks.client;
 import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.gui.MakerSelectorGUI;
 import com.ulto.customblocks.gui.MakerSelectorScreen;
-import com.ulto.customblocks.resource.IMutableResourcePackManager;
 import com.ulto.customblocks.resource.CustomResourcePackProvider;
+import com.ulto.customblocks.resource.IMutableResourcePackManager;
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
@@ -29,7 +29,7 @@ public class CustomBlocksClient implements ClientModInitializer {
         ));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openBlockMenu.wasPressed()) {
-                MinecraftClient.getInstance().openScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
+                MinecraftClient.getInstance().setScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
             }
         });
         //Resource Injection

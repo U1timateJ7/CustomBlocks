@@ -10,6 +10,6 @@ public class BlockMakerScreen extends CottonClientScreen {
 
     @Override
     public void onClose() {
-        this.client.openScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
+        this.client.setScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
     }
 }
