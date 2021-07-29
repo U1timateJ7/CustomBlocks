@@ -12,7 +12,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 @Mixin(PaneBlock.class)
 public class PaneBlockMixin {
     @Inject(at = @At("RETURN"), method = "connectsTo", cancellable = true)
-    private void isFence(BlockState state, boolean bl, CallbackInfoReturnable<Boolean> cir) {
+    private void isFence(BlockState state, boolean sideSolidFullSquare, CallbackInfoReturnable<Boolean> cir) {
         if (state.getBlock() instanceof CustomWallBlock) cir.setReturnValue(true);
         if (state.getBlock() instanceof CustomFallingWallBlock) cir.setReturnValue(true);
     }

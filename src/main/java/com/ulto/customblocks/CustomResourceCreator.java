@@ -26,12 +26,13 @@ public class CustomResourceCreator {
 		try {
 			FileWriter mcmetawriter = new FileWriter(mcmeta);
 			BufferedWriter mcmetabw = new BufferedWriter(mcmetawriter);
-			mcmetabw.write("{\n" +
-					"  \"pack\": {\n" +
-					"    \"pack_format\": 6,\n" +
-					"    \"description\": \"In the config folder.\"\n" +
-					"  }\n" +
-					"}");
+			mcmetabw.write("""
+					{
+					  "pack": {
+					    "pack_format": 6,
+					    "description": "In the config folder."
+					  }
+					}""");
 			mcmetabw.close();
 			mcmetawriter.close();
 		} catch (IOException fileNotFoundException) {

@@ -3,9 +3,6 @@ package com.ulto.customblocks.resource;
 import com.ulto.customblocks.CustomBlocksMod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.*;
-import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
-import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -27,7 +24,7 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
         String packName = "Custom Block Resources";
         type.getLogger().info("Loading pack {} from {}.", packName, candidate.getAbsolutePath());
         Supplier<ResourcePack> packSupplier = candidate.isDirectory() ? () -> new DirectoryResourcePack(candidate) : () -> new ZipResourcePack(candidate);
-        ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, nameAndSource("pack.source.mod"));
+        ResourcePackProfile profile = ResourcePackProfile.of(packName, true, packSupplier, factory, ResourcePackProfile.InsertionPosition.TOP, ResourcePackSource.PACK_SOURCE_BUILTIN);
         if (profile != null) {
             consumer.accept(profile);
             type.getLogger().info("Loaded pack {}.", packName);
@@ -35,11 +32,6 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
         else {
             type.getLogger().error("Failed to build pack profile {} from {}.", packName, candidate.getAbsolutePath());
         }
-    }
-
-    static ResourcePackSource nameAndSource(String source) {
-        Text text = new TranslatableText(source);
-        return (name) -> (new TranslatableText("pack.nameAndSource", name, text)).formatted(Formatting.GRAY);
     }
     
     public enum Type {
