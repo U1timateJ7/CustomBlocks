@@ -112,38 +112,38 @@ public class CustomResourceCreator {
 			}
 			//Block Model(s)
 			if (customBlockModel.equals("none")) {
-				String directionalTextures = "  \"textures\": {" +
-						"    \"up\": \"" + resourceNamespace + ":block/" + topTexture + "\"," +
-						"    \"down\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"," +
-						"    \"north\": \"" + resourceNamespace + ":block/" + frontTexture + "\"," +
-						"    \"south\": \"" + resourceNamespace + ":block/" + backTexture + "\"," +
-						"    \"west\": \"" + resourceNamespace + ":block/" + rightTexture + "\"," +
-						"    \"east\": \"" + resourceNamespace + ":block/" + leftTexture + "\"," +
-						"    \"particle\": \"#down\"" +
+				String directionalTextures = "  \"textures\": {\n" +
+						"    \"up\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
+						"    \"down\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+						"    \"north\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
+						"    \"south\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
+						"    \"west\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
+						"    \"east\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
+						"    \"particle\": \"#down\"\n" +
 						"  },\n";
-				String texturesAll = "  \"textures\": {" +
-						"    \"all\": \"" + resourceNamespace + ":block/" + texture + "\"," +
-						"    \"particle\": \"#all\"" +
+				String texturesAll = "  \"textures\": {\n" +
+						"    \"all\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
+						"    \"particle\": \"#all\"\n" +
 						"  },\n";
-				String directionalTexturesNoComma = "  \"textures\": {" +
-						"    \"up\": \"" + resourceNamespace + ":block/" + topTexture + "\"," +
-						"    \"down\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"," +
-						"    \"north\": \"" + resourceNamespace + ":block/" + frontTexture + "\"," +
-						"    \"south\": \"" + resourceNamespace + ":block/" + backTexture + "\"," +
-						"    \"west\": \"" + resourceNamespace + ":block/" + rightTexture + "\"," +
-						"    \"east\": \"" + resourceNamespace + ":block/" + leftTexture + "\"," +
-						"    \"particle\": \"#down\"" +
+				String directionalTexturesNoComma = "  \"textures\": {\n" +
+						"    \"up\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
+						"    \"down\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+						"    \"north\": \"" + resourceNamespace + ":block/" + frontTexture + "\",\n" +
+						"    \"south\": \"" + resourceNamespace + ":block/" + backTexture + "\",\n" +
+						"    \"west\": \"" + resourceNamespace + ":block/" + rightTexture + "\",\n" +
+						"    \"east\": \"" + resourceNamespace + ":block/" + leftTexture + "\",\n" +
+						"    \"particle\": \"#down\"\n" +
 						"  }\n";
-				String texturesAllNoComma = "  \"textures\": {" +
-						"    \"all\": \"" + resourceNamespace + ":block/" + texture + "\"," +
-						"    \"particle\": \"#all\"" +
+				String texturesAllNoComma = "  \"textures\": {\n" +
+						"    \"all\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
+						"    \"particle\": \"#all\"\n" +
 						"  }\n";
-				String defaultCube = "{" +
-						"  \"parent\": \"minecraft:block/cube\"," +
+				String defaultCube = "{\n" +
+						"  \"parent\": \"minecraft:block/cube\",\n" +
 						directionalTexturesNoComma +
 						"}";
-				String cubeAll = "{" +
-						"  \"parent\": \"minecraft:block/cube_all\"," +
+				String cubeAll = "{\n" +
+						"  \"parent\": \"minecraft:block/cube_all\",\n" +
 						texturesAllNoComma +
 						"}";
 				switch (base) {
