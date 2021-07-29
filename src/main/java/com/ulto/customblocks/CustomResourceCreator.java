@@ -29,7 +29,7 @@ public class CustomResourceCreator {
 			mcmetabw.write("""
 					{
 					  "pack": {
-					    "pack_format": 6,
+					    "pack_format": 7,
 					    "description": "In the config folder."
 					  }
 					}""");
