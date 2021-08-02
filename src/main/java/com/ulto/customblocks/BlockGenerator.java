@@ -320,11 +320,11 @@ public class BlockGenerator {
 					break;
 				case "stairs":
 					if (hasGravity) {
-						CustomFallingStairBlock BLOCK = new CustomFallingStairBlock(Blocks.STONE.getDefaultState(), blockSettings, drops, block);
+						CustomFallingStairBlock BLOCK = new CustomFallingStairBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						StairsBlock BLOCK = new CustomStairBlock(Blocks.STONE.getDefaultState(), blockSettings, drops, block);
+						StairsBlock BLOCK = new CustomStairBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
