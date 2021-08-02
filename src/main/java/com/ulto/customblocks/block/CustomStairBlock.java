@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.StairsBlock;
 import net.minecraft.item.ItemStack;
@@ -19,8 +20,8 @@ public class CustomStairBlock extends StairsBlock {
     List<JsonObject> drops = new ArrayList<>();
     JsonObject block;
 
-    public CustomStairBlock(BlockState baseBlock, Settings settings, List<JsonObject> dropsIn, JsonObject blockIn) {
-        super(baseBlock, settings);
+    public CustomStairBlock(Settings settings, List<JsonObject> dropsIn, JsonObject blockIn) {
+        super(new Block(settings).getDefaultState(), settings);
         drops.addAll(dropsIn);
         block = blockIn;
     }

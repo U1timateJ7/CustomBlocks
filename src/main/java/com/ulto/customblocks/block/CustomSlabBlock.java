@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
+import net.minecraft.block.enums.SlabType;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.context.LootContext;
 import net.minecraft.util.math.BlockPos;
@@ -46,7 +47,9 @@ public class CustomSlabBlock extends SlabBlock {
             return dropsOriginal;
         List<ItemStack> realDrops = new ArrayList<>();
         for (JsonObject item : drops) {
-            realDrops.add(JsonUtils.itemStackFromJsonObject(item));
+            ItemStack stack = JsonUtils.itemStackFromJsonObject(item);
+            stack.setCount(stack.getCount() * (state.get(TYPE) == SlabType.DOUBLE ? 2 : 1));
+            realDrops.add(stack);
         }
         return realDrops;
     }
