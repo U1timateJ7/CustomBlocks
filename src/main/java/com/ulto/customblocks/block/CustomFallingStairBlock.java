@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Random;
 
 public class CustomFallingStairBlock extends CustomStairBlock {
-    public CustomFallingStairBlock(BlockState baseBlock, Settings settings, List<JsonObject> dropsIn, JsonObject block) {
-        super(baseBlock, settings, dropsIn, block);
+    public CustomFallingStairBlock(Settings settings, List<JsonObject> dropsIn, JsonObject block) {
+        super(settings, dropsIn, block);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
