@@ -9,7 +9,9 @@ import io.github.cottonmc.cotton.gui.widget.*;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 
-import java.io.*;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
 
 public class BlockItemPackMakerGUI extends LightweightGuiDescription {
     Gson gson = new GsonBuilder().setPrettyPrinting().create();
@@ -43,7 +45,7 @@ public class BlockItemPackMakerGUI extends LightweightGuiDescription {
 
         WButton createButton = new WButton(new TranslatableText("gui.block_maker.button.create"));
         createButton.setOnClick(() -> {
-            packFile = new File(GenerateCustomElements.packsFolder.getName() + File.separator + nameField.getText() + ".json");
+            packFile = new File(GenerateCustomElements.packsFolder + File.separator + nameField.getText() + ".json");
             try {
                 JsonObject pack = new JsonObject();
                 pack.addProperty("name", nameField.getText());
