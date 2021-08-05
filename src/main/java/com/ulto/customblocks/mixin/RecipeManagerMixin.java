@@ -22,7 +22,7 @@ public class RecipeManagerMixin {
         for (JsonObject recipe : RecipeGenerator.recipes) {
             if (recipe.has("custom")) {
                 JsonObject custom = recipe.getAsJsonObject("custom");
-                if (custom.has("namespace") || custom.has("id")) {
+                if (custom.has("namespace") && custom.has("id")) {
                     JsonObject newRecipe = JsonUtils.copy(recipe);
                     newRecipe.remove("custom");
                     map.put(new Identifier(custom.get("namespace").getAsString(), custom.get("id").getAsString()), newRecipe);

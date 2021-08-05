@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class CustomResourceCreator {
 	static File assets = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "assets");
+	static File data = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "data");
 
 	public static void setupResourcePack() {
 		File mcmeta = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "pack.mcmeta");
@@ -37,6 +38,7 @@ public class CustomResourceCreator {
 			fileNotFoundException.printStackTrace();
 		}
 		assets.mkdirs();
+		data.mkdirs();
 	}
 
 	public static boolean generateBlockResources(JsonObject _block) {

@@ -22,8 +22,8 @@ public class CustomBlocksMod implements ModInitializer {
 		File packMcmeta = new File(customBlocksConfig, File.separator + "pack.mcmeta");
 		try {
 			if (!CustomResourcePackProvider.customBlocksPath.exists()) CustomResourcePackProvider.customBlocksPath.mkdirs();
-			Files.move(assets.toPath(), CustomResourceCreator.assets.toPath());
-			Files.move(packMcmeta.toPath(), new File(CustomResourcePackProvider.customBlocksPath, File.separator + "pack.mcmeta").toPath());
+			if (assets.exists()) Files.move(assets.toPath(), CustomResourceCreator.assets.toPath());
+			if (packMcmeta.exists()) Files.move(packMcmeta.toPath(), new File(CustomResourcePackProvider.customBlocksPath, File.separator + "pack.mcmeta").toPath());
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

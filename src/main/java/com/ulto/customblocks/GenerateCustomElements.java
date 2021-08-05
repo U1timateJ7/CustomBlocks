@@ -62,7 +62,7 @@ public class GenerateCustomElements {
 				if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
 					CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate block " + value.getName() + " !");
+					CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + " !");
 				}
 				blockReader.close();
 			} catch (IOException e) {
@@ -81,7 +81,7 @@ public class GenerateCustomElements {
 				if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item, item.get("namespace").getAsString(), item.get("id").getAsString(), item.get("texture").getAsString()) && LanguageHandler.addItemKey(item)) {
 					CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate item " + value.getName() + " !");
+					CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + " !");
 				}
 				itemReader.close();
 			} catch (IOException e) {
@@ -100,7 +100,7 @@ public class GenerateCustomElements {
 				if (ItemGroupGenerator.add(itemGroup) && LanguageHandler.addItemGroupKey(itemGroup)) {
 					CustomBlocksMod.LOGGER.info("Generated item group " + itemGroup.get("namespace").getAsString() + ":" + itemGroup.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate item group " + value.getName() + "!");
+					CustomBlocksMod.LOGGER.error("Failed to generate item group " + value.getName() + "!");
 				}
 				packReader.close();
 			} catch (IOException e) {
@@ -119,7 +119,7 @@ public class GenerateCustomElements {
 				if (PaintingGenerator.add(painting) && CustomResourceCreator.generatePaintingResources(painting)) {
 					CustomBlocksMod.LOGGER.info("Generated painting " + painting.get("namespace").getAsString() + ":" + painting.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate painting " + value.getName() + "!");
+					CustomBlocksMod.LOGGER.error("Failed to generate painting " + value.getName() + "!");
 				}
 				packReader.close();
 			} catch (IOException e) {
@@ -138,7 +138,7 @@ public class GenerateCustomElements {
 				if (RecipeGenerator.add(recipe)) {
 					CustomBlocksMod.LOGGER.info("Generated Recipe {}", recipe.getAsJsonObject("custom").get("namespace").getAsString() + ":" + recipe.getAsJsonObject("custom").get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate recipe!");
+					CustomBlocksMod.LOGGER.error("Failed to generate recipe!");
 				}
 				packReader.close();
 			} catch (IOException e) {
@@ -154,9 +154,13 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
-				CustomBlocksMod.LOGGER.info("Loading pack " + pack.get("name").getAsString() + "...");
-				PackGenerator.add(pack);
-				CustomBlocksMod.LOGGER.info("Loaded pack " + pack.get("name").getAsString());
+				if (pack.has("name")) {
+					CustomBlocksMod.LOGGER.info("Loading pack " + pack.get("name").getAsString() + "...");
+					PackGenerator.add(pack);
+					CustomBlocksMod.LOGGER.info("Loaded pack " + pack.get("name").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to load pack " + value.getName() + "!");
+				}
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();

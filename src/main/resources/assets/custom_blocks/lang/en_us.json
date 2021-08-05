@@ -20,5 +20,6 @@
   "gui.pack_type_selector.button.block_item_pack": "Block/Item Pack",
   "gui.pack_type_selector.button.wood_pack": "Wood Type Pack",
   "gui.block_item_pack_maker.label.top": "Block/Item Pack Creator",
-  "gui.wood_pack_maker.label.top": "Wood Type Pack Creator"
+  "gui.wood_pack_maker.label.top": "Wood Type Pack Creator",
+  "pack.source.mod": "mod"
 }
