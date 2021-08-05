@@ -12,6 +12,7 @@ import java.io.IOException;
 
 public class CustomResourceCreator {
 	static File assets = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "assets");
+	static File data = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "data");
 
 	public static void setupResourcePack() {
 		File mcmeta = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "pack.mcmeta");
@@ -38,6 +39,7 @@ public class CustomResourceCreator {
 			fileNotFoundException.printStackTrace();
 		}
 		assets.mkdirs();
+		data.mkdirs();
 	}
 
 	public static boolean generateBlockResources(JsonObject _block) {
@@ -955,7 +957,7 @@ public class CustomResourceCreator {
 							blockItemModelbw.write("{\n" +
 									"  \"parent\": \"minecraft:item/generated\",\n" +
 									"  \"textures\": {\n" +
-									"    \"layer0\": \"" + resourceNamespace + ":block/" + frontTexture + "\"\n" +
+									"    \"layer0\": \"" + resourceNamespace + ":item/" + frontTexture + "\"\n" +
 									"  }\n" +
 									"}");
 							blockItemModelbw.close();
@@ -998,6 +1000,8 @@ public class CustomResourceCreator {
 			textures.mkdirs();
 			File blocks = new File(textures, File.separator + "block");
 			blocks.mkdirs();
+			File items = new File(textures, File.separator + "item");
+			if (base.equals("door")) items.mkdirs();
 			File blockstates = new File(namespace, File.separator + "blockstates");
 			blockstates.mkdirs();
 			File blockState = new File(blockstates, File.separator + id + ".json");
