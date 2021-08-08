@@ -3,10 +3,7 @@ package com.ulto.customblocks.block;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.HorizontalDirectionalBlock;
-import net.minecraft.world.level.block.Mirror;
-import net.minecraft.world.level.block.Rotation;
+import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -38,7 +35,7 @@ public class CustomHorizontalFacingBlock extends CustomBlock {
 
     @Override
     public BlockState getStateForPlacement(BlockPlaceContext context) {
-        if (fromPlayerFacing) return this.defaultBlockState().setValue(FACING, context.getNearestLookingDirection().getOpposite());
+        if (fromPlayerFacing) return this.defaultBlockState().setValue(FACING, context.getHorizontalDirection().getOpposite());
         else {
             if (context.getClickedFace() == Direction.UP || context.getClickedFace() == Direction.DOWN)
                 return this.defaultBlockState().setValue(FACING, Direction.NORTH);

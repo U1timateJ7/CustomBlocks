@@ -30,6 +30,8 @@ public class GenerateCustomElements {
 	public static List<File> itemGroups = new ArrayList<>();
 	public static File paintingsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "paintings");
 	public static List<File> paintings = new ArrayList<>();
+	public static File recipesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "recipes");
+	public static List<File> recipes = new ArrayList<>();
 	
 	public static void generate() {
 		blocksFolder.mkdirs();
@@ -37,13 +39,16 @@ public class GenerateCustomElements {
 		packsFolder.mkdirs();
 		itemGroupsFolder.mkdirs();
 		paintingsFolder.mkdirs();
+		recipesFolder.mkdirs();
 		listFiles(blocksFolder, blocks);
 		listFiles(itemsFolder, items);
 		listFiles(packsFolder, packs);
 		listFiles(itemGroupsFolder, itemGroups);
 		listFiles(paintingsFolder, paintings);
-		LanguageHandler.setupLanguage();
+		listFiles(recipesFolder, recipes);
 		CustomResourceCreator.setupResourcePack();
+		LanguageHandler.setupLanguage();
+		RecipeGenerator.setup();
 		for (File value : itemGroups) {
 			try {
 				BufferedReader packReader = new BufferedReader(new FileReader(value));
@@ -56,7 +61,7 @@ public class GenerateCustomElements {
 				if (ItemGroupGenerator.add(itemGroup) && LanguageHandler.addItemGroupKey(itemGroup)) {
 					CustomBlocksMod.LOGGER.info("Generated item group " + itemGroup.get("namespace").getAsString() + ":" + itemGroup.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate item group " + value.getName() + "!");
+					CustomBlocksMod.LOGGER.error("Failed to generate item group " + value.getName() + "!");
 				}
 				packReader.close();
 			} catch (IOException e) {
@@ -75,7 +80,7 @@ public class GenerateCustomElements {
 				if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
 					CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate block " + value.getName() + " !");
+					CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + " !");
 				}
 				blockReader.close();
 			} catch (IOException e) {
@@ -94,7 +99,7 @@ public class GenerateCustomElements {
 				if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item, item.get("namespace").getAsString(), item.get("id").getAsString(), item.get("texture").getAsString()) && LanguageHandler.addItemKey(item)) {
 					CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate item " + value.getName() + "!");
+					CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + "!");
 				}
 				itemReader.close();
 			} catch (IOException e) {
@@ -113,7 +118,26 @@ public class GenerateCustomElements {
 				if (PaintingGenerator.add(painting) && CustomResourceCreator.generatePaintingResources(painting)) {
 					CustomBlocksMod.LOGGER.info("Generated painting " + painting.get("namespace").getAsString() + ":" + painting.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.info("Failed to generate painting " + value.getName() + "!");
+					CustomBlocksMod.LOGGER.error("Failed to generate painting " + value.getName() + "!");
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File value : recipes) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject recipe = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (RecipeGenerator.add(recipe)) {
+					CustomBlocksMod.LOGGER.info("Generated Recipe {}", recipe.getAsJsonObject("custom").get("namespace").getAsString() + ":" + recipe.getAsJsonObject("custom").get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate recipe " + value.getName() + "!");
 				}
 				packReader.close();
 			} catch (IOException e) {

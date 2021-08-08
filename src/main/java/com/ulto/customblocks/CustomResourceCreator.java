@@ -13,6 +13,7 @@ import java.io.IOException;
 @SuppressWarnings({"ResultOfMethodCallIgnored", "SuspiciousNameCombination"})
 public class CustomResourceCreator {
 	static File assets = new File(CustomResourcePackFinder.customBlocksPath, File.separator + "assets");
+	static File data = new File(CustomResourcePackFinder.customBlocksPath, File.separator + "data");
 
 	public static void setupResourcePack() {
 		File mcmeta = new File(CustomResourcePackFinder.customBlocksPath, File.separator + "pack.mcmeta");
@@ -39,6 +40,7 @@ public class CustomResourceCreator {
 			fileNotFoundException.printStackTrace();
 		}
 		assets.mkdirs();
+		data.mkdirs();
 	}
 
 	public static boolean generateBlockResources(JsonObject _block) {

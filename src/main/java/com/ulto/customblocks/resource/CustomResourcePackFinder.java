@@ -47,21 +47,13 @@ public class CustomResourcePackFinder implements RepositorySource {
     @Override
     public void loadPacks (Consumer<Pack> consumer, Pack.PackConstructor factory) {
         CustomBlocksMod.LOGGER.info("Loading {} Custom Blocks Resources.", this.type.displayName);
-        Pack packInfo = createPack(factory);
+        Pack packInfo = Pack.create("Custom Blocks Resources", true, getAsPack(Type.RESOURCES.getDirectory()), factory, Pack.Position.TOP, decorating("pack.source.mod"));
         if (packInfo != null) {
             consumer.accept(packInfo);
         }
     }
 
-    private static Pack createPack(Pack.PackConstructor factory) {
-        return Pack.create("Custom Blocks Resources", true, getAsPack1(Type.RESOURCES.getDirectory()), factory, Pack.Position.TOP, decorating("pack.source.mod"));
-    }
-
     private Supplier<PackResources> getAsPack (File file) {
-        return file.isDirectory() ? () -> new FolderPackResources(file) : () -> new FilePackResources(file);
-    }
-
-    private static Supplier<PackResources> getAsPack1(File file) {
         return file.isDirectory() ? () -> new FolderPackResources(file) : () -> new FilePackResources(file);
     }
 
