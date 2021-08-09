@@ -50,6 +50,21 @@ public class LanguageHandler {
 		return false;
 	}
 
+	public static boolean addFluidKeys(JsonObject fluid) {
+		if (fluid.has("namespace") && fluid.has("id") && fluid.has("display_name")) {
+			String namespace = fluid.get("namespace").getAsString();
+			String id = fluid.get("id").getAsString();
+			String text = fluid.get("display_name").getAsString();
+			languageObject.addProperty("block." + namespace + "." + id, text);
+			String bucketNamespace = fluid.get("namespace").getAsString();
+			String bucketId = fluid.get("id").getAsString() + "_bucket";
+			String bucketText = fluid.get("display_name").getAsString() + " Bucket";
+			languageObject.addProperty("item." + bucketNamespace + "." + bucketId, bucketText);
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean addItemGroupKey(JsonObject itemGroup) {
 		if (itemGroup.has("namespace") && itemGroup.has("id") && itemGroup.has("name")) {
 			String namespace = itemGroup.get("namespace").getAsString();

@@ -2256,6 +2256,50 @@ public class CustomResourceCreator {
 		return false;
 	}
 
+	public static boolean generateFluidResources(JsonObject _fluid) {
+		if (_fluid.has("namespace") && _fluid.has("id") && _fluid.has("texture") && _fluid.has("bucket_texture")) {
+			String _namespace = _fluid.get("namespace").getAsString();
+			String id = _fluid.get("id").getAsString();
+			String resourceNamespace = _namespace;
+			if (_fluid.has("texture_namespace")) resourceNamespace = _fluid.get("texture_namespace").getAsString();
+			File namespace = new File(assets, File.separator + _namespace);
+			namespace.mkdirs();
+			File textureNamespace = new File(assets, File.separator + resourceNamespace);
+			textureNamespace.mkdirs();
+			File blockstates = new File(namespace, File.separator + "blockstates");
+			blockstates.mkdirs();
+			File blockstate = new File(blockstates, File.separator + id + ".json");
+			try {
+				FileWriter blockstatewriter = new FileWriter(blockstate);
+				BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
+				blockstatebw.write("""
+						{
+						  "variants": {
+						    "": {
+						      "model": "minecraft:block/water"
+						    }
+						  }
+						}""");
+				blockstatebw.close();
+				blockstatewriter.close();
+			} catch (IOException fileNotFoundException) {
+				fileNotFoundException.printStackTrace();
+			}
+			File textures = new File(textureNamespace, File.separator + "textures");
+			textures.mkdirs();
+			File block = new File(textures, File.separator + "block");
+			block.mkdirs();
+			JsonObject item = new JsonObject();
+			item.addProperty("namespace", _namespace);
+			item.addProperty("id", id + "_bucket");
+			item.addProperty("texture_namespace", resourceNamespace);
+			item.addProperty("texture", _fluid.get("bucket_texture").getAsString());
+			generateItemResources(item, _namespace, id + "_bucket", _fluid.get("bucket_texture").getAsString());
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean generatePaintingResources(JsonObject _painting) {
 		if (_painting.has("namespace") && _painting.has("id")) {
 			String _namespace = _painting.get("namespace").getAsString();
