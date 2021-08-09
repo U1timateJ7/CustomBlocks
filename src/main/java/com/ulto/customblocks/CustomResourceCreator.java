@@ -2272,13 +2272,14 @@ public class CustomResourceCreator {
 			try {
 				FileWriter blockstatewriter = new FileWriter(blockstate);
 				BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
-				blockstatebw.write("{\n" +
-						"  \"variants\": {\n" +
-						"    \"\": {\n" +
-						"      \"model\": \"minecraft:block/water\"\n" +
-						"    }\n" +
-						"  }\n" +
-						"}");
+				blockstatebw.write("""
+						{
+						  "variants": {
+						    "": {
+						      "model": "minecraft:block/water"
+						    }
+						  }
+						}""");
 				blockstatebw.close();
 				blockstatewriter.close();
 			} catch (IOException fileNotFoundException) {
