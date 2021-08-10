@@ -17,6 +17,10 @@ public class BooleanUtils {
         return block.has("namespace") && block.has("id") && block.has("display_name") && ((textures.has("top_texture") && textures.has("bottom_texture") && textures.has("front_texture") && textures.has("back_texture") && textures.has("right_texture") && textures.has("left_texture")) || textures.has("all"));
     }
 
+    public static boolean isValidFluid(JsonObject fluid) {
+        return fluid.has("namespace") && fluid.has("id") && fluid.has("texture") && fluid.has("bucket_texture");
+    }
+
 
     /**
      * @param block The <code>JsonObject</code> of the block.

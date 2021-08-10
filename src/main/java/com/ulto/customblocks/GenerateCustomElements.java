@@ -6,8 +6,18 @@ import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
+import net.minecraft.fluid.Fluid;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
@@ -19,12 +29,15 @@ import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 
 public class GenerateCustomElements {
 	public static File blocksFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "blocks");
 	public static List<File> blocks = new ArrayList<>();
 	public static File itemsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "items");
 	public static List<File> items = new ArrayList<>();
+	public static File fluidsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "fluids");
+	public static List<File> fluids = new ArrayList<>();
 	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
 	public static List<File> packs = new ArrayList<>();
 	public static File itemGroupsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "item_groups");
@@ -37,6 +50,7 @@ public class GenerateCustomElements {
 	public static void generate() {
 		blocksFolder.mkdirs();
 		itemsFolder.mkdirs();
+		fluidsFolder.mkdirs();
 		packsFolder.mkdirs();
 		itemGroupsFolder.mkdirs();
 		paintingsFolder.mkdirs();
@@ -44,6 +58,7 @@ public class GenerateCustomElements {
 		copyOldFiles();
 		listFiles(blocksFolder, blocks);
 		listFiles(itemsFolder, items);
+		listFiles(fluidsFolder, fluids);
 		listFiles(packsFolder, packs);
 		listFiles(itemGroupsFolder, itemGroups);
 		listFiles(paintingsFolder, paintings);
@@ -88,6 +103,25 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			}
 		}
+		for (File value : fluids) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject fluid = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (FluidGenerator.add(fluid) && CustomResourceCreator.generateFluidResources(fluid) && LanguageHandler.addFluidKeys(fluid)) {
+					CustomBlocksMod.LOGGER.info("Generated Fluid {}", fluid.get("namespace").getAsString() + ":" + fluid.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate fluid {}!", value.getName());
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		for (File value : itemGroups) {
 			try {
 				BufferedReader packReader = new BufferedReader(new FileReader(value));
@@ -98,7 +132,7 @@ public class GenerateCustomElements {
 				}
 				JsonObject itemGroup = new Gson().fromJson(json.toString(), JsonObject.class);
 				if (ItemGroupGenerator.add(itemGroup) && LanguageHandler.addItemGroupKey(itemGroup)) {
-					CustomBlocksMod.LOGGER.info("Generated item group " + itemGroup.get("namespace").getAsString() + ":" + itemGroup.get("id").getAsString());
+					CustomBlocksMod.LOGGER.info("Generated Item Group " + itemGroup.get("namespace").getAsString() + ":" + itemGroup.get("id").getAsString());
 				} else {
 					CustomBlocksMod.LOGGER.error("Failed to generate item group " + value.getName() + "!");
 				}
@@ -117,7 +151,7 @@ public class GenerateCustomElements {
 				}
 				JsonObject painting = new Gson().fromJson(json.toString(), JsonObject.class);
 				if (PaintingGenerator.add(painting) && CustomResourceCreator.generatePaintingResources(painting)) {
-					CustomBlocksMod.LOGGER.info("Generated painting " + painting.get("namespace").getAsString() + ":" + painting.get("id").getAsString());
+					CustomBlocksMod.LOGGER.info("Generated Painting " + painting.get("namespace").getAsString() + ":" + painting.get("id").getAsString());
 				} else {
 					CustomBlocksMod.LOGGER.error("Failed to generate painting " + value.getName() + "!");
 				}
@@ -138,7 +172,7 @@ public class GenerateCustomElements {
 				if (RecipeGenerator.add(recipe)) {
 					CustomBlocksMod.LOGGER.info("Generated Recipe {}", recipe.getAsJsonObject("custom").get("namespace").getAsString() + ":" + recipe.getAsJsonObject("custom").get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.error("Failed to generate recipe!");
+					CustomBlocksMod.LOGGER.error("Failed to generate recipe {}!", value.getName());
 				}
 				packReader.close();
 			} catch (IOException e) {
@@ -155,9 +189,9 @@ public class GenerateCustomElements {
 				}
 				JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
 				if (pack.has("name")) {
-					CustomBlocksMod.LOGGER.info("Loading pack " + pack.get("name").getAsString() + "...");
+					CustomBlocksMod.LOGGER.info("Loading Pack " + pack.get("name").getAsString() + "...");
 					PackGenerator.add(pack);
-					CustomBlocksMod.LOGGER.info("Loaded pack " + pack.get("name").getAsString());
+					CustomBlocksMod.LOGGER.info("Loaded Pack " + pack.get("name").getAsString());
 				} else {
 					CustomBlocksMod.LOGGER.error("Failed to load pack " + value.getName() + "!");
 				}
@@ -171,7 +205,6 @@ public class GenerateCustomElements {
 
 	@Environment(EnvType.CLIENT)
 	public static void generateClient() {
-		listFiles(blocksFolder, blocks);
 		for (File file : blocks) {
 			try {
 				BufferedReader test_blockReader = new BufferedReader(new FileReader(file));
@@ -199,6 +232,60 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			}
 		}
+		for (File file : fluids) {
+			try {
+				BufferedReader test_blockReader = new BufferedReader(new FileReader(file));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = test_blockReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject fluid = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (BooleanUtils.isValidFluid(fluid)) {
+					setupFluidRendering(Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())), new Identifier(fluid.get("texture").getAsString()));
+					BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())));
+				}
+				test_blockReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+	}
+
+	public static void setupFluidRendering(final Fluid still, final Fluid flowing, final Identifier textureFluidId) {
+		final Identifier stillSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_still");
+		final Identifier flowingSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_flow");
+
+		// If they're not already present, add the sprites to the block atlas
+		ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
+			registry.register(stillSpriteId);
+			registry.register(flowingSpriteId);
+		});
+
+		final Identifier fluidId = Registry.FLUID.getId(still);
+		final Identifier listenerId = new Identifier(fluidId.getNamespace(), fluidId.getPath() + "_reload_listener");
+
+		final Sprite[] fluidSprites = { null, null };
+
+		ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+			@Override
+			public Identifier getFabricId() {
+				return listenerId;
+			}
+
+			@Override
+			public void reload(ResourceManager resourceManager) {
+				final Function<Identifier, Sprite> atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+				fluidSprites[0] = atlas.apply(stillSpriteId);
+				fluidSprites[1] = atlas.apply(flowingSpriteId);
+			}
+		});
+
+		// The FluidRenderer gets the sprites and color from a FluidRenderHandler during rendering
+		final FluidRenderHandler renderHandler = (view, pos, state) -> fluidSprites;
+
+		FluidRenderHandlerRegistry.INSTANCE.register(still, renderHandler);
+		FluidRenderHandlerRegistry.INSTANCE.register(flowing, renderHandler);
 	}
 
 	private static void listFiles(final File folder, List<File> list) {

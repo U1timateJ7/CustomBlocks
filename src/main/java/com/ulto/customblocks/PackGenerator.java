@@ -1,18 +1,31 @@
 package com.ulto.customblocks;
 
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.util.BooleanUtils;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandler;
+import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry;
+import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.advancement.criterion.InventoryChangedCriterion;
+import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
+import net.minecraft.client.texture.Sprite;
+import net.minecraft.client.texture.SpriteAtlasTexture;
 import net.minecraft.data.server.recipe.ShapedRecipeJsonFactory;
 import net.minecraft.data.server.recipe.ShapelessRecipeJsonFactory;
+import net.minecraft.fluid.Fluid;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.resource.ResourceType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
 import java.util.List;
+import java.util.function.Function;
 
 public class PackGenerator {
     public static void add(JsonObject pack) {
@@ -584,6 +597,19 @@ public class PackGenerator {
                 } else {
                     CustomBlocksMod.LOGGER.error("Failed to generate block!");
                 }
+                if (BooleanUtils.isValidBlock(block) && block.has("render_type")) {
+                    switch (block.get("render_type").getAsString()) {
+                        case "cutout":
+                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutout());
+                            break;
+                        case "cutout_mipped":
+                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutoutMipped());
+                            break;
+                        case "translucent":
+                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getTranslucent());
+                            break;
+                    }
+                }
             }
         }
         if (pack.has("items")) {
@@ -593,6 +619,20 @@ public class PackGenerator {
                     CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
                 } else {
                     CustomBlocksMod.LOGGER.error("Failed to generate item!");
+                }
+            }
+        }
+        if (pack.has("fluids")) {
+            List<JsonObject> items = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("fluids"));
+            for (JsonObject fluid : items) {
+                if (FluidGenerator.add(fluid) && CustomResourceCreator.generateFluidResources(fluid) && LanguageHandler.addFluidKeys(fluid)) {
+                    CustomBlocksMod.LOGGER.info("Generated Fluid {}", fluid.get("namespace").getAsString() + ":" + fluid.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate fluid!");
+                }
+                if (BooleanUtils.isValidFluid(fluid)) {
+                    setupFluidRendering(Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())), new Identifier(fluid.get("texture").getAsString()));
+                    BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())));
                 }
             }
         }
@@ -638,5 +678,41 @@ public class PackGenerator {
                 }
             }
         }
+    }
+
+    public static void setupFluidRendering(final Fluid still, final Fluid flowing, final Identifier textureFluidId) {
+        final Identifier stillSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_still");
+        final Identifier flowingSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_flow");
+
+        // If they're not already present, add the sprites to the block atlas
+        ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
+            registry.register(stillSpriteId);
+            registry.register(flowingSpriteId);
+        });
+
+        final Identifier fluidId = Registry.FLUID.getId(still);
+        final Identifier listenerId = new Identifier(fluidId.getNamespace(), fluidId.getPath() + "_reload_listener");
+
+        final Sprite[] fluidSprites = { null, null };
+
+        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
+            @Override
+            public Identifier getFabricId() {
+                return listenerId;
+            }
+
+            @Override
+            public void reload(ResourceManager resourceManager) {
+                final Function<Identifier, Sprite> atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
+                fluidSprites[0] = atlas.apply(stillSpriteId);
+                fluidSprites[1] = atlas.apply(flowingSpriteId);
+            }
+        });
+
+        // The FluidRenderer gets the sprites and color from a FluidRenderHandler during rendering
+        final FluidRenderHandler renderHandler = (view, pos, state) -> fluidSprites;
+
+        FluidRenderHandlerRegistry.INSTANCE.register(still, renderHandler);
+        FluidRenderHandlerRegistry.INSTANCE.register(flowing, renderHandler);
     }
 }
