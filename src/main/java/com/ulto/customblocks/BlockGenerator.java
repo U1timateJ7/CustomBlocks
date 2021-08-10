@@ -547,7 +547,6 @@ public class BlockGenerator {
 					itemGroup = ItemGroup.BUILDING_BLOCKS;
 					break;
 			}
-
 			Block NEW_BLOCK;
 			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).materialColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
 			if (!breakTool.equals("none")) {
