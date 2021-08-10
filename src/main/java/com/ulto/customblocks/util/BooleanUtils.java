@@ -16,7 +16,6 @@ public class BooleanUtils {
         return block.has("namespace") && block.has("id") && block.has("display_name") && ((textures.has("top_texture") && textures.has("bottom_texture") && textures.has("front_texture") && textures.has("back_texture") && textures.has("right_texture") && textures.has("left_texture")) || textures.has("all"));
     }
 
-
     /**
      * @param block The <code>JsonObject</code> of the block.
      * @return <code>TriState.TRUE</code> if it uses the top, bottom, front, back, right and left textures, <code>TriState.FALSE</code> if uses the <code>all</code> texture and <code>TriState.DEFAULT</code> if otherwise.

@@ -166,7 +166,6 @@ public class GenerateCustomElements {
 
 	@OnlyIn(Dist.CLIENT)
 	public static void generateClient() {
-		listFiles(blocksFolder, blocks);
 		for (File file : blocks) {
 			try {
 				BufferedReader test_blockReader = new BufferedReader(new FileReader(file));
