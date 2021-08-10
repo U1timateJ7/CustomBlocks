@@ -610,6 +610,19 @@ public class PackGenerator {
                         case "translucent" -> BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getTranslucent());
                     }
                 }
+                if (BooleanUtils.isValidBlock(block) && block.has("render_type")) {
+                    switch (block.get("render_type").getAsString()) {
+                        case "cutout":
+                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutout());
+                            break;
+                        case "cutout_mipped":
+                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutoutMipped());
+                            break;
+                        case "translucent":
+                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getTranslucent());
+                            break;
+                    }
+                }
             }
         }
         if (pack.has("items")) {
