@@ -78,7 +78,7 @@ public abstract class CustomFluid extends FlowableFluid {
 
     @Override
     public int getTickRate(WorldView worldView) {
-        return 5;
+        return fluid.has("tick_rate") ? fluid.get("tick_rate").getAsInt() : 5;
     }
 
     @Override

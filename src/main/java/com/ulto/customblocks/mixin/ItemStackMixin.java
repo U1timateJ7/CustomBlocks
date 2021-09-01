@@ -18,7 +18,7 @@ public abstract class ItemStackMixin {
 
     @Shadow
     private NbtCompound getOrCreateNbt() {
-        return this.nbt;
+        return null;
     }
 
     @Inject(at = @At("HEAD"), method = "addEnchantment", cancellable = true)

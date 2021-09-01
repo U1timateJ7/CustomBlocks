@@ -27,7 +27,7 @@ public class JsonUtils {
         return list;
     }
 
-    public static List<Character> jsonArrayToCharList(JsonArray jsonArray) {
+    public static List<Character> jsonArrayToCharacterList(JsonArray jsonArray) {
         List<Character> list = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             list.add(jsonArray.get(i).getAsCharacter());
@@ -107,7 +107,7 @@ public class JsonUtils {
         return list;
     }
 
-    public static List<Boolean> jsonArrayToBoolList(JsonArray jsonArray) {
+    public static List<Boolean> jsonArrayToBooleanList(JsonArray jsonArray) {
         List<Boolean> list = new ArrayList<>();
         for (int i = 0; i < jsonArray.size(); i++) {
             list.add(jsonArray.get(i).getAsBoolean());

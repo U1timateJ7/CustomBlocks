@@ -21,6 +21,10 @@ public class BooleanUtils {
         return fluid.has("namespace") && fluid.has("id") && fluid.has("texture") && fluid.has("bucket_texture");
     }
 
+    public static boolean isValidEntity(JsonObject entity) {
+        return entity.has("namespace") && entity.has("id") && entity.has("shadow_size") && entity.has("model") && entity.has("goals") && entity.has("texture") && entity.has("base") && entity.has("width") && entity.has("height");
+    }
+
     /**
      * @param block The <code>JsonObject</code> of the block.
      * @return <code>TriState.TRUE</code> if it uses the top, bottom, front, back, right and left textures, <code>TriState.FALSE</code> if uses the <code>all</code> texture and <code>TriState.DEFAULT</code> if otherwise.
