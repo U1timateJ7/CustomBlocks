@@ -312,6 +312,8 @@ public class GenerateCustomElements {
 	public static List<File> blocksFv0 = listFiles(blocksFolderFv0);
 	public static File itemsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "items");
 	public static List<File> itemsFv0 = listFiles(itemsFolderFv0);
+	public static File fluidsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "fluids");
+	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0);
 	public static File packsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
 	public static List<File> packsFv0 = listFiles(packsFolderFv0);
 	public static File itemGroupsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
@@ -333,6 +335,14 @@ public class GenerateCustomElements {
 		for (File fv0 : itemsFv0) {
 			try {
 				Files.copy(fv0.toPath(), itemsFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : fluidsFv0) {
+			try {
+				Files.copy(fv0.toPath(), fluidsFolder.toPath().resolve(fv0.getName()));
 				fv0.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -372,6 +382,7 @@ public class GenerateCustomElements {
 		}
 		blocksFolderFv0.delete();
 		itemsFolderFv0.delete();
+		fluidsFolderFv0.delete();
 		packsFolderFv0.delete();
 		itemGroupsFolderFv0.delete();
 		paintingsFolderFv0.delete();
