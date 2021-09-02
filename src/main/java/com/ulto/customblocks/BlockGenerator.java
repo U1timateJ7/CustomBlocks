@@ -4,32 +4,16 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.block.*;
 import com.ulto.customblocks.util.JsonUtils;
-import net.minecraft.client.renderer.BiomeColors;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Registry;
-import net.minecraft.data.tags.BlockTagsProvider;
-import net.minecraft.data.tags.TagsProvider;
-import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.BlockTags;
-import net.minecraft.tags.StaticTagHelper;
-import net.minecraft.tags.StaticTags;
 import net.minecraft.world.item.*;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.GrassColor;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.api.distmarker.OnlyIn;
-import net.minecraftforge.client.event.ColorHandlerEvent;
-import net.minecraftforge.common.ToolType;
-import net.minecraftforge.event.TagsUpdatedEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.registries.ForgeRegistries;
 
 import java.util.ArrayList;
@@ -67,9 +51,6 @@ public class BlockGenerator {
 			String _sounds;
 			if (block.has("sounds")) _sounds = block.get("sounds").getAsString();
 			else _sounds = "stone";
-			String breakTool;
-			if (block.has("efficient_tool")) breakTool = block.get("efficient_tool").getAsString();
-			else breakTool = "none";
 			boolean requiresTool;
 			if (block.has("requires_tool")) requiresTool = block.get("requires_tool").getAsBoolean();
 			else requiresTool = true;
@@ -83,9 +64,6 @@ public class BlockGenerator {
 				thisBlock.addProperty("id", namespace + ":" + id);
 				drops.add(thisBlock);
 			}
-			int harvestLevel;
-			if (block.has("harvest_level")) harvestLevel = block.get("harvest_level").getAsInt();
-			else harvestLevel = 0;
 			int luminance;
 			if (block.has("luminance")) luminance = block.get("luminance").getAsInt();
 			else luminance = 0;
@@ -137,7 +115,6 @@ public class BlockGenerator {
 			Material material;
 			MaterialColor mapColor;
 			SoundType sounds;
-			ToolType efficientTool;
 			CreativeModeTab itemGroup;
 			material = switch (_material) {
 				case "wood" -> Material.WOOD;
@@ -290,14 +267,6 @@ public class BlockGenerator {
 				case "polished_deepslate" -> SoundType.POLISHED_DEEPSLATE;
 				default -> SoundType.STONE;
 			};
-			efficientTool = switch (breakTool) {
-				case "sword" -> ToolType.get("sword");
-				case "axe" -> ToolType.AXE;
-				case "shovel" -> ToolType.SHOVEL;
-				case "hoe" -> ToolType.HOE;
-				case "shears" -> ToolType.get("shears");
-				default -> ToolType.PICKAXE;
-			};
 			ResourceLocation __itemGroup = new ResourceLocation("default");
 			if (_itemGroup.matches("a-z0-9/._-:")) __itemGroup = new ResourceLocation(_itemGroup);
 			itemGroup = switch (_itemGroup) {
@@ -316,10 +285,7 @@ public class BlockGenerator {
 			Block NEW_BLOCK;
 			final int finalLuminance = luminance;
 			BlockBehaviour.Properties blockSettings = BlockBehaviour.Properties.of(material, mapColor).strength((float) _hardness, (float) _resistance).friction((float) _slipperiness).sound(sounds).lightLevel((state) -> finalLuminance).speedFactor(speedFactor).jumpFactor(jumpFactor);
-			if (!breakTool.equals("none")) {
-				blockSettings.harvestTool(efficientTool).harvestLevel(harvestLevel);
-				if (requiresTool) blockSettings.requiresCorrectToolForDrops();
-			}
+			if (requiresTool) blockSettings.requiresCorrectToolForDrops();
 			if (!renderType.equals("opaque")) blockSettings.noOcclusion().isViewBlocking(BlockGenerator::never).isSuffocating(BlockGenerator::never).isRedstoneConductor(BlockGenerator::never);
 			ResourceLocation registryName = new ResourceLocation(namespace, id);
 			switch (base) {
