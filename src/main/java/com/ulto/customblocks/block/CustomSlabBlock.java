@@ -2,6 +2,8 @@ package com.ulto.customblocks.block;
 
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.util.JsonUtils;
+import net.fabricmc.api.EnvType;
+import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.SlabBlock;
 import net.minecraft.block.enums.SlabType;
@@ -52,5 +54,15 @@ public class CustomSlabBlock extends SlabBlock {
             realDrops.add(stack);
         }
         return realDrops;
+    }
+
+    @Environment(EnvType.CLIENT)
+    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
+        if (block.has("render_type")) {
+            if (!block.get("render_type").getAsString().equals("opaque")) {
+                return stateFrom.isOf(this) || super.isSideInvisible(state, stateFrom, direction);
+            }
+        }
+        return super.isSideInvisible(state, stateFrom, direction);
     }
 }

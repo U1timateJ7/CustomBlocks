@@ -4,11 +4,14 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.CustomResourceCreator;
 import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.NumberConverter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import net.minecraft.text.*;
+import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
 
 import java.io.*;
@@ -22,11 +25,12 @@ public class BlockMakerGUI extends LightweightGuiDescription {
 
     public BlockMakerGUI() {
         WPlainPanel root = new WPlainPanel();
+        root.setInsets(Insets.ROOT_PANEL);
         WScrollPanel scroll = new WScrollPanel(root);
         scroll.setHost(this);
         setRootPanel(scroll);
         root.setSize(300, 200);
-        scroll.setSize(310, 210);
+        scroll.setSize(324, 224);
         WLabel topLabel = new WLabel(new TranslatableText("gui.block_maker.label.top"));
         root.add(topLabel, 120, 10);
         WButton openFolderButton = new WButton(new TranslatableText("gui.maker.button.open_folder"));
@@ -182,6 +186,12 @@ public class BlockMakerGUI extends LightweightGuiDescription {
         root.add(textureNamespaceLabel, 200, 280);
         WLabel textureNamespaceLabel2 = new WLabel(new LiteralText("the textures use"));
         root.add(textureNamespaceLabel2, 200, 290);
+        WToggleButton useSingleTextureToggle = new WToggleButton(new LiteralText("Use single texture."));
+        root.add(useSingleTextureToggle, 10, 330);
+        WTextField allTextureField = new WTextField(new LiteralText("texture"));
+        allTextureField.setHost(this);
+        allTextureField.setEditable(true);
+        allTextureField.setMaxLength(50);
         WTextField topTextureField = new WTextField(new LiteralText("top texture"));
         topTextureField.setHost(this);
         topTextureField.setEditable(true);
@@ -212,7 +222,40 @@ public class BlockMakerGUI extends LightweightGuiDescription {
         leftTextureField.setEditable(true);
         leftTextureField.setMaxLength(50);
         root.add(leftTextureField, 210, 400, 90, 20);
+        useSingleTextureToggle.setOnToggle((toggle) -> {
+            if (toggle) {
+                root.add(allTextureField, 10, 350, 90, 20);
+                root.remove(topTextureField);
+                root.remove(bottomTextureField);
+                root.remove(frontTextureField);
+                root.remove(backTextureField);
+                root.remove(rightTextureField);
+                root.remove(leftTextureField);
+            } else {
+                root.remove(allTextureField);
+                root.add(topTextureField, 10, 350, 90, 20);
+                root.add(bottomTextureField, 110, 350, 90, 20);
+                root.add(frontTextureField, 210, 350, 90, 20);
+                root.add(backTextureField, 10, 400, 90, 20);
+                root.add(rightTextureField, 110, 400, 90, 20);
+                root.add(leftTextureField, 210, 400, 90, 20);
+            }
+        });
 
+        WButton openTextureFolderButton = new WButton(new TranslatableText("gui.maker.button.textures_folder"));
+        openTextureFolderButton.setOnClick(() -> {
+            if (!textureNamespaceField.getText().isEmpty()) {
+                File destination = CustomResourceCreator.assets.toPath().resolve(textureNamespaceField.getText()).resolve("textures").resolve("block").toFile();
+                destination.mkdirs();
+                Util.getOperatingSystem().open(destination);
+            }
+            else if (!namespaceField.getText().isEmpty()) {
+                File destination = CustomResourceCreator.assets.toPath().resolve(namespaceField.getText()).resolve("textures").resolve("block").toFile();
+                destination.mkdirs();
+                Util.getOperatingSystem().open(destination);
+            }
+        });
+        root.add(openTextureFolderButton, 203, 0, 100, 20);
         WButton createButton = new WButton(new TranslatableText("gui.block_maker.button.create"));
         createButton.setOnClick(() -> {
             blockFile = new File(GenerateCustomElements.blocksFolder.getName() + File.separator + idField.getText() + ".json");
@@ -237,12 +280,16 @@ public class BlockMakerGUI extends LightweightGuiDescription {
                 if (itemGroupField.getText().length() > 0) block.addProperty("item_group", itemGroupField.getText());
                 if (textureNamespaceField.getText().length() > 0) block.addProperty("texture_namespace", textureNamespaceField.getText());
                 block.add("textures", new JsonObject());
-                block.getAsJsonObject("textures").addProperty("top_texture", topTextureField.getText());
-                block.getAsJsonObject("textures").addProperty("bottom_texture", bottomTextureField.getText());
-                block.getAsJsonObject("textures").addProperty("front_texture", frontTextureField.getText());
-                block.getAsJsonObject("textures").addProperty("back_texture", backTextureField.getText());
-                block.getAsJsonObject("textures").addProperty("right_texture", rightTextureField.getText());
-                block.getAsJsonObject("textures").addProperty("left_texture", leftTextureField.getText());
+                if (!useSingleTextureToggle.getToggle()) {
+                    block.getAsJsonObject("textures").addProperty("top_texture", topTextureField.getText());
+                    block.getAsJsonObject("textures").addProperty("bottom_texture", bottomTextureField.getText());
+                    block.getAsJsonObject("textures").addProperty("front_texture", frontTextureField.getText());
+                    block.getAsJsonObject("textures").addProperty("back_texture", backTextureField.getText());
+                    block.getAsJsonObject("textures").addProperty("right_texture", rightTextureField.getText());
+                    block.getAsJsonObject("textures").addProperty("left_texture", leftTextureField.getText());
+                } else {
+                    block.getAsJsonObject("textures").addProperty("all", allTextureField.getText());
+                }
                 FileWriter blockFileWriter = new FileWriter(blockFile);
                 blockFileWriter.write(gson.toJson(block));
                 blockFileWriter.close();
