@@ -4,10 +4,12 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.CustomResourceCreator;
 import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.NumberConverter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
+import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
@@ -25,17 +27,19 @@ public class ItemMakerGUI extends LightweightGuiDescription {
 
     public ItemMakerGUI() {
         WPlainPanel root = new WPlainPanel();
+        root.setInsets(Insets.ROOT_PANEL);
         WScrollPanel scroll = new WScrollPanel(root);
         WPlainPanel foodRoot = new WPlainPanel();
+        foodRoot.setInsets(Insets.ROOT_PANEL);
         WScrollPanel foodScroll = new WScrollPanel(foodRoot);
         WTabPanel main = new WTabPanel();
         main.add(new WTabPanel.Tab.Builder(scroll).title(new TranslatableText("gui.item_maker.tab.item")).icon(new ItemIcon(Items.DIAMOND)).build());
         main.add(new WTabPanel.Tab.Builder(foodScroll).title(new TranslatableText("gui.item_maker.tab.food")).icon(new ItemIcon(Items.APPLE)).build());
         setRootPanel(main);
         root.setSize(300, 200);
-        scroll.setSize(310, 210);
+        scroll.setSize(324, 224);
         foodRoot.setSize(300, 200);
-        foodScroll.setSize(310, 210);
+        foodScroll.setSize(324, 224);
         main.setSize(325, 255);
         WLabel topLabel = new WLabel(new TranslatableText("gui.item_maker.label.top"));
         root.add(topLabel, 120, 10);
@@ -206,7 +210,22 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         });
         foodRoot.add(foodCreateButton, 10, 300, 80, 20);
 
-        //Non-widgets
+        //Other Widgets
+        WButton openTextureFolderButton = new WButton(new TranslatableText("gui.maker.button.textures_folder"));
+        openTextureFolderButton.setOnClick(() -> {
+            if (!textureNamespaceField.getText().isEmpty()) {
+                File destination = CustomResourceCreator.assets.toPath().resolve(textureNamespaceField.getText()).resolve("textures").resolve("item").toFile();
+                destination.mkdirs();
+                Util.getOperatingSystem().open(destination);
+            }
+            else if (!namespaceField.getText().isEmpty()) {
+                File destination = CustomResourceCreator.assets.toPath().resolve(namespaceField.getText()).resolve("textures").resolve("item").toFile();
+                destination.mkdirs();
+                Util.getOperatingSystem().open(destination);
+            }
+        });
+        root.add(openTextureFolderButton, 210, 0, 100, 20);
+        foodRoot.add(openTextureFolderButton, 210, 0, 100, 20);
         WButton createButton = new WButton(new TranslatableText("gui.block_maker.button.create"));
         createButton.setOnClick(() -> {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");

@@ -305,4 +305,25 @@ public class JsonUtils {
         }
         return newObject;
     }
+
+    public static boolean isJsonObjectValid(String json) {
+        return isJsonValid(json, JsonObject.class);
+    }
+
+    public static boolean isJsonArrayValid(String json) {
+        return isJsonValid(json, JsonArray.class);
+    }
+
+    public static boolean isJsonPrimitiveValid(String json) {
+        return isJsonValid(json, JsonPrimitive.class);
+    }
+
+    public static boolean isJsonValid(String json, Class<? extends JsonElement> clazz) {
+        try {
+            new Gson().fromJson(json, clazz);
+        } catch (JsonSyntaxException ex) {
+            return false;
+        }
+        return true;
+    }
 }

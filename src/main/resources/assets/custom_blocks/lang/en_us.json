@@ -3,6 +3,7 @@
   "title.maker.tooltip": "Block/Item/Pack Makers",
   "key.customblocks.open_menu": "Open Maker Screen",
   "gui.maker.button.open_folder": "Open Folder",
+  "gui.maker.button.textures_folder": "Textures Folder",
   "gui.maker_selector.label.top": "Maker Selector",
   "gui.maker_selector.button.block": "Block Maker",
   "gui.maker_selector.button.item": "Item Maker",

@@ -10,9 +10,10 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+@SuppressWarnings("SuspiciousNameCombination")
 public class CustomResourceCreator {
-	static File assets = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "assets");
-	static File data = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "data");
+	public static File assets = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "assets");
+	public static File data = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "data");
 
 	public static void setupResourcePack() {
 		File mcmeta = new File(CustomResourcePackProvider.customBlocksPath, File.separator + "pack.mcmeta");
@@ -155,89 +156,47 @@ public class CustomResourceCreator {
 							File blockSlabBottom = new File(block, File.separator + id + "_bottom.json");
 							FileWriter blockSlabBottomwriter = new FileWriter(blockSlabBottom);
 							BufferedWriter blockSlabBottombw = new BufferedWriter(blockSlabBottomwriter);
-							if (differentTextures == TriState.TRUE) {
-								blockSlabBottombw.write("{\n" +
-										"  \"parent\": \"minecraft:block/block\",\n" +
-										directionalTextures +
-										"  \"elements\": [\n" +
-										"    { \n" +
-										"\t  \"from\": [ 0, 0, 0 ],\n" +
-										"      \"to\": [ 16, 8, 16 ],\n" +
-										"      \"faces\": {\n" +
-										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
-										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
-										"        \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"        \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"        \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
-										"        \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"      }\n" +
-										"    }\n" +
-										"  ]\n" +
-										"}");
-							} else if (differentTextures == TriState.FALSE) {
-								blockSlabBottombw.write("{\n" +
-										"  \"parent\": \"minecraft:block/block\",\n" +
-										texturesAll +
-										"  \"elements\": [\n" +
-										"    { \n" +
-										"\t  \"from\": [ 0, 0, 0 ],\n" +
-										"      \"to\": [ 16, 8, 16 ],\n" +
-										"      \"faces\": {\n" +
-										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
-										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\" },\n" +
-										"        \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
-										"        \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"south\" },\n" +
-										"        \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"west\" },\n" +
-										"        \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"east\" }\n" +
-										"      }\n" +
-										"    }\n" +
-										"  ]\n" +
-										"}");
-							}
+							blockSlabBottombw.write("{\n" +
+									"  \"parent\": \"minecraft:block/block\",\n" +
+									(differentTextures == TriState.TRUE ? directionalTextures : texturesAll) +
+									"  \"elements\": [\n" +
+									"    { \n" +
+									"\t  \"from\": [ 0, 0, 0 ],\n" +
+									"      \"to\": [ 16, 8, 16 ],\n" +
+									"      \"faces\": {\n" +
+									"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+									"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+									"        \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"        \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"        \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+									"        \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"      }\n" +
+									"    }\n" +
+									"  ]\n" +
+									"}");
 							blockSlabBottombw.close();
 							blockSlabBottomwriter.close();
 							File blockSlabTop = new File(block, File.separator + id + "_top.json");
 							FileWriter blockSlabTopwriter = new FileWriter(blockSlabTop);
 							BufferedWriter blockSlabTopbw = new BufferedWriter(blockSlabTopwriter);
-							if (differentTextures == TriState.TRUE) {
-								blockSlabTopbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/block\",\n" +
-										directionalTextures +
-										"  \"elements\": [\n" +
-										"    { \n" +
-										"\t  \"from\": [ 0, 8, 0 ],\n" +
-										"      \"to\": [ 16, 16, 16 ],\n" +
-										"      \"faces\": {\n" +
-										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\" },\n" +
-										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
-										"        \"north\": { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"        \"south\": { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"        \"west\":  { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
-										"        \"east\":  { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"      }\n" +
-										"    }\n" +
-										"  ]\n" +
-										"}");
-							} else if (differentTextures == TriState.FALSE) {
-								blockSlabTopbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/block\",\n" +
-										texturesAll +
-										"  \"elements\": [\n" +
-										"    { \n" +
-										"\t  \"from\": [ 0, 8, 0 ],\n" +
-										"      \"to\": [ 16, 16, 16 ],\n" +
-										"      \"faces\": {\n" +
-										"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\" },\n" +
-										"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#all\", \"cullface\": \"up\" },\n" +
-										"        \"north\": { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
-										"        \"south\": { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"south\" },\n" +
-										"        \"west\":  { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"west\" },\n" +
-										"        \"east\":  { \"uv\": [ 0, 0, 16, 8 ], \"texture\": \"#all\", \"cullface\": \"east\" }\n" +
-										"      }\n" +
-										"    }\n" +
-										"  ]\n" +
-										"}");
-							}
+							blockSlabTopbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/block\",\n" +
+									(differentTextures == TriState.TRUE ? directionalTextures : texturesAll) +
+									"  \"elements\": [\n" +
+									"    { \n" +
+									"\t  \"from\": [ 0, 8, 0 ],\n" +
+									"      \"to\": [ 16, 16, 16 ],\n" +
+									"      \"faces\": {\n" +
+									"        \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\" },\n" +
+									"        \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+									"        \"north\": { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"        \"south\": { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"        \"west\":  { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+									"        \"east\":  { \"uv\": [ 0, 0, 16, 8  ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"      }\n" +
+									"    }\n" +
+									"  ]\n" +
+									"}");
 							blockSlabTopbw.close();
 							blockSlabTopwriter.close();
 							File blockSlabDouble = new File(block, File.separator + id + "_double.json");
@@ -256,132 +215,120 @@ public class CustomResourceCreator {
 							File blockStair = new File(block, File.separator + id + ".json");
 							FileWriter blockStairwriter = new FileWriter(blockStair);
 							BufferedWriter blockStairbw = new BufferedWriter(blockStairwriter);
-							{
-								String textures = directionalTextures;
-								if (differentTextures == TriState.FALSE) textures = texturesAll;
-								blockStairbw.write("{   \"parent\": \"block/block\",\n" +
-										"    \"display\": {\n" +
-										"        \"gui\": {\n" +
-										"            \"rotation\": [ 30, 135, 0 ],\n" +
-										"            \"translation\": [ 0, 0, 0],\n" +
-										"            \"scale\":[ 0.625, 0.625, 0.625 ]\n" +
-										"        },\n" +
-										"        \"head\": {\n" +
-										"            \"rotation\": [ 0, -90, 0 ],\n" +
-										"            \"translation\": [ 0, 0, 0 ],\n" +
-										"            \"scale\": [ 1, 1, 1 ]\n" +
-										"        },\n" +
-										"        \"thirdperson_lefthand\": {\n" +
-										"            \"rotation\": [ 75, -135, 0 ],\n" +
-										"            \"translation\": [ 0, 2.5, 0],\n" +
-										"            \"scale\": [ 0.375, 0.375, 0.375 ]\n" +
-										"        }\n" +
-										"    },\n" +
-										textures +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 0, 0, 0 ],\n" +
-										"            \"to\": [ 16, 8, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"            }\n" +
-										"        },\n" +
-										"        {   \"from\": [ 8, 8, 0 ],\n" +
-										"            \"to\": [ 16, 16, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"            }\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockStairbw.write("{   \"parent\": \"block/block\",\n" +
+									"    \"display\": {\n" +
+									"        \"gui\": {\n" +
+									"            \"rotation\": [ 30, 135, 0 ],\n" +
+									"            \"translation\": [ 0, 0, 0],\n" +
+									"            \"scale\":[ 0.625, 0.625, 0.625 ]\n" +
+									"        },\n" +
+									"        \"head\": {\n" +
+									"            \"rotation\": [ 0, -90, 0 ],\n" +
+									"            \"translation\": [ 0, 0, 0 ],\n" +
+									"            \"scale\": [ 1, 1, 1 ]\n" +
+									"        },\n" +
+									"        \"thirdperson_lefthand\": {\n" +
+									"            \"rotation\": [ 75, -135, 0 ],\n" +
+									"            \"translation\": [ 0, 2.5, 0],\n" +
+									"            \"scale\": [ 0.375, 0.375, 0.375 ]\n" +
+									"        }\n" +
+									"    },\n" +
+									(differentTextures == TriState.TRUE ? directionalTextures : texturesAll) +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 0, 0, 0 ],\n" +
+									"            \"to\": [ 16, 8, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+									"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"            }\n" +
+									"        },\n" +
+									"        {   \"from\": [ 8, 8, 0 ],\n" +
+									"            \"to\": [ 16, 16, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+									"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockStairbw.close();
 							blockStairwriter.close();
 							File blockStairInner = new File(block, File.separator + id + "_inner.json");
 							FileWriter blockStairInnerwriter = new FileWriter(blockStairInner);
 							BufferedWriter blockStairInnerbw = new BufferedWriter(blockStairInnerwriter);
-							{
-								String textures = directionalTextures;
-								if (differentTextures == TriState.FALSE) textures = texturesAll;
-								blockStairInnerbw.write("{\n" +
-										textures +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 0, 0, 0 ],\n" +
-										"            \"to\": [ 16, 8, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"            }\n" +
-										"        },\n" +
-										"        {   \"from\": [ 8, 8, 0 ],\n" +
-										"            \"to\": [ 16, 16, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"            }\n" +
-										"        },\n" +
-										"        {   \"from\": [ 0, 8, 8 ],\n" +
-										"            \"to\": [ 8, 16, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 0, 8,  8, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#west\", \"cullface\": \"west\" }\n" +
-										"            }\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockStairInnerbw.write("{\n" +
+									(differentTextures == TriState.TRUE ? directionalTextures : texturesAll) +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 0, 0, 0 ],\n" +
+									"            \"to\": [ 16, 8, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+									"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"            }\n" +
+									"        },\n" +
+									"        {   \"from\": [ 8, 8, 0 ],\n" +
+									"            \"to\": [ 16, 16, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"up\":    { \"uv\": [ 8, 0, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+									"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 0, 16,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"            }\n" +
+									"        },\n" +
+									"        {   \"from\": [ 0, 8, 8 ],\n" +
+									"            \"to\": [ 8, 16, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"up\":    { \"uv\": [ 0, 8,  8, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+									"                \"north\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#north\" },\n" +
+									"                \"south\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#west\", \"cullface\": \"west\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockStairInnerbw.close();
 							blockStairInnerwriter.close();
 							File blockStairOuter = new File(block, File.separator + id + "_outer.json");
 							FileWriter blockStairOuterwriter = new FileWriter(blockStairOuter);
 							BufferedWriter blockStairOuterbw = new BufferedWriter(blockStairOuterwriter);
-							{
-								String textures = directionalTextures;
-								if (differentTextures == TriState.FALSE) textures = texturesAll;
-								blockStairOuterbw.write("{\n" +
-										textures +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 0, 0, 0 ],\n" +
-										"            \"to\": [ 16, 8, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"            }\n" +
-										"        },\n" +
-										"        {   \"from\": [ 8, 8, 8 ],\n" +
-										"            \"to\": [ 16, 16, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"up\":    { \"uv\": [ 8, 8, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\" },\n" +
-										"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
-										"            }\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockStairOuterbw.write("{\n" +
+									(differentTextures == TriState.TRUE ? directionalTextures : texturesAll) +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 0, 0, 0 ],\n" +
+									"            \"to\": [ 16, 8, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#down\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#up\" },\n" +
+									"                \"north\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#north\", \"cullface\": \"north\" },\n" +
+									"                \"south\": { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#west\", \"cullface\": \"west\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 8, 16, 16 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"            }\n" +
+									"        },\n" +
+									"        {   \"from\": [ 8, 8, 8 ],\n" +
+									"            \"to\": [ 16, 16, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"up\":    { \"uv\": [ 8, 8, 16, 16 ], \"texture\": \"#up\", \"cullface\": \"up\" },\n" +
+									"                \"north\": { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#north\" },\n" +
+									"                \"south\": { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#south\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 8, 0, 16,  8 ], \"texture\": \"#west\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 0,  8,  8 ], \"texture\": \"#east\", \"cullface\": \"east\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockStairOuterbw.close();
 							blockStairOuterwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -393,119 +340,111 @@ public class CustomResourceCreator {
 							File blockWall = new File(block, File.separator + id + "_post.json");
 							FileWriter blockWallwriter = new FileWriter(blockWall);
 							BufferedWriter blockWallbw = new BufferedWriter(blockWallwriter);
-							{
-								blockWallbw.write("{\n" +
-										texturesAll +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 4, 0, 4 ],\n" +
-										"            \"to\": [ 12, 16, 12 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"texture\": \"#all\", \"cullface\": \"up\" },\n" +
-										"                \"north\": { \"texture\": \"#all\" },\n" +
-										"                \"south\": { \"texture\": \"#all\" },\n" +
-										"                \"west\":  { \"texture\": \"#all\" },\n" +
-										"                \"east\":  { \"texture\": \"#all\" }\n" +
-										"            },\n" +
-										"            \"__comment\": \"Center post\"\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockWallbw.write("{\n" +
+									texturesAll +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 4, 0, 4 ],\n" +
+									"            \"to\": [ 12, 16, 12 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"texture\": \"#all\", \"cullface\": \"up\" },\n" +
+									"                \"north\": { \"texture\": \"#all\" },\n" +
+									"                \"south\": { \"texture\": \"#all\" },\n" +
+									"                \"west\":  { \"texture\": \"#all\" },\n" +
+									"                \"east\":  { \"texture\": \"#all\" }\n" +
+									"            },\n" +
+									"            \"__comment\": \"Center post\"\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockWallbw.close();
 							blockWallwriter.close();
 							File blockWallSide = new File(block, File.separator + id + "_side.json");
 							FileWriter blockWallSidewriter = new FileWriter(blockWallSide);
 							BufferedWriter blockWallSidebw = new BufferedWriter(blockWallSidewriter);
-							{
-								blockWallSidebw.write("{\n" +
-										texturesAll +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 5, 0, 0 ],\n" +
-										"            \"to\": [ 11, 14, 8 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"texture\": \"#all\" },\n" +
-										"                \"north\": { \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
-										"                \"west\":  { \"texture\": \"#all\" },\n" +
-										"                \"east\":  { \"texture\": \"#all\" }\n" +
-										"            },\n" +
-										"            \"__comment\": \"wall\"\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockWallSidebw.write("{\n" +
+									texturesAll +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 5, 0, 0 ],\n" +
+									"            \"to\": [ 11, 14, 8 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"texture\": \"#all\" },\n" +
+									"                \"north\": { \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
+									"                \"west\":  { \"texture\": \"#all\" },\n" +
+									"                \"east\":  { \"texture\": \"#all\" }\n" +
+									"            },\n" +
+									"            \"__comment\": \"wall\"\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockWallSidebw.close();
 							blockWallSidewriter.close();
 							File blockWallSideTall = new File(block, File.separator + id + "_side_tall.json");
 							FileWriter blockWallSideTallwriter = new FileWriter(blockWallSideTall);
 							BufferedWriter blockWallSideTallbw = new BufferedWriter(blockWallSideTallwriter);
-							{
-								blockWallSideTallbw.write("{\n" +
-										texturesAll +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 5, 0, 0 ],\n" +
-										"            \"to\": [ 11, 16, 8 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"texture\": \"#all\", \"cullface\": \"up\"},\n" +
-										"                \"north\": { \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
-										"                \"west\":  { \"texture\": \"#all\" },\n" +
-										"                \"east\":  { \"texture\": \"#all\" }\n" +
-										"            }\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockWallSideTallbw.write("{\n" +
+									texturesAll +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 5, 0, 0 ],\n" +
+									"            \"to\": [ 11, 16, 8 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"texture\": \"#all\", \"cullface\": \"up\"},\n" +
+									"                \"north\": { \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
+									"                \"west\":  { \"texture\": \"#all\" },\n" +
+									"                \"east\":  { \"texture\": \"#all\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockWallSideTallbw.close();
 							blockWallSideTallwriter.close();
 							File blockWallInventory = new File(block, File.separator + id + "_inventory.json");
 							FileWriter blockWallInventorywriter = new FileWriter(blockWallInventory);
 							BufferedWriter blockWallInventorybw = new BufferedWriter(blockWallInventorywriter);
-							{
-								blockWallInventorybw.write("{   \"parent\": \"block/block\",\n" +
-										"    \"display\": {\n" +
-										"        \"gui\": {\n" +
-										"            \"rotation\": [ 30, 135, 0 ],\n" +
-										"            \"translation\": [ 0, 0, 0],\n" +
-										"            \"scale\":[ 0.625, 0.625, 0.625 ]\n" +
-										"        },\n" +
-										"        \"fixed\": {\n" +
-										"            \"rotation\": [ 0, 90, 0 ],\n" +
-										"            \"translation\": [ 0, 0, 0 ],\n" +
-										"            \"scale\": [ 0.5, 0.5, 0.5 ]\n" +
-										"        }\n" +
-										"    },\n" +
-										"    \"ambientocclusion\": false,\n" +
-										texturesAll +
-										"    \"elements\": [\n" +
-										"        {   \"from\": [ 4, 0, 4 ],\n" +
-										"            \"to\": [ 12, 16, 12 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 4, 4, 12, 12 ], \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 4, 4, 12, 12 ], \"texture\": \"#all\" },\n" +
-										"                \"north\": { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" },\n" +
-										"                \"south\": { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" },\n" +
-										"                \"west\":  { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" },\n" +
-										"                \"east\":  { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" }\n" +
-										"            },\n" +
-										"            \"__comment\": \"Center post\"\n" +
-										"        },\n" +
-										"        {   \"from\": [ 5, 0, 0 ],\n" +
-										"            \"to\": [ 11, 13, 16 ],\n" +
-										"            \"faces\": {\n" +
-										"                \"down\":  { \"uv\": [ 5, 0, 11, 16 ], \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
-										"                \"up\":    { \"uv\": [ 5, 0, 11, 16 ], \"texture\": \"#all\" },\n" +
-										"                \"north\": { \"uv\": [ 5, 3, 11, 16 ], \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
-										"                \"south\": { \"uv\": [ 5, 3, 11, 16 ], \"texture\": \"#all\", \"cullface\": \"south\" },\n" +
-										"                \"west\":  { \"uv\": [ 0, 3, 16, 16 ], \"texture\": \"#all\" },\n" +
-										"                \"east\":  { \"uv\": [ 0, 3, 16, 16 ], \"texture\": \"#all\" }\n" +
-										"            },\n" +
-										"            \"__comment\": \"Full wall\"\n" +
-										"        }\n" +
-										"    ]\n" +
-										"}\n");
-							}
+							blockWallInventorybw.write("{   \"parent\": \"block/block\",\n" +
+									"    \"display\": {\n" +
+									"        \"gui\": {\n" +
+									"            \"rotation\": [ 30, 135, 0 ],\n" +
+									"            \"translation\": [ 0, 0, 0],\n" +
+									"            \"scale\":[ 0.625, 0.625, 0.625 ]\n" +
+									"        },\n" +
+									"        \"fixed\": {\n" +
+									"            \"rotation\": [ 0, 90, 0 ],\n" +
+									"            \"translation\": [ 0, 0, 0 ],\n" +
+									"            \"scale\": [ 0.5, 0.5, 0.5 ]\n" +
+									"        }\n" +
+									"    },\n" +
+									"    \"ambientocclusion\": false,\n" +
+									texturesAll +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 4, 0, 4 ],\n" +
+									"            \"to\": [ 12, 16, 12 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 4, 4, 12, 12 ], \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 4, 4, 12, 12 ], \"texture\": \"#all\" },\n" +
+									"                \"north\": { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" },\n" +
+									"                \"south\": { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" },\n" +
+									"                \"west\":  { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" },\n" +
+									"                \"east\":  { \"uv\": [ 4, 0, 12, 16 ], \"texture\": \"#all\" }\n" +
+									"            },\n" +
+									"            \"__comment\": \"Center post\"\n" +
+									"        },\n" +
+									"        {   \"from\": [ 5, 0, 0 ],\n" +
+									"            \"to\": [ 11, 13, 16 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 5, 0, 11, 16 ], \"texture\": \"#all\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 5, 0, 11, 16 ], \"texture\": \"#all\" },\n" +
+									"                \"north\": { \"uv\": [ 5, 3, 11, 16 ], \"texture\": \"#all\", \"cullface\": \"north\" },\n" +
+									"                \"south\": { \"uv\": [ 5, 3, 11, 16 ], \"texture\": \"#all\", \"cullface\": \"south\" },\n" +
+									"                \"west\":  { \"uv\": [ 0, 3, 16, 16 ], \"texture\": \"#all\" },\n" +
+									"                \"east\":  { \"uv\": [ 0, 3, 16, 16 ], \"texture\": \"#all\" }\n" +
+									"            },\n" +
+									"            \"__comment\": \"Full wall\"\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 							blockWallInventorybw.close();
 							blockWallInventorywriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -517,40 +456,34 @@ public class CustomResourceCreator {
 							File blockFencePost = new File(block, File.separator + id + "_post.json");
 							FileWriter blockFencePostwriter = new FileWriter(blockFencePost);
 							BufferedWriter blockFencePostbw = new BufferedWriter(blockFencePostwriter);
-							{
-								blockFencePostbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/fence_post\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFencePostbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/fence_post\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFencePostbw.close();
 							blockFencePostwriter.close();
 							File blockFenceSide = new File(block, File.separator + id + "_side.json");
 							FileWriter blockFenceSidewriter = new FileWriter(blockFenceSide);
 							BufferedWriter blockFenceSidebw = new BufferedWriter(blockFenceSidewriter);
-							{
-								blockFenceSidebw.write("{\n" +
-										"  \"parent\": \"minecraft:block/fence_side\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFenceSidebw.write("{\n" +
+									"  \"parent\": \"minecraft:block/fence_side\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFenceSidebw.close();
 							blockFenceSidewriter.close();
 							File blockFenceInventory = new File(block, File.separator + id + "_inventory.json");
 							FileWriter blockFenceInventorywriter = new FileWriter(blockFenceInventory);
 							BufferedWriter blockFenceInventorybw = new BufferedWriter(blockFenceInventorywriter);
-							{
-								blockFenceInventorybw.write("{\n" +
-										"  \"parent\": \"minecraft:block/fence_inventory\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFenceInventorybw.write("{\n" +
+									"  \"parent\": \"minecraft:block/fence_inventory\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFenceInventorybw.close();
 							blockFenceInventorywriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -562,53 +495,45 @@ public class CustomResourceCreator {
 							File blockFenceGate = new File(block, File.separator + id + ".json");
 							FileWriter blockFenceGatewriter = new FileWriter(blockFenceGate);
 							BufferedWriter blockFenceGatebw = new BufferedWriter(blockFenceGatewriter);
-							{
-								blockFenceGatebw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_fence_gate\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFenceGatebw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_fence_gate\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFenceGatebw.close();
 							blockFenceGatewriter.close();
 							File blockFenceGateOpen = new File(block, File.separator + id + "_open.json");
 							FileWriter blockFenceGateOpenwriter = new FileWriter(blockFenceGateOpen);
 							BufferedWriter blockFenceGateOpenbw = new BufferedWriter(blockFenceGateOpenwriter);
-							{
-								blockFenceGateOpenbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_fence_gate_open\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFenceGateOpenbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_fence_gate_open\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFenceGateOpenbw.close();
 							blockFenceGateOpenwriter.close();
 							File blockFenceGateWall = new File(block, File.separator + id + "_wall.json");
 							FileWriter blockFenceGateWallwriter = new FileWriter(blockFenceGateWall);
 							BufferedWriter blockFenceGateWallbw = new BufferedWriter(blockFenceGateWallwriter);
-							{
-								blockFenceGateWallbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_fence_gate_wall\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFenceGateWallbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_fence_gate_wall\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFenceGateWallbw.close();
 							blockFenceGateWallwriter.close();
 							File blockFenceGateWallOpen = new File(block, File.separator + id + "_wall_open.json");
 							FileWriter blockFenceGateWallOpenwriter = new FileWriter(blockFenceGateWallOpen);
 							BufferedWriter blockFenceGateWallOpenbw = new BufferedWriter(blockFenceGateWallOpenwriter);
-							{
-								blockFenceGateWallOpenbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_fence_gate_wall_open\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockFenceGateWallOpenbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_fence_gate_wall_open\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockFenceGateWallOpenbw.close();
 							blockFenceGateWallOpenwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -620,69 +545,59 @@ public class CustomResourceCreator {
 							File blockPaneNoside = new File(block, File.separator + id + "_noside.json");
 							FileWriter blockPaneNosidewriter = new FileWriter(blockPaneNoside);
 							BufferedWriter blockPaneNosidebw = new BufferedWriter(blockPaneNosidewriter);
-							{
-								blockPaneNosidebw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_glass_pane_noside\",\n" +
-										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockPaneNosidebw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_glass_pane_noside\",\n" +
+									"  \"textures\": {\n" +
+									"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockPaneNosidebw.close();
 							blockPaneNosidewriter.close();
 							File blockPaneNosideAlt = new File(block, File.separator + id + "_noside_alt.json");
 							FileWriter blockPaneNosideAltwriter = new FileWriter(blockPaneNosideAlt);
 							BufferedWriter blockPaneNosideAltbw = new BufferedWriter(blockPaneNosideAltwriter);
-							{
-								blockPaneNosideAltbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_glass_pane_noside_alt\",\n" +
-										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockPaneNosideAltbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_glass_pane_noside_alt\",\n" +
+									"  \"textures\": {\n" +
+									"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockPaneNosideAltbw.close();
 							blockPaneNosideAltwriter.close();
 							File blockPanePost = new File(block, File.separator + id + "_post.json");
 							FileWriter blockPanePostwriter = new FileWriter(blockPanePost);
 							BufferedWriter blockPanePostbw = new BufferedWriter(blockPanePostwriter);
-							{
-								blockPanePostbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_glass_pane_post\",\n" +
-										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
-										"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockPanePostbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_glass_pane_post\",\n" +
+									"  \"textures\": {\n" +
+									"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
+									"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockPanePostbw.close();
 							blockPanePostwriter.close();
 							File blockPaneSide = new File(block, File.separator + id + "_side.json");
 							FileWriter blockPaneSidewriter = new FileWriter(blockPaneSide);
 							BufferedWriter blockPaneSidebw = new BufferedWriter(blockPaneSidewriter);
-							{
-								blockPaneSidebw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_glass_pane_side\",\n" +
-										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
-										"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockPaneSidebw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_glass_pane_side\",\n" +
+									"  \"textures\": {\n" +
+									"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
+									"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockPaneSidebw.close();
 							blockPaneSidewriter.close();
 							File blockPaneSideAlt = new File(block, File.separator + id + "_side_alt.json");
 							FileWriter blockPaneSideAltwriter = new FileWriter(blockPaneSideAlt);
 							BufferedWriter blockPaneSideAltbw = new BufferedWriter(blockPaneSideAltwriter);
-							{
-								blockPaneSideAltbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_glass_pane_side_alt\",\n" +
-										"  \"textures\": {\n" +
-										"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
-										"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockPaneSideAltbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_glass_pane_side_alt\",\n" +
+									"  \"textures\": {\n" +
+									"    \"pane\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
+									"    \"edge\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockPaneSideAltbw.close();
 							blockPaneSideAltwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -693,27 +608,23 @@ public class CustomResourceCreator {
 						try {
 							FileWriter blockModelwriter = new FileWriter(blockModel);
 							BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
-							{
-								blockModelbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/pressure_plate_up\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockModelbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/pressure_plate_up\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockModelbw.close();
 							blockModelwriter.close();
 							File blockDown = new File(block, File.separator + id + "_down.json");
 							FileWriter blockDownwriter = new FileWriter(blockDown);
 							BufferedWriter blockDownbw = new BufferedWriter(blockDownwriter);
-							{
-								blockDownbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/pressure_plate_down\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockDownbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/pressure_plate_down\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockDownbw.close();
 							blockDownwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -724,40 +635,34 @@ public class CustomResourceCreator {
 						try {
 							FileWriter blockModelwriter = new FileWriter(blockModel);
 							BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
-							{
-								blockModelbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/button\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockModelbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/button\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockModelbw.close();
 							blockModelwriter.close();
 							File blockPressed = new File(block, File.separator + id + "_pressed.json");
 							FileWriter blockPressedwriter = new FileWriter(blockPressed);
 							BufferedWriter blockPressedbw = new BufferedWriter(blockPressedwriter);
-							{
-								blockPressedbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/button_pressed\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockPressedbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/button_pressed\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockPressedbw.close();
 							blockPressedwriter.close();
 							File blockInventory = new File(block, File.separator + id + "_inventory.json");
 							FileWriter blockInventorywriter = new FileWriter(blockInventory);
 							BufferedWriter blockInventorybw = new BufferedWriter(blockInventorywriter);
-							{
-								blockInventorybw.write("{\n" +
-										"  \"parent\": \"minecraft:block/button_inventory\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockInventorybw.write("{\n" +
+									"  \"parent\": \"minecraft:block/button_inventory\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockInventorybw.close();
 							blockInventorywriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -769,40 +674,34 @@ public class CustomResourceCreator {
 							File blockBottom = new File(block, File.separator + id + "_bottom.json");
 							FileWriter blockBottomwriter = new FileWriter(blockBottom);
 							BufferedWriter blockBottombw = new BufferedWriter(blockBottomwriter);
-							{
-								blockBottombw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_orientable_trapdoor_bottom\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockBottombw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_orientable_trapdoor_bottom\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockBottombw.close();
 							blockBottomwriter.close();
 							File blockTop = new File(block, File.separator + id + "_top.json");
 							FileWriter blockTopwriter = new FileWriter(blockTop);
 							BufferedWriter blockTopbw = new BufferedWriter(blockTopwriter);
-							{
-								blockTopbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_orientable_trapdoor_top\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockTopbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_orientable_trapdoor_top\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockTopbw.close();
 							blockTopwriter.close();
 							File blockOpen = new File(block, File.separator + id + "_open.json");
 							FileWriter blockOpenwriter = new FileWriter(blockOpen);
 							BufferedWriter blockOpenbw = new BufferedWriter(blockOpenwriter);
-							{
-								blockOpenbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/template_orientable_trapdoor_open\",\n" +
-										"  \"textures\": {\n" +
-										"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockOpenbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/template_orientable_trapdoor_open\",\n" +
+									"  \"textures\": {\n" +
+									"    \"texture\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockOpenbw.close();
 							blockOpenwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -814,59 +713,129 @@ public class CustomResourceCreator {
 							File blockBottom = new File(block, File.separator + id + "_bottom.json");
 							FileWriter blockBottomwriter = new FileWriter(blockBottom);
 							BufferedWriter blockBottombw = new BufferedWriter(blockBottomwriter);
-							{
-								blockBottombw.write("{\n" +
-										"  \"parent\": \"minecraft:block/door_bottom\",\n" +
-										"  \"textures\": {\n" +
-										"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockBottombw.write("{\n" +
+									"  \"parent\": \"minecraft:block/door_bottom\",\n" +
+									"  \"textures\": {\n" +
+									"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
+									"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockBottombw.close();
 							blockBottomwriter.close();
 							File blockBottomHinge = new File(block, File.separator + id + "_bottom_hinge.json");
 							FileWriter blockBottomHingewriter = new FileWriter(blockBottomHinge);
 							BufferedWriter blockBottomHingebw = new BufferedWriter(blockBottomHingewriter);
-							{
-								blockBottomHingebw.write("{\n" +
-										"  \"parent\": \"minecraft:block/door_bottom_rh\",\n" +
-										"  \"textures\": {\n" +
-										"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockBottomHingebw.write("{\n" +
+									"  \"parent\": \"minecraft:block/door_bottom_rh\",\n" +
+									"  \"textures\": {\n" +
+									"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
+									"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockBottomHingebw.close();
 							blockBottomHingewriter.close();
 							File blockTop = new File(block, File.separator + id + "_top.json");
 							FileWriter blockTopwriter = new FileWriter(blockTop);
 							BufferedWriter blockTopbw = new BufferedWriter(blockTopwriter);
-							{
-								blockTopbw.write("{\n" +
-										"  \"parent\": \"minecraft:block/door_top\",\n" +
-										"  \"textures\": {\n" +
-										"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockTopbw.write("{\n" +
+									"  \"parent\": \"minecraft:block/door_top\",\n" +
+									"  \"textures\": {\n" +
+									"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
+									"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockTopbw.close();
 							blockTopwriter.close();
 							File blockTopHinge = new File(block, File.separator + id + "_top_hinge.json");
 							FileWriter blockTopHingewriter = new FileWriter(blockTopHinge);
 							BufferedWriter blockTopHingebw = new BufferedWriter(blockTopHingewriter);
-							{
-								blockTopHingebw.write("{\n" +
-										"  \"parent\": \"minecraft:block/door_top_rh\",\n" +
-										"  \"textures\": {\n" +
-										"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
-										"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
-										"  }\n" +
-										"}");
-							}
+							blockTopHingebw.write("{\n" +
+									"  \"parent\": \"minecraft:block/door_top_rh\",\n" +
+									"  \"textures\": {\n" +
+									"    \"top\": \"" + resourceNamespace + ":block/" + topTexture + "\",\n" +
+									"    \"bottom\": \"" + resourceNamespace + ":block/" + bottomTexture + "\"\n" +
+									"  }\n" +
+									"}");
 							blockTopHingebw.close();
 							blockTopHingewriter.close();
+						} catch (IOException fileNotFoundException) {
+							fileNotFoundException.printStackTrace();
+						}
+						break;
+					case "lever":
+						try {
+							File blockOff = new File(block, File.separator + id + ".json");
+							FileWriter blockOffwriter = new FileWriter(blockOff);
+							BufferedWriter blockOffbw = new BufferedWriter(blockOffwriter);
+							blockOffbw.write("{\n" +
+									"    \"ambientocclusion\": false,\n" +
+									"    \"textures\": {\n" +
+									"        \"particle\": \"#base\",\n" +
+									"        \"base\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+									"        \"lever\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
+									"    },\n" +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 5, 0, 4 ],\n" +
+									"            \"to\": [ 11, 3, 12 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 5, 4, 11, 12 ], \"texture\": \"#base\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 5, 4, 11, 12 ], \"texture\": \"#base\" },\n" +
+									"                \"north\": { \"uv\": [ 5, 0, 11,  3 ], \"texture\": \"#base\" },\n" +
+									"                \"south\": { \"uv\": [ 5, 0, 11,  3 ], \"texture\": \"#base\" },\n" +
+									"                \"west\":  { \"uv\": [ 4, 0, 12,  3 ], \"texture\": \"#base\" },\n" +
+									"                \"east\":  { \"uv\": [ 4, 0, 12,  3 ], \"texture\": \"#base\" }\n" +
+									"            }\n" +
+									"        },\n" +
+									"        {   \"from\": [ 7, 1, 7 ],\n" +
+									"            \"to\": [ 9, 11, 9 ],\n" +
+									"            \"rotation\": { \"origin\": [ 8, 1, 8 ], \"axis\": \"x\", \"angle\": -45 },\n" +
+									"            \"faces\": {\n" +
+									"                \"up\":    { \"uv\": [ 7, 6, 9,  8 ], \"texture\": \"#lever\" },\n" +
+									"                \"north\": { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" },\n" +
+									"                \"south\": { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" },\n" +
+									"                \"west\":  { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" },\n" +
+									"                \"east\":  { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
+							blockOffbw.close();
+							blockOffwriter.close();
+							File blockBottomHinge = new File(block, File.separator + id + "_on.json");
+							FileWriter blockBottomHingewriter = new FileWriter(blockBottomHinge);
+							BufferedWriter blockBottomHingebw = new BufferedWriter(blockBottomHingewriter);
+							blockBottomHingebw.write("{\n" +
+									"    \"ambientocclusion\": false,\n" +
+									"    \"textures\": {\n" +
+									"        \"particle\": \"#base\",\n" +
+									"        \"base\": \"" + resourceNamespace + ":block/" + bottomTexture + "\",\n" +
+									"        \"lever\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
+									"    },\n" +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 5, 0, 4 ],\n" +
+									"            \"to\": [ 11, 3, 12 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"down\":  { \"uv\": [ 5, 4, 11, 12 ], \"texture\": \"#base\", \"cullface\": \"down\" },\n" +
+									"                \"up\":    { \"uv\": [ 5, 4, 11, 12 ], \"texture\": \"#base\" },\n" +
+									"                \"north\": { \"uv\": [ 5, 0, 11,  3 ], \"texture\": \"#base\" },\n" +
+									"                \"south\": { \"uv\": [ 5, 0, 11,  3 ], \"texture\": \"#base\" },\n" +
+									"                \"west\":  { \"uv\": [ 4, 0, 12,  3 ], \"texture\": \"#base\" },\n" +
+									"                \"east\":  { \"uv\": [ 4, 0, 12,  3 ], \"texture\": \"#base\" }\n" +
+									"            }\n" +
+									"        },\n" +
+									"        {   \"from\": [ 7, 1, 7 ],\n" +
+									"            \"to\": [ 9, 11, 9 ],\n" +
+									"            \"rotation\": { \"origin\": [ 8, 1, 8 ], \"axis\": \"x\", \"angle\": 45 },\n" +
+									"            \"faces\": {\n" +
+									"                \"up\":    { \"uv\": [ 7, 6, 9,  8 ], \"texture\": \"#lever\" },\n" +
+									"                \"north\": { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" },\n" +
+									"                \"south\": { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" },\n" +
+									"                \"west\":  { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" },\n" +
+									"                \"east\":  { \"uv\": [ 7, 6, 9, 16 ], \"texture\": \"#lever\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
 						} catch (IOException fileNotFoundException) {
 							fileNotFoundException.printStackTrace();
 						}
@@ -875,8 +844,7 @@ public class CustomResourceCreator {
 						try {
 							FileWriter blockModelwriter = new FileWriter(blockModel);
 							BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
-							if (differentTextures == TriState.TRUE) blockModelbw.write(defaultCube);
-							else if (differentTextures == TriState.FALSE) blockModelbw.write(cubeAll);
+							blockModelbw.write(differentTextures == TriState.TRUE ? defaultCube : cubeAll);
 							blockModelbw.close();
 							blockModelwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -889,9 +857,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter blockModelwriter = new FileWriter(blockModel);
 					BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
-					{
-						blockModelbw.write(customBlockModel);
-					}
+					blockModelbw.write(customBlockModel);
 					blockModelbw.close();
 					blockModelwriter.close();
 				} catch (IOException e) {
@@ -906,11 +872,9 @@ public class CustomResourceCreator {
 						try {
 							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
-							{
-								blockItemModelbw.write("{\n" +
-										"  \"parent\": \"" + _namespace + ":block/" + id + "_bottom" + "\"\n" +
-										"}");
-							}
+							blockItemModelbw.write("{\n" +
+									"  \"parent\": \"" + _namespace + ":block/" + id + "_bottom" + "\"\n" +
+									"}");
 							blockItemModelbw.close();
 							blockItemModelwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -923,11 +887,9 @@ public class CustomResourceCreator {
 						try {
 							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
-							{
-								blockItemModelbw.write("{\n" +
-										"  \"parent\": \"" + _namespace + ":block/" + id + "_inventory" + "\"\n" +
-										"}");
-							}
+							blockItemModelbw.write("{\n" +
+									"  \"parent\": \"" + _namespace + ":block/" + id + "_inventory" + "\"\n" +
+									"}");
 							blockItemModelbw.close();
 							blockItemModelwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -966,15 +928,29 @@ public class CustomResourceCreator {
 							fileNotFoundException.printStackTrace();
 						}
 						break;
+					case "lever":
+						try {
+							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
+							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
+							blockItemModelbw.write("{\n" +
+									"  \"parent\": \"minecraft:item/generated\",\n" +
+									"  \"textures\": {\n" +
+									"    \"layer0\": \"" + resourceNamespace + ":block/" + topTexture + "\"\n" +
+									"  }\n" +
+									"}");
+							blockItemModelbw.close();
+							blockItemModelwriter.close();
+						} catch (IOException fileNotFoundException) {
+							fileNotFoundException.printStackTrace();
+						}
+						break;
 					default:
 						try {
 							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
-							{
-								blockItemModelbw.write("{\n" +
-										"  \"parent\": \"" + _namespace + ":block/" + id + "\"\n" +
-										"}");
-							}
+							blockItemModelbw.write("{\n" +
+									"  \"parent\": \"" + _namespace + ":block/" + id + "\"\n" +
+									"}");
 							blockItemModelbw.close();
 							blockItemModelwriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -987,9 +963,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 					BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
-					{
-						blockItemModelbw.write(customItemModel);
-					}
+					blockItemModelbw.write(customItemModel);
 					blockItemModelbw.close();
 					blockItemModelwriter.close();
 				} catch (IOException e) {
@@ -1012,21 +986,19 @@ public class CustomResourceCreator {
 						try {
 							FileWriter blockStatewriter = new FileWriter(blockState);
 							BufferedWriter blockStatebw = new BufferedWriter(blockStatewriter);
-							{
-								blockStatebw.write("{\n" +
-										"  \"variants\": {\n" +
-										"    \"type=bottom\": {\n" +
-										"      \"model\": \"" + _namespace + ":block/" + id + "_bottom\"\n" +
-										"    },\n" +
-										"    \"type=double\": {\n" +
-										"      \"model\": \"" + _namespace + ":block/" + id + "_double\"\n" +
-										"    },\n" +
-										"    \"type=top\": {\n" +
-										"      \"model\": \"" + _namespace + ":block/" + id + "_top\"\n" +
-										"    }\n" +
-										"  }\n" +
-										"}");
-							}
+							blockStatebw.write("{\n" +
+									"  \"variants\": {\n" +
+									"    \"type=bottom\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_bottom\"\n" +
+									"    },\n" +
+									"    \"type=double\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_double\"\n" +
+									"    },\n" +
+									"    \"type=top\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_top\"\n" +
+									"    }\n" +
+									"  }\n" +
+									"}");
 							blockStatebw.close();
 							blockStatewriter.close();
 						} catch (IOException fileNotFoundException) {
@@ -1960,6 +1932,126 @@ public class CustomResourceCreator {
 										"  }\n" +
 										"}");
 							}
+							blockStatebw.close();
+							blockStatewriter.close();
+						} catch (IOException fileNotFoundException) {
+							fileNotFoundException.printStackTrace();
+						}
+						break;
+					case "lever":
+						try {
+							FileWriter blockStatewriter = new FileWriter(blockState);
+							BufferedWriter blockStatebw = new BufferedWriter(blockStatewriter);
+							blockStatebw.write("{\n" +
+									"  \"variants\": {\n" +
+									"    \"face=ceiling,facing=east,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 180,\n" +
+									"      \"y\": 270\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=east,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 180,\n" +
+									"      \"y\": 270\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=north,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 180,\n" +
+									"      \"y\": 180\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=north,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 180,\n" +
+									"      \"y\": 180\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=south,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 180\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=south,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 180\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=west,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 180,\n" +
+									"      \"y\": 90\n" +
+									"    },\n" +
+									"    \"face=ceiling,facing=west,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 180,\n" +
+									"      \"y\": 90\n" +
+									"    },\n" +
+									"    \"face=floor,facing=east,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"y\": 90\n" +
+									"    },\n" +
+									"    \"face=floor,facing=east,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"y\": 90\n" +
+									"    },\n" +
+									"    \"face=floor,facing=north,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\"\n" +
+									"    },\n" +
+									"    \"face=floor,facing=north,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+									"    },\n" +
+									"    \"face=floor,facing=south,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"y\": 180\n" +
+									"    },\n" +
+									"    \"face=floor,facing=south,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"y\": 180\n" +
+									"    },\n" +
+									"    \"face=floor,facing=west,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"y\": 270\n" +
+									"    },\n" +
+									"    \"face=floor,facing=west,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"y\": 270\n" +
+									"    },\n" +
+									"    \"face=wall,facing=east,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 90,\n" +
+									"      \"y\": 90\n" +
+									"    },\n" +
+									"    \"face=wall,facing=east,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 90,\n" +
+									"      \"y\": 90\n" +
+									"    },\n" +
+									"    \"face=wall,facing=north,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 90\n" +
+									"    },\n" +
+									"    \"face=wall,facing=north,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 90\n" +
+									"    },\n" +
+									"    \"face=wall,facing=south,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 90,\n" +
+									"      \"y\": 180\n" +
+									"    },\n" +
+									"    \"face=wall,facing=south,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 90,\n" +
+									"      \"y\": 180\n" +
+									"    },\n" +
+									"    \"face=wall,facing=west,powered=false\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "_on\",\n" +
+									"      \"x\": 90,\n" +
+									"      \"y\": 270\n" +
+									"    },\n" +
+									"    \"face=wall,facing=west,powered=true\": {\n" +
+									"      \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"      \"x\": 90,\n" +
+									"      \"y\": 270\n" +
+									"    }\n" +
+									"  }\n" +
+									"}");
 							blockStatebw.close();
 							blockStatewriter.close();
 						} catch (IOException fileNotFoundException) {
