@@ -2,6 +2,7 @@ package com.ulto.customblocks;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
+import com.google.gson.JsonSyntaxException;
 import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -38,31 +39,31 @@ public class GenerateCustomElements {
 	public static List<File> items = new ArrayList<>();
 	public static File fluidsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "fluids");
 	public static List<File> fluids = new ArrayList<>();
-	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
-	public static List<File> packs = new ArrayList<>();
 	public static File itemGroupsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "item_groups");
 	public static List<File> itemGroups = new ArrayList<>();
 	public static File paintingsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "paintings");
 	public static List<File> paintings = new ArrayList<>();
 	public static File recipesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "recipes");
 	public static List<File> recipes = new ArrayList<>();
+	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
+	public static List<File> packs = new ArrayList<>();
 	
 	public static void generate() {
 		blocksFolder.mkdirs();
 		itemsFolder.mkdirs();
 		fluidsFolder.mkdirs();
-		packsFolder.mkdirs();
 		itemGroupsFolder.mkdirs();
 		paintingsFolder.mkdirs();
 		recipesFolder.mkdirs();
+		packsFolder.mkdirs();
 		copyOldFiles();
 		listFiles(blocksFolder, blocks);
 		listFiles(itemsFolder, items);
 		listFiles(fluidsFolder, fluids);
-		listFiles(packsFolder, packs);
 		listFiles(itemGroupsFolder, itemGroups);
 		listFiles(paintingsFolder, paintings);
 		listFiles(recipesFolder, recipes);
+		listFiles(packsFolder, packs);
 		LanguageHandler.setupLanguage();
 		CustomResourceCreator.setupResourcePack();
 		for (File value : blocks) {
@@ -77,11 +78,13 @@ public class GenerateCustomElements {
 				if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
 					CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + " !");
+					CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
 				}
 				blockReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
 			}
 		}
 		for (File value : items) {
@@ -96,11 +99,13 @@ public class GenerateCustomElements {
 				if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item, item.get("namespace").getAsString(), item.get("id").getAsString(), item.get("texture").getAsString()) && LanguageHandler.addItemKey(item)) {
 					CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
 				} else {
-					CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + " !");
+					CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + "!");
 				}
 				itemReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + "!");
 			}
 		}
 		for (File value : fluids) {
@@ -120,6 +125,8 @@ public class GenerateCustomElements {
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate fluid " + value.getName() + "!");
 			}
 		}
 		for (File value : itemGroups) {
@@ -139,6 +146,8 @@ public class GenerateCustomElements {
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate item group " + value.getName() + "!");
 			}
 		}
 		for (File value : paintings) {
@@ -158,6 +167,8 @@ public class GenerateCustomElements {
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate painting " + value.getName() + "!");
 			}
 		}
 		for (File value : recipes) {
@@ -177,6 +188,8 @@ public class GenerateCustomElements {
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate recipe " + value.getName() + "!");
 			}
 		}
 		for (File value : packs) {
@@ -198,6 +211,8 @@ public class GenerateCustomElements {
 				packReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to load pack " + value.getName() + "!");
 			}
 		}
 		LanguageHandler.saveLang();
@@ -205,9 +220,9 @@ public class GenerateCustomElements {
 
 	@Environment(EnvType.CLIENT)
 	public static void generateClient() {
-		for (File file : blocks) {
+		for (File value : blocks) {
 			try {
-				BufferedReader test_blockReader = new BufferedReader(new FileReader(file));
+				BufferedReader test_blockReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
 				String line;
 				while ((line = test_blockReader.readLine()) != null) {
@@ -224,11 +239,13 @@ public class GenerateCustomElements {
 				test_blockReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
 			}
 		}
-		for (File file : fluids) {
+		for (File value : fluids) {
 			try {
-				BufferedReader test_blockReader = new BufferedReader(new FileReader(file));
+				BufferedReader test_blockReader = new BufferedReader(new FileReader(value));
 				StringBuilder json = new StringBuilder();
 				String line;
 				while ((line = test_blockReader.readLine()) != null) {
@@ -242,6 +259,8 @@ public class GenerateCustomElements {
 				test_blockReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
 			}
 		}
 	}
