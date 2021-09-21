@@ -47,7 +47,7 @@ public class GenerateCustomElements {
 	public static List<File> recipes = new ArrayList<>();
 	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
 	public static List<File> packs = new ArrayList<>();
-	
+
 	public static void generate() {
 		blocksFolder.mkdirs();
 		itemsFolder.mkdirs();

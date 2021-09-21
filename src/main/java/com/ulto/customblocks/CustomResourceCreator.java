@@ -949,8 +949,8 @@ public class CustomResourceCreator {
 							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
 							blockItemModelbw.write("{\n" +
-										"  \"parent\": \"" + _namespace + ":block/" + id + "\"\n" +
-										"}");
+									"  \"parent\": \"" + _namespace + ":block/" + id + "\"\n" +
+									"}");
 							blockItemModelbw.close();
 							blockItemModelwriter.close();
 						} catch (IOException fileNotFoundException) {

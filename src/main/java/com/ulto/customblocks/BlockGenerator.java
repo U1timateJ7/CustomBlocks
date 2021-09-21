@@ -60,6 +60,16 @@ public class BlockGenerator {
 			boolean requiresTool;
 			if (block.has("requires_tool")) requiresTool = block.get("requires_tool").getAsBoolean();
 			else requiresTool = true;
+			List<JsonObject> drops = new ArrayList<>();
+			if (block.has("drops")) {
+				JsonArray stacks = block.getAsJsonArray("drops");
+				drops = JsonUtils.jsonArrayToJsonObjectList(stacks);
+			}
+			else {
+				JsonObject thisBlock = new JsonObject();
+				thisBlock.addProperty("id", namespace + ":" + id);
+				drops.add(thisBlock);
+			}
 			int harvestLevel;
 			if (block.has("harvest_level")) harvestLevel = block.get("harvest_level").getAsInt();
 			else harvestLevel = 0;
@@ -299,107 +309,107 @@ public class BlockGenerator {
 			switch (base) {
 				case "slab":
 					if (hasGravity) {
-						CustomFallingSlabBlock BLOCK = new CustomFallingSlabBlock(blockSettings, block);
+						CustomFallingSlabBlock BLOCK = new CustomFallingSlabBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						SlabBlock BLOCK = new CustomSlabBlock(blockSettings, block);
+						SlabBlock BLOCK = new CustomSlabBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "stairs":
 					if (hasGravity) {
-						CustomFallingStairBlock BLOCK = new CustomFallingStairBlock(blockSettings, block);
+						CustomFallingStairBlock BLOCK = new CustomFallingStairBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						StairsBlock BLOCK = new CustomStairBlock(blockSettings, block);
+						StairsBlock BLOCK = new CustomStairBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "wall":
 					if (hasGravity) {
-						CustomFallingWallBlock BLOCK = new CustomFallingWallBlock(blockSettings, block);
+						CustomFallingWallBlock BLOCK = new CustomFallingWallBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						WallBlock BLOCK = new CustomWallBlock(blockSettings, block);
+						WallBlock BLOCK = new CustomWallBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "fence":
 					if (hasGravity) {
-						CustomFallingFenceBlock BLOCK = new CustomFallingFenceBlock(blockSettings, block);
+						CustomFallingFenceBlock BLOCK = new CustomFallingFenceBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						FenceBlock BLOCK = new CustomFenceBlock(blockSettings, block);
+						FenceBlock BLOCK = new CustomFenceBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "fence_gate":
 					if (hasGravity) {
-						CustomFallingFenceGateBlock BLOCK = new CustomFallingFenceGateBlock(blockSettings, block);
+						CustomFallingFenceGateBlock BLOCK = new CustomFallingFenceGateBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						FenceGateBlock BLOCK = new CustomFenceGateBlock(blockSettings, block);
+						FenceGateBlock BLOCK = new CustomFenceGateBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "pane":
 					if (hasGravity) {
-						CustomFallingPaneBlock BLOCK = new CustomFallingPaneBlock(blockSettings, block);
+						CustomFallingPaneBlock BLOCK = new CustomFallingPaneBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						PaneBlock BLOCK = new CustomPaneBlock(blockSettings, block);
+						PaneBlock BLOCK = new CustomPaneBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "pressure_plate":
 					if (hasGravity) {
-						CustomFallingPressurePlateBlock BLOCK = new CustomFallingPressurePlateBlock(blockSettings, block);
+						CustomFallingPressurePlateBlock BLOCK = new CustomFallingPressurePlateBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						CustomPressurePlateBlock BLOCK = new CustomPressurePlateBlock(blockSettings, block);
+						CustomPressurePlateBlock BLOCK = new CustomPressurePlateBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "button": {
-						CustomButtonBlock BLOCK = new CustomButtonBlock(blockSettings, block);
+						CustomButtonBlock BLOCK = new CustomButtonBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "trapdoor":
 					if (hasGravity) {
-						CustomFallingTrapdoorBlock BLOCK = new CustomFallingTrapdoorBlock(blockSettings, block);
+						CustomFallingTrapdoorBlock BLOCK = new CustomFallingTrapdoorBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					} else {
-						CustomTrapdoorBlock BLOCK = new CustomTrapdoorBlock(blockSettings, block);
+						CustomTrapdoorBlock BLOCK = new CustomTrapdoorBlock(blockSettings, drops, block);
 						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 						NEW_BLOCK = BLOCK;
 					}
 					break;
 				case "door": {
-					CustomDoorBlock BLOCK = new CustomDoorBlock(blockSettings, block);
-					Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
-					NEW_BLOCK = BLOCK;
-				}
-				break;
+						CustomDoorBlock BLOCK = new CustomDoorBlock(blockSettings, drops, block);
+						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
+						NEW_BLOCK = BLOCK;
+					}
+					break;
 				case "lever":
 				{
-					CustomLeverBlock BLOCK = new CustomLeverBlock(blockSettings, block);
+					CustomLeverBlock BLOCK = new CustomLeverBlock(blockSettings, drops, block);
 					Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 					NEW_BLOCK = BLOCK;
 				}
@@ -408,32 +418,32 @@ public class BlockGenerator {
 					if (hasGravity) {
 						switch (rotationType) {
 							case "axis" -> {
-								CustomFallingPillarBlock BLOCK = new CustomFallingPillarBlock(blockSettings, shape, block);
+								CustomFallingPillarBlock BLOCK = new CustomFallingPillarBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "y_axis_player" -> {
-								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block);
+								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "y_axis" -> {
-								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block);
+								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "all_player" -> {
-								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, true, shape, block);
+								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "all" -> {
-								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, false, shape, block);
+								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							default -> {
-								FallingBlock BLOCK = new CustomFallingBlock(blockSettings, shape, block);
+								FallingBlock BLOCK = new CustomFallingBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
@@ -441,32 +451,32 @@ public class BlockGenerator {
 					} else {
 						switch (rotationType) {
 							case "axis" -> {
-								PillarBlock BLOCK = new CustomPillarBlock(blockSettings, shape, block);
+								PillarBlock BLOCK = new CustomPillarBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "y_axis_player" -> {
-								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, true, shape, block);
+								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "y_axis" -> {
-								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, false, shape, block);
+								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "all_player" -> {
-								Block BLOCK = new CustomFacingBlock(blockSettings, true, shape, block);
+								Block BLOCK = new CustomFacingBlock(blockSettings, true, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							case "all" -> {
-								Block BLOCK = new CustomFacingBlock(blockSettings, false, shape, block);
+								Block BLOCK = new CustomFacingBlock(blockSettings, false, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							default -> {
-								Block BLOCK = new CustomBlock(blockSettings, shape, block);
+								Block BLOCK = new CustomBlock(blockSettings, drops, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
