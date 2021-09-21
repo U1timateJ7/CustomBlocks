@@ -91,14 +91,4 @@ public class CustomSlabBlock extends SlabBlock {
         }
         return super.isSideInvisible(state, stateFrom, direction);
     }
-
-    @Environment(EnvType.CLIENT)
-    public boolean isSideInvisible(BlockState state, BlockState stateFrom, Direction direction) {
-        if (block.has("render_type")) {
-            if (!block.get("render_type").getAsString().equals("opaque")) {
-                return stateFrom.isOf(this) || super.isSideInvisible(state, stateFrom, direction);
-            }
-        }
-        return super.isSideInvisible(state, stateFrom, direction);
-    }
 }
