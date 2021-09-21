@@ -402,11 +402,11 @@ public class BlockGenerator {
 					}
 					break;
 				case "door": {
-					CustomDoorBlock BLOCK = new CustomDoorBlock(blockSettings, drops, block);
-					Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
-					NEW_BLOCK = BLOCK;
-				}
-				break;
+						CustomDoorBlock BLOCK = new CustomDoorBlock(blockSettings, drops, block);
+						Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
+						NEW_BLOCK = BLOCK;
+					}
+					break;
 				case "lever":
 				{
 					CustomLeverBlock BLOCK = new CustomLeverBlock(blockSettings, drops, block);
