@@ -16,12 +16,11 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-import java.util.List;
 import java.util.Random;
 
 public class CustomFallingPressurePlateBlock extends CustomPressurePlateBlock {
-    public CustomFallingPressurePlateBlock(Settings settings, List<JsonObject> dropsIn, JsonObject blockIn) {
-        super(settings, dropsIn, blockIn);
+    public CustomFallingPressurePlateBlock(Settings settings, JsonObject blockIn) {
+        super(settings, blockIn);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {

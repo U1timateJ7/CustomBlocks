@@ -16,12 +16,11 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-import java.util.List;
 import java.util.Random;
 
 public class CustomFallingFenceBlock extends CustomFenceBlock {
-    public CustomFallingFenceBlock(Settings settings, List<JsonObject> dropsIn, JsonObject block) {
-        super(settings, dropsIn, block);
+    public CustomFallingFenceBlock(Settings settings, JsonObject block) {
+        super(settings, block);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
