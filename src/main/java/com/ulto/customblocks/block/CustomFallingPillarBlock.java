@@ -20,8 +20,8 @@ import java.util.List;
 import java.util.Random;
 
 public class CustomFallingPillarBlock extends CustomPillarBlock {
-    public CustomFallingPillarBlock(Settings settings, List<JsonObject> dropsIn, List<JsonObject> shapeIn, JsonObject blockIn) {
-        super(settings, dropsIn, shapeIn, blockIn);
+    public CustomFallingPillarBlock(Settings settings, List<JsonObject> shapeIn, JsonObject blockIn) {
+        super(settings, shapeIn, blockIn);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {

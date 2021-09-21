@@ -16,13 +16,12 @@ import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
 
-import java.util.List;
 import java.util.Random;
 
 public class CustomFallingSlabBlock extends CustomSlabBlock {
 
-    public CustomFallingSlabBlock(Settings settings, List<JsonObject> drops, JsonObject block) {
-        super(settings, drops, block);
+    public CustomFallingSlabBlock(Settings settings, JsonObject block) {
+        super(settings, block);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
