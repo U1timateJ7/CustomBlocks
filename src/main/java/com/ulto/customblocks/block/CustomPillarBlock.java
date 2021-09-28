@@ -2,6 +2,7 @@ package com.ulto.customblocks.block;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.event.Events;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -9,6 +10,8 @@ import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.block.entity.BlockEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
@@ -30,10 +33,11 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldAccess;
+import net.minecraft.world.explosion.Explosion;
+import org.jetbrains.annotations.Nullable;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
+import java.util.*;
 
 public class CustomPillarBlock extends PillarBlock {
     List<JsonObject> shape = new ArrayList<>();
@@ -113,6 +117,7 @@ public class CustomPillarBlock extends PillarBlock {
     }
 
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
+        if (block.has("on_use")) Events.playBlockActionEvent(state, pos, world, Map.of("entity", player, "hand", hand, "blockhitresult", hit), block.getAsJsonObject("on_use"));
         if (block.has("stripped_block")) {
             if (FabricToolTags.AXES.contains(player.getStackInHand(hand).getItem()) && state.getBlock() != null) {
                 BlockState _bs = Registry.BLOCK.get(new Identifier(block.get("stripped_block").getAsString())).getDefaultState().with(PillarBlock.AXIS, world.getBlockState(pos).get(PillarBlock.AXIS));
@@ -125,5 +130,62 @@ public class CustomPillarBlock extends PillarBlock {
             }
         }
         return ActionResult.PASS;
+    }
+
+    @Override
+    public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onBlockAdded(state, world, pos, oldState, notify);
+        int tickRate = 10;
+        if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
+        if (!randomTicks) world.getBlockTickScheduler().schedule(pos, this, tickRate);
+        if (block.has("on_added")) Events.playBlockEvent(state, pos, world, Map.of("oldstate", oldState, "notify", notify), block.getAsJsonObject("on_added"));
+    }
+
+    @Override
+    public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.scheduledTick(state, world, pos, random);
+        int tickRate = 10;
+        if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
+        if (!randomTicks) world.getBlockTickScheduler().schedule(pos, this, tickRate);
+        if (block.has("on_tick")) Events.playBlockEvent(state, pos, world, Map.of("random", random), block.getAsJsonObject("on_tick"));
+    }
+
+    @Override
+    public void onEntityCollision(BlockState state, World world, BlockPos pos, Entity entity) {
+        super.onEntityCollision(state, world, pos, entity);
+        if (block.has("on_entity_collision")) Events.playBlockEvent(state, pos, world, Map.of("entity", entity), block.getAsJsonObject("on_entity_collision"));
+    }
+
+    @Override
+    public void onBroken(WorldAccess world, BlockPos pos, BlockState state) {
+        super.onBroken(world, pos, state);
+        if (block.has("on_broken") && world instanceof World) Events.playBlockEvent(state, pos, (World) world, Map.of(), block.getAsJsonObject("on_broken"));
+    }
+
+    @Override
+    public void onLandedUpon(World world, BlockState state, BlockPos pos, Entity entity, float fallDistance) {
+        super.onLandedUpon(world, state, pos, entity, fallDistance);
+        if (block.has("on_entity_landed")) Events.playBlockEvent(state, pos, world, Map.of("entity", entity, "falldistance", fallDistance), block.getAsJsonObject("on_entity_landed"));
+    }
+
+    @Override
+    public void afterBreak(World world, PlayerEntity player, BlockPos pos, BlockState state, @Nullable BlockEntity blockEntity, ItemStack stack) {
+        super.afterBreak(world, player, pos, state, blockEntity, stack);
+        if (block.has("on_broken_by_player")) {
+            if (blockEntity != null) Events.playBlockEvent(state, pos, world, Map.of("entity", player, "blockentity", blockEntity, "itemstack", stack), block.getAsJsonObject("on_entity_landed"));
+            else Events.playBlockEvent(state, pos, world, Map.of("entity", player, "itemstack", stack), block.getAsJsonObject("on_entity_landed"));
+        }
+    }
+
+    @Override
+    public void onDestroyedByExplosion(World world, BlockPos pos, Explosion explosion) {
+        super.onDestroyedByExplosion(world, pos, explosion);
+        if (block.has("on_exploded")) Events.playBlockEvent(world.getBlockState(pos), pos, world, Map.of("explosion", explosion), block.getAsJsonObject("on_exploded"));
+    }
+
+    @Override
+    public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
+        super.onSteppedOn(world, pos, state, entity);
+        if (block.has("on_entity_stepped")) Events.playBlockEvent(state, pos, world, Map.of("entity", entity), block.getAsJsonObject("on_entity_stepped"));
     }
 }

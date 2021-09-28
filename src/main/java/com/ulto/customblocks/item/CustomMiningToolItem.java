@@ -1,28 +1,106 @@
 package com.ulto.customblocks.item;
 
+import com.google.gson.JsonObject;
+import com.ulto.customblocks.event.Events;
 import com.ulto.customblocks.util.MiscConverter;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.ItemEntity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ItemUsageContext;
 import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.tag.Tag;
 import net.minecraft.text.Text;
+import net.minecraft.util.ActionResult;
+import net.minecraft.util.Hand;
+import net.minecraft.util.TypedActionResult;
+import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
+import java.util.Map;
 
 public class CustomMiningToolItem extends MiningToolItem {
     List<String> tooltips;
+    JsonObject item;
 
-    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, List<String> tooltip) {
+    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, List<String> tooltip, JsonObject itemIn) {
         super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
         tooltips = tooltip;
+        item = itemIn;
     }
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
         tooltip.addAll(MiscConverter.stringListToTextList(tooltips));
+    }
+
+    @Override
+    public TypedActionResult<ItemStack> use(World world, PlayerEntity user, Hand hand) {
+        TypedActionResult<ItemStack> result = super.use(world, user, hand);
+        if (item.has("on_use")) {
+            boolean swingsHand = false;
+            if (item.getAsJsonObject("on_use").has("swing_hand")) swingsHand = item.getAsJsonObject("on_use").get("swing_hand").getAsBoolean();
+            return Events.playItemTypedActionEvent(user.getStackInHand(hand), swingsHand, Map.of("x", user.getPos().x, "y", user.getPos().y, "z", user.getPos().z, "entity", user, "hand", hand, "world", world), item.getAsJsonObject("on_use"));
+        }
+        return result;
+    }
+
+    @Override
+    public ActionResult useOnBlock(ItemUsageContext context) {
+        ActionResult result = super.useOnBlock(context);
+        if (item.has("on_use_on_block")) {
+            if (context.getPlayer() != null) return Events.playItemActionEvent(context.getStack(), Map.of("x", context.getHitPos().x, "y", context.getHitPos().y, "z", context.getHitPos().z, "entity", context.getPlayer(), "hand", context.getHand(), "world", context.getWorld()), item.getAsJsonObject("on_use"));
+            else return Events.playItemActionEvent(context.getStack(), Map.of("hand", context.getHand(), "world", context.getWorld()), item.getAsJsonObject("on_use"));
+        }
+        return result;
+    }
+
+    @Override
+    public void onCraft(ItemStack stack, World world, PlayerEntity player) {
+        super.onCraft(stack, world, player);
+        if (item.has("on_craft")) Events.playItemEvent(stack, Map.of("x", player.getPos().x, "y", player.getPos().y, "z", player.getPos().z, "entity", player, "world", world), item.getAsJsonObject("on_craft"));
+    }
+
+    @Override
+    public void onItemEntityDestroyed(ItemEntity entity) {
+        super.onItemEntityDestroyed(entity);
+        if (item.has("on_destroyed")) Events.playItemEvent(entity.getStack(), Map.of("x", entity.getPos().x, "y", entity.getPos().y, "z", entity.getPos().z, "entity", entity, "world", entity.world), item.getAsJsonObject("on_destroyed"));
+    }
+
+    @Override
+    public void onStoppedUsing(ItemStack stack, World world, LivingEntity user, int remainingUseTicks) {
+        super.onStoppedUsing(stack, world, user, remainingUseTicks);
+        if (item.has("on_stopped_using")) Events.playItemEvent(stack, Map.of("x", user.getPos().x, "y", user.getPos().y, "z", user.getPos().z, "entity", user, "world", world), item.getAsJsonObject("on_stopped_using"));
+    }
+
+    @Override
+    public void inventoryTick(ItemStack stack, World world, Entity entity, int slot, boolean selected) {
+        super.inventoryTick(stack, world, entity, slot, selected);
+        if (item.has("on_inventory_tick")) Events.playItemEvent(stack, Map.of("x", entity.getPos().x, "y", entity.getPos().y, "z", entity.getPos().z, "entity", entity, "world", world), item.getAsJsonObject("on_inventory_tick"));
+    }
+
+    @Override
+    public void usageTick(World world, LivingEntity user, ItemStack stack, int remainingUseTicks) {
+        super.usageTick(world, user, stack, remainingUseTicks);
+        if (item.has("on_usage_tick")) Events.playItemEvent(stack, Map.of("x", user.getPos().x, "y", user.getPos().y, "z", user.getPos().z, "entity", user, "world", world), item.getAsJsonObject("on_usage_tick"));
+    }
+
+    @Override
+    public boolean postMine(ItemStack stack, World world, BlockState state, BlockPos pos, LivingEntity miner) {
+        if (item.has("on_mine_block")) Events.playBlockEvent(state, pos, world, Map.of("entity", miner, "itemstack", stack), item.getAsJsonObject("on_mine_block"));
+        return super.postMine(stack, world, state, pos, miner);
+    }
+
+    @Override
+    public boolean postHit(ItemStack stack, LivingEntity target, LivingEntity attacker) {
+        if (item.has("on_hit")) Events.playItemEvent(stack, Map.of("x", target.getPos().x, "y", target.getPos().y, "z", target.getPos().z, "entity", target, "sourceentity", attacker, "world", target.world), item.getAsJsonObject("on_hit"));
+        return super.postHit(stack, target, attacker);
     }
 }
