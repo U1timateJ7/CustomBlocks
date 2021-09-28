@@ -84,9 +84,10 @@ public class BlockGenerator {
 			else maxStackSize = 64;
 			if (maxStackSize > 64) maxStackSize = 64;
 			if (maxStackSize < 1) maxStackSize = 1;
-			boolean fireproof;
+			boolean fireproof = false;
 			if (block.has("fireproof")) fireproof = block.get("fireproof").getAsBoolean();
-			else fireproof = false;
+			boolean hasRandomTick = false;
+			if (block.has("randomly_ticks")) hasRandomTick = block.get("randomly_ticks").getAsBoolean();
 			String _itemGroup;
 			if (block.has("item_group")) _itemGroup = block.get("item_group").getAsString();
 			else {
@@ -296,6 +297,7 @@ public class BlockGenerator {
 				if (requiresTool) blockSettings.requiresTool();
 			}
 			if (!renderType.equals("opaque")) blockSettings.nonOpaque().blockVision(BlockGenerator::never).suffocates(BlockGenerator::never).solidBlock(BlockGenerator::never);
+			if (hasRandomTick) blockSettings.ticksRandomly();
 			switch (base) {
 				case "slab":
 					if (hasGravity) {

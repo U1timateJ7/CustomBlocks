@@ -152,12 +152,12 @@ public class ItemGenerator {
 
                 if (!item.has("item_group")) itemGroup = ItemGroup.FOOD;
                 settings.group(itemGroup);
-                ITEM = new CustomFoodItem(settings.food(foodBuilder.build()), eatingSpeed, tooltip);
+                ITEM = new CustomFoodItem(settings.food(foodBuilder.build()), eatingSpeed, tooltip, item);
             } else {
                 if (!toolType.equals("none")) {
-                    ITEM = toolType.equals("sword") ? new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip) : new CustomMiningToolItem(-1, attackSpeed - 4, tool, allBlocks, settings, tooltip);
+                    ITEM = toolType.equals("sword") ? new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip, item) : new CustomMiningToolItem(-1, attackSpeed - 4, tool, allBlocks, settings, tooltip, item);
                 } else {
-                    ITEM = new CustomItem(settings, tooltip);
+                    ITEM = new CustomItem(settings, tooltip, item);
                 }
             }
             Registry.register(Registry.ITEM, new Identifier(namespace, id), ITEM);
