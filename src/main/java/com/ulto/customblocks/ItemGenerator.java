@@ -1,12 +1,12 @@
 package com.ulto.customblocks;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.item.CustomFoodItem;
 import com.ulto.customblocks.item.CustomItem;
 import com.ulto.customblocks.item.CustomMiningToolItem;
 import com.ulto.customblocks.item.CustomSwordItem;
-import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.minecraft.block.Block;
 import net.minecraft.block.ComposterBlock;
@@ -27,8 +27,8 @@ public class ItemGenerator {
         if (item.has("namespace") && item.has("id")) {
             String namespace = item.get("namespace").getAsString();
             String id = item.get("id").getAsString();
-            List<String> tooltip = new ArrayList<>();
-            if (item.has("tooltips")) tooltip = JsonUtils.jsonArrayToStringList(item.getAsJsonArray("tooltips"));
+            JsonArray tooltip = new JsonArray();
+            if (item.has("tooltips")) tooltip = item.getAsJsonArray("tooltips");
             int maxStackSize;
             if (item.has("max_stack_size")) maxStackSize = item.get("max_stack_size").getAsInt();
             else maxStackSize = 64;

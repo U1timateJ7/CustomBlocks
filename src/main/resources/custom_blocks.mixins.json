@@ -11,7 +11,9 @@
     "MixinResourcePackManager",
     "MixinMinecraftServer",
     "AbstractFileResourcePackMixin",
-    "RecipeManagerMixin"
+    "RecipeManagerMixin",
+    "EntityMixin",
+    "PlayerEntityMixin"
   ],
   "client": [
     "TitleScreenMixin",

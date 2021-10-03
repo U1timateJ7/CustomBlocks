@@ -1,8 +1,9 @@
 package com.ulto.customblocks.item;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.event.Events;
-import com.ulto.customblocks.util.MiscConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -25,10 +26,10 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomSwordItem extends SwordItem {
-    List<String> tooltips;
+    JsonArray tooltips;
     JsonObject item;
 
-    public CustomSwordItem(ToolMaterial toolMaterial, int attackDamage, float attackSpeed, Settings settings, List<String> tooltip, JsonObject itemIn) {
+    public CustomSwordItem(ToolMaterial toolMaterial, int attackDamage, float attackSpeed, Settings settings, JsonArray tooltip, JsonObject itemIn) {
         super(toolMaterial, attackDamage, attackSpeed, settings);
         tooltips = tooltip;
         item = itemIn;
@@ -36,7 +37,7 @@ public class CustomSwordItem extends SwordItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.addAll(MiscConverter.stringListToTextList(tooltips));
+        tooltip.addAll(JsonUtils.jsonArrayToTextList(tooltips));
     }
 
     @Override
