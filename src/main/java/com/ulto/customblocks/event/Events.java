@@ -1,5 +1,6 @@
 package com.ulto.customblocks.event;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.util.JsonUtils;
@@ -26,17 +27,72 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
+@SuppressWarnings("SimplifiableConditionalExpression")
 public class Events {
+    public static boolean parseIfCondition(Map<String, Object> dependencies, JsonObject condition) {
+        if (condition.has("id")) {
+            final boolean[] returnValue = {false};
+            switch (condition.get("id").getAsString()) {
+                case "true" -> returnValue[0] = true;
+                case "check_game_rule" -> {
+                    if (dependencies.containsKey("world") && condition.has("game_rule")) {
+                        World world = (World) dependencies.get("world");
+                        GameRules.accept(new GameRules.Visitor() {
+                            @Override
+                            public void visitBoolean(GameRules.Key<GameRules.BooleanRule> key, GameRules.Type<GameRules.BooleanRule> type) {
+                                if (key.getName().equals(condition.get("game_rule").getAsString())) {
+                                    returnValue[0] = world.getGameRules().getBoolean(key);
+                                }
+                            }
+
+                            @Override
+                            public void visitInt(GameRules.Key<GameRules.IntRule> key, GameRules.Type<GameRules.IntRule> type) {
+                                if (condition.has("value") && key.getName().equals(condition.get("game_rule").getAsString())) {
+                                    returnValue[0] = world.getGameRules().getInt(key) == condition.get("value").getAsInt();
+                                }
+                            }
+                        });
+                    }
+                }
+            }
+            return returnValue[0];
+        }
+        return true;
+    }
+
+    public static void ifLoop(List<JsonObject> ifs, Map<String, Object> dependencies) {
+        for (JsonObject _if : ifs) {
+            if (_if.has("condition") && _if.has("if")) {
+                if (parseIfCondition(dependencies, _if.getAsJsonObject("condition"))) {
+                    playEvent(dependencies, _if.getAsJsonObject("if"));
+                } else if (_if.has("else_if")) {
+                    JsonArray elseIfs = _if.getAsJsonArray("else_if");
+                    for (JsonObject elseIf : JsonUtils.jsonArrayToJsonObjectList(elseIfs)) {
+                        if (!elseIf.has("condition") || !elseIf.has("if")) continue;
+                        if (parseIfCondition(dependencies, elseIf.getAsJsonObject("condition"))) {
+                            ifLoop(Collections.singletonList(elseIf), dependencies);
+                            break;
+                        }
+                    }
+                } else if (_if.has("else")) {
+                    playEvent(dependencies, _if.getAsJsonObject("else"));
+                }
+            }
+        }
+    }
+
     public static ActionResult playEvent(Map<String, Object> dependencies, JsonObject event) {
         ActionResult result = ActionResult.PASS;
+        List<JsonObject> ifs = new ArrayList<>();
+        for (Map.Entry<String, JsonElement> entry : event.entrySet()) if (entry.getKey().contains("if") && entry.getValue().isJsonObject()) ifs.add(entry.getValue().getAsJsonObject());
+        ifLoop(ifs, dependencies);
         if (event.has("command")) {
             if (event.get("command").isJsonArray()) {
                 for (JsonElement commandElement : event.getAsJsonArray("command")) {
@@ -111,13 +167,13 @@ public class Events {
             if (event.get("explode").isJsonObject() && dependencies.containsKey("world") && dependencies.containsKey("x") && dependencies.containsKey("y") && dependencies.containsKey("z")) {
                 JsonObject explode = event.getAsJsonObject("explode");
                 float power = explode.has("power") ? explode.get("power").getAsFloat() : 4;
-                boolean lightsFire = explode.has("lights_fire") && explode.get("lights_fire").getAsBoolean();
+                boolean lightsFire = explode.has("lights_fire") ? explode.get("lights_fire").getAsBoolean() : false;
                 World world = (World) dependencies.get("world");
                 double x = dependencies.get("x") instanceof Integer ? (int) dependencies.get("x") : (double) dependencies.get("x");
                 double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                 world.breakBlock(new BlockPos(x, y, z), true, null);
-                world.createExplosion(null, x, y, z, power, lightsFire, Explosion.DestructionType.BREAK);
+                if (!world.isClient()) world.createExplosion(null, x, y, z, power, lightsFire, Explosion.DestructionType.BREAK);
                 result = ActionResult.SUCCESS;
             }
         }
@@ -210,14 +266,14 @@ public class Events {
                 double x = dependencies.get("x") instanceof Integer ? (int) dependencies.get("x") : (double) dependencies.get("x");
                 double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
-                Identifier entity = new Identifier(command.get("id").getAsString());
+                String entity = command.get("id").getAsString();
                 NbtCompound nbt = new NbtCompound();
                 boolean initialize = true;
                 if (command.has("nbt")) {
-                    JsonUtils.jsonElementToNbtCompound(command.get("nbt"));
+                    nbt = JsonUtils.jsonElementToNbtCompound(command.get("nbt"));
                     initialize = false;
                 }
-                nbt.putString("id", entity.toString());
+                nbt.putString("id", entity);
                 if (!world.isClient()) {
                     Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (entityx) -> {
                         entityx.refreshPositionAndAngles(x, y, z, entityx.getYaw(), entityx.getPitch());

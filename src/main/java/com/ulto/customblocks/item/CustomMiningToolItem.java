@@ -1,8 +1,9 @@
 package com.ulto.customblocks.item;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.event.Events;
-import com.ulto.customblocks.util.MiscConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
@@ -27,10 +28,10 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomMiningToolItem extends MiningToolItem {
-    List<String> tooltips;
+    JsonArray tooltips;
     JsonObject item;
 
-    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, List<String> tooltip, JsonObject itemIn) {
+    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, JsonArray tooltip, JsonObject itemIn) {
         super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
         tooltips = tooltip;
         item = itemIn;
@@ -38,7 +39,7 @@ public class CustomMiningToolItem extends MiningToolItem {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.addAll(MiscConverter.stringListToTextList(tooltips));
+        tooltip.addAll(JsonUtils.jsonArrayToTextList(tooltips));
     }
 
     @Override

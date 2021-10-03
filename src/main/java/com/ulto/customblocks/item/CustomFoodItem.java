@@ -1,5 +1,6 @@
 package com.ulto.customblocks.item;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.event.Events;
 import net.minecraft.entity.LivingEntity;
@@ -10,14 +11,13 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
-import java.util.List;
 import java.util.Map;
 
 public class CustomFoodItem extends CustomItem {
     private final int eatSpeed;
     private Item eatenItem = null;
 
-    public CustomFoodItem(Item.Settings settings, int eatSpeed, List<String> tooltip, JsonObject item) {
+    public CustomFoodItem(Item.Settings settings, int eatSpeed, JsonArray tooltip, JsonObject item) {
         super(settings, tooltip, item);
         this.eatSpeed = eatSpeed;
         if (item.getAsJsonObject("food").has("eaten_item")) eatenItem = Registry.ITEM.get(new Identifier(item.getAsJsonObject("food").get("eaten_item").getAsString()));

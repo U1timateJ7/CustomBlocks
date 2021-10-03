@@ -3,6 +3,7 @@ package com.ulto.customblocks;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.ulto.customblocks.event.global.GlobalEvents;
 import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -45,6 +46,8 @@ public class GenerateCustomElements {
 	public static List<File> paintings = new ArrayList<>();
 	public static File recipesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "recipes");
 	public static List<File> recipes = new ArrayList<>();
+	public static File globalEventsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "global_events");
+	public static List<File> globalEvents = new ArrayList<>();
 	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
 	public static List<File> packs = new ArrayList<>();
 	
@@ -55,6 +58,7 @@ public class GenerateCustomElements {
 		itemGroupsFolder.mkdirs();
 		paintingsFolder.mkdirs();
 		recipesFolder.mkdirs();
+		globalEventsFolder.mkdirs();
 		packsFolder.mkdirs();
 		copyOldFiles();
 		listFiles(blocksFolder, blocks);
@@ -63,6 +67,7 @@ public class GenerateCustomElements {
 		listFiles(itemGroupsFolder, itemGroups);
 		listFiles(paintingsFolder, paintings);
 		listFiles(recipesFolder, recipes);
+		listFiles(globalEventsFolder, globalEvents);
 		listFiles(packsFolder, packs);
 		LanguageHandler.setupLanguage();
 		CustomResourceCreator.setupResourcePack();
@@ -75,10 +80,16 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
-				if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
-					CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
+				if (block.has("format_version")) {
+					if (!BlockGenerator.addBedrock(block, value)) {
+						CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+					}
 				} else {
-					CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+					if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
+						CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
+					} else {
+						CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+					}
 				}
 				blockReader.close();
 			} catch (IOException e) {
@@ -190,6 +201,27 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
 				CustomBlocksMod.LOGGER.error("Failed to generate recipe " + value.getName() + "!");
+			}
+		}
+		for (File value : globalEvents) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject event = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (GlobalEvents.register(event)) {
+					CustomBlocksMod.LOGGER.info("Registered Global Event {}", event.get("namespace").getAsString() + ":" + event.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to register global event {}!", value.getName());
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Failed to register global event " + value.getName() + "!");
 			}
 		}
 		for (File value : packs) {
@@ -333,14 +365,16 @@ public class GenerateCustomElements {
 	public static List<File> itemsFv0 = listFiles(itemsFolderFv0);
 	public static File fluidsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "fluids");
 	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0);
-	public static File packsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
-	public static List<File> packsFv0 = listFiles(packsFolderFv0);
 	public static File itemGroupsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
 	public static List<File> itemGroupsFv0 = listFiles(itemGroupsFolderFv0);
 	public static File paintingsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
 	public static List<File> paintingsFv0 = listFiles(paintingsFolderFv0);
 	public static File recipesFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
 	public static List<File> recipesFv0 = listFiles(recipesFolderFv0);
+	public static File globalEventsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "global_events");
+	public static List<File> globalEventsFv0 = listFiles(globalEventsFolderFv0);
+	public static File packsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
+	public static List<File> packsFv0 = listFiles(packsFolderFv0);
 
 	private static void copyOldFiles() {
 		for (File fv0 : blocksFv0) {
@@ -362,14 +396,6 @@ public class GenerateCustomElements {
 		for (File fv0 : fluidsFv0) {
 			try {
 				Files.copy(fv0.toPath(), fluidsFolder.toPath().resolve(fv0.getName()));
-				fv0.delete();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-		for (File fv0 : packsFv0) {
-			try {
-				Files.copy(fv0.toPath(), packsFolder.toPath().resolve(fv0.getName()));
 				fv0.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -399,12 +425,29 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			}
 		}
+		for (File fv0 : globalEventsFv0) {
+			try {
+				Files.copy(fv0.toPath(), globalEventsFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : packsFv0) {
+			try {
+				Files.copy(fv0.toPath(), packsFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		blocksFolderFv0.delete();
 		itemsFolderFv0.delete();
 		fluidsFolderFv0.delete();
-		packsFolderFv0.delete();
 		itemGroupsFolderFv0.delete();
 		paintingsFolderFv0.delete();
 		recipesFolderFv0.delete();
+		globalEventsFolderFv0.delete();
+		packsFolderFv0.delete();
 	}
 }

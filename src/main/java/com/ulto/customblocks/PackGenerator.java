@@ -375,7 +375,7 @@ public class PackGenerator {
                 if (BlockGenerator.add(pressurePlate) && CustomResourceCreator.generateBlockResources(pressurePlate) && LanguageHandler.addBlockKey(pressurePlate)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + pressurePlate.get("namespace").getAsString() + ":" + pressurePlate.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate fence gate!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate pressure plate!");
                 }
                 Identifier pressurePlateId = new Identifier(pressurePlate.get("namespace").getAsString(), pressurePlate.get("id").getAsString());
                 JsonObject button = new JsonObject();
@@ -405,7 +405,7 @@ public class PackGenerator {
                 if (BlockGenerator.add(button) && CustomResourceCreator.generateBlockResources(button) && LanguageHandler.addBlockKey(button)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + button.get("namespace").getAsString() + ":" + button.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate fence gate!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate button!");
                 }
                 Identifier buttonId = new Identifier(button.get("namespace").getAsString(), button.get("id").getAsString());
                 JsonObject door = new JsonObject();
@@ -592,10 +592,16 @@ public class PackGenerator {
         if (pack.has("blocks")) {
             List<JsonObject> blocks = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("blocks"));
             for (JsonObject block : blocks) {
-                if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
-                    CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
+                if (block.has("format_version")) {
+                    if (!BlockGenerator.addBedrock(block, null)) {
+                        CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                    }
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                    if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
+                        CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
+                    } else {
+                        CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                    }
                 }
                 if (BooleanUtils.isValidBlock(block) && block.has("render_type")) {
                     switch (block.get("render_type").getAsString()) {

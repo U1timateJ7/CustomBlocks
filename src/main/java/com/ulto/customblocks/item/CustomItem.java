@@ -1,8 +1,9 @@
 package com.ulto.customblocks.item;
 
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.event.Events;
-import com.ulto.customblocks.util.MiscConverter;
+import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
@@ -24,10 +25,10 @@ import java.util.List;
 import java.util.Map;
 
 public class CustomItem extends Item {
-    List<String> tooltips;
+    JsonArray tooltips;
     JsonObject item;
 
-    public CustomItem(Settings settings, List<String> tooltip, JsonObject itemIn) {
+    public CustomItem(Settings settings, JsonArray tooltip, JsonObject itemIn) {
         super(settings);
         tooltips = tooltip;
         item = itemIn;
@@ -35,7 +36,7 @@ public class CustomItem extends Item {
 
     @Override
     public void appendTooltip(ItemStack stack, @Nullable World world, List<Text> tooltip, TooltipContext context) {
-        tooltip.addAll(MiscConverter.stringListToTextList(tooltips));
+        tooltip.addAll(JsonUtils.jsonArrayToTextList(tooltips));
     }
 
     @Override

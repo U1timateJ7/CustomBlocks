@@ -11,6 +11,8 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
@@ -338,6 +340,20 @@ public class JsonUtils {
             }
         }
         return new NbtCompound();
+    }
+
+    public static Text jsonElementToText(JsonElement element) {
+        if (element.isJsonPrimitive()) return new LiteralText(element.getAsString());
+        else if (element.isJsonArray() || element.isJsonObject()) return Text.Serializer.fromJson(element);
+        return new LiteralText("");
+    }
+
+    public static List<Text> jsonArrayToTextList(JsonArray jsonArray) {
+        List<Text> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            list.add(jsonElementToText(jsonArray.get(i)));
+        }
+        return list;
     }
 
     public static JsonObject copy(JsonObject objectIn) {
