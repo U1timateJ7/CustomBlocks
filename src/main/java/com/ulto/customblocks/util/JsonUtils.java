@@ -244,9 +244,9 @@ public class JsonUtils {
                         }
                         PotionUtil.setCustomPotionEffects(item, effects);
                         if (customPotion.has("color")) {
-                            item.getOrCreateNbt().putInt("CustomPotionColor", MiscConverter.jsonObjectToColor(customPotion.getAsJsonObject("color")));
+                            item.getOrCreateTag().putInt("CustomPotionColor", MiscUtils.jsonObjectToColor(customPotion.getAsJsonObject("color")));
                         } else {
-                            item.getOrCreateNbt().putInt("CustomPotionColor", PotionUtil.getColor(effects));
+                            item.getOrCreateTag().putInt("CustomPotionColor", PotionUtil.getColor(effects));
                         }
                     }
                     if (modifiers.has("damage")) {
@@ -254,13 +254,13 @@ public class JsonUtils {
                     }
                     if (modifiers.has("unbreakable")) {
                         boolean unbreakable = modifiers.get("unbreakable").getAsBoolean();
-                        item.getOrCreateNbt().putBoolean("Unbreakable", unbreakable);
+                        item.getOrCreateTag().putBoolean("Unbreakable", unbreakable);
                     }
                     if (modifiers.has("display")) {
                         JsonObject display = modifiers.getAsJsonObject("display");
                         NbtCompound displayTag = new NbtCompound();
                         if (display.has("color")) {
-                            displayTag.putInt("color", MiscConverter.jsonObjectToColor(display.getAsJsonObject("color")));
+                            displayTag.putInt("color", MiscUtils.jsonObjectToColor(display.getAsJsonObject("color")));
                         }
                         if (display.has("name")) {
                             String name;
@@ -290,18 +290,18 @@ public class JsonUtils {
                             lore.add(NbtString.of(loreValue));
                             displayTag.put("Lore", lore);
                         }
-                        item.getOrCreateNbt().put("display", displayTag);
+                        item.getOrCreateTag().put("display", displayTag);
                     }
                     if (modifiers.has("nbt")) {
                         List<JsonObject> nbtObjects = jsonArrayToJsonObjectList(modifiers.getAsJsonArray("nbt"));
-                        item.setNbt(jsonObjectListToNbtCompound(nbtObjects));
+                        item.setTag(jsonObjectListToNbtCompound(nbtObjects));
                     }
                 }
                 if (itemIn.has("nbt")) {
-                    if (itemIn.get("nbt").isJsonArray()) item.setNbt(jsonObjectListToNbtCompound(jsonArrayToJsonObjectList(itemIn.getAsJsonArray("nbt"))));
+                    if (itemIn.get("nbt").isJsonArray()) item.setTag(jsonObjectListToNbtCompound(jsonArrayToJsonObjectList(itemIn.getAsJsonArray("nbt"))));
                     else if (itemIn.get("nbt").isJsonPrimitive()) {
                         try {
-                            item.setNbt(StringNbtReader.parse(itemIn.get("nbt").getAsString()));
+                            item.setTag(StringNbtReader.parse(itemIn.get("nbt").getAsString()));
                         } catch (CommandSyntaxException e) {
                             CustomBlocksMod.LOGGER.error("Failed to set Nbt of an item stack!");
                         }

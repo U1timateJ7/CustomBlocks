@@ -27,13 +27,12 @@ public class CustomResourceCreator {
 		try {
 			FileWriter mcmetawriter = new FileWriter(mcmeta);
 			BufferedWriter mcmetabw = new BufferedWriter(mcmetawriter);
-			mcmetabw.write("""
-					{
-					  "pack": {
-					    "pack_format": 7,
-					    "description": "In the config folder."
-					  }
-					}""");
+			mcmetabw.write("{\n" +
+					"  \"pack\": {\n" +
+					"    \"pack_format\": 6,\n" +
+					"    \"description\": \"In the config folder.\"\n" +
+					"  }\n" +
+					"}");
 			mcmetabw.close();
 			mcmetawriter.close();
 		} catch (IOException fileNotFoundException) {
@@ -2364,14 +2363,13 @@ public class CustomResourceCreator {
 			try {
 				FileWriter blockstatewriter = new FileWriter(blockstate);
 				BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
-				blockstatebw.write("""
-						{
-						  "variants": {
-						    "": {
-						      "model": "minecraft:block/water"
-						    }
-						  }
-						}""");
+				blockstatebw.write("{\n" +
+						"  \"variants\": {\n" +
+						"    \"\": {\n" +
+						"      \"model\": \"minecraft:block/water\"\n" +
+						"    }\n" +
+						"  }\n" +
+						"}");
 				blockstatebw.close();
 				blockstatewriter.close();
 			} catch (IOException fileNotFoundException) {

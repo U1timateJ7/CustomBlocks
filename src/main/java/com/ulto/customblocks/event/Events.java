@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.util.JsonUtils;
+import com.ulto.customblocks.util.MiscUtils;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -40,8 +41,10 @@ public class Events {
         if (condition.has("id")) {
             final boolean[] returnValue = {false};
             switch (condition.get("id").getAsString()) {
-                case "true" -> returnValue[0] = true;
-                case "check_game_rule" -> {
+                case "true":
+                    returnValue[0] = true;
+                    break;
+                case "check_game_rule" :
                     if (dependencies.containsKey("world") && condition.has("game_rule")) {
                         World world = (World) dependencies.get("world");
                         GameRules.accept(new GameRules.Visitor() {
@@ -60,7 +63,7 @@ public class Events {
                             }
                         });
                     }
-                }
+                    break;
             }
             return returnValue[0];
         }
@@ -252,7 +255,7 @@ public class Events {
                         nbt.putString("id", entity.toString());
                         if (!world.isClient()) {
                             Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (entityx) -> {
-                                entityx.refreshPositionAndAngles(x, y, z, entityx.getYaw(), entityx.getPitch());
+                                entityx.refreshPositionAndAngles(x, y, z, entityx.yaw, entityx.pitch);
                                 return entityx;
                             });
                             if (initialize && entity2 instanceof MobEntity) ((MobEntity) entity2).initialize((ServerWorld) world, world.getLocalDifficulty(entity2.getBlockPos()), SpawnReason.COMMAND, null, null);
@@ -276,7 +279,7 @@ public class Events {
                 nbt.putString("id", entity);
                 if (!world.isClient()) {
                     Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (entityx) -> {
-                        entityx.refreshPositionAndAngles(x, y, z, entityx.getYaw(), entityx.getPitch());
+                        entityx.refreshPositionAndAngles(x, y, z, entityx.yaw, entityx.pitch);
                         return entityx;
                     });
                     if (initialize && entity2 instanceof MobEntity) ((MobEntity) entity2).initialize((ServerWorld) world, world.getLocalDifficulty(entity2.getBlockPos()), SpawnReason.COMMAND, null, null);
@@ -288,7 +291,7 @@ public class Events {
     }
 
     public static void playBlockEvent(BlockState state, BlockPos pos, World world, @Nullable Map<String, Object> dependencies, JsonObject event) {
-        Map<String, Object> deps = new HashMap<>(Map.of("blockstate", state, "x", pos.getX(), "y", pos.getY(), "z", pos.getZ(), "world", world));
+        Map<String, Object> deps = new HashMap<>(MiscUtils.mapOf("blockstate", state, "x", pos.getX(), "y", pos.getY(), "z", pos.getZ(), "world", world));
         if (dependencies != null) {
             for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
                 deps.put(entry.getKey(), entry.getValue());
@@ -298,7 +301,7 @@ public class Events {
     }
 
     public static ActionResult playBlockActionEvent(BlockState state, BlockPos pos, World world, @Nullable Map<String, Object> dependencies, JsonObject event) {
-        Map<String, Object> deps = new HashMap<>(Map.of("blockstate", state, "x", pos.getX(), "y", pos.getY(), "z", pos.getZ(), "world", world));
+        Map<String, Object> deps = new HashMap<>(MiscUtils.mapOf("blockstate", state, "x", pos.getX(), "y", pos.getY(), "z", pos.getZ(), "world", world));
         if (dependencies != null) {
             for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
                 deps.put(entry.getKey(), entry.getValue());
@@ -308,7 +311,7 @@ public class Events {
     }
 
     public static void playItemEvent(ItemStack stack, @Nullable Map<String, Object> dependencies, JsonObject event) {
-        Map<String, Object> deps = new HashMap<>(Map.of("itemstack", stack));
+        Map<String, Object> deps = new HashMap<>(MiscUtils.mapOf("itemstack", stack));
         if (dependencies != null) {
             for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
                 deps.put(entry.getKey(), entry.getValue());
@@ -318,7 +321,7 @@ public class Events {
     }
 
     public static ActionResult playItemActionEvent(ItemStack stack, @Nullable Map<String, Object> dependencies, JsonObject event) {
-        Map<String, Object> deps = new HashMap<>(Map.of("itemstack", stack));
+        Map<String, Object> deps = new HashMap<>(MiscUtils.mapOf("itemstack", stack));
         if (dependencies != null) {
             for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
                 deps.put(entry.getKey(), entry.getValue());
@@ -328,17 +331,27 @@ public class Events {
     }
 
     public static TypedActionResult<ItemStack> playItemTypedActionEvent(ItemStack stack, boolean swingHand, @Nullable Map<String, Object> dependencies, JsonObject event) {
-        Map<String, Object> deps = new HashMap<>(Map.of("itemstack", stack));
+        Map<String, Object> deps = new HashMap<>(MiscUtils.mapOf("itemstack", stack));
         if (dependencies != null) {
             for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
                 deps.put(entry.getKey(), entry.getValue());
             }
         }
-        return switch (playEvent(deps, event)) {
-            case SUCCESS -> TypedActionResult.success(stack, swingHand);
-            case CONSUME, CONSUME_PARTIAL -> TypedActionResult.consume(stack);
-            case FAIL -> TypedActionResult.fail(stack);
-            default -> TypedActionResult.pass(stack);
-        };
+        TypedActionResult<ItemStack> result;
+        switch (playEvent(deps, event)) {
+            case SUCCESS:
+                result = TypedActionResult.success(stack, swingHand);
+                break;
+            case CONSUME:
+                result = TypedActionResult.consume(stack);
+                break;
+            case FAIL:
+                result = TypedActionResult.fail(stack);
+                break;
+            default:
+                result = TypedActionResult.pass(stack);
+                break;
+        }
+        return result;
     }
 }

@@ -15,12 +15,10 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.recipe.Ingredient;
-import net.minecraft.tag.Tag;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Set;
 
 public class ItemGenerator {
     public static boolean add(JsonObject item) {
@@ -71,23 +69,42 @@ public class ItemGenerator {
             Ingredient repairIngredient;
             if (Registry.ITEM.containsId(new Identifier(repairIngredientId))) repairIngredient = Ingredient.ofItems(Registry.ITEM.get(new Identifier(repairIngredientId)));
             else repairIngredient = null;
-            ItemGroup itemGroup = switch (_itemGroup) {
-                case "building_blocks" -> ItemGroup.BUILDING_BLOCKS;
-                case "decorations" -> ItemGroup.DECORATIONS;
-                case "redstone" -> ItemGroup.REDSTONE;
-                case "transportation" -> ItemGroup.TRANSPORTATION;
-                case "food" -> ItemGroup.FOOD;
-                case "tools" -> ItemGroup.TOOLS;
-                case "combat" -> ItemGroup.COMBAT;
-                case "brewing" -> ItemGroup.BREWING;
-                default -> ItemGroup.MISC;
+            ItemGroup itemGroup;
+            switch (_itemGroup) {
+                case "building_blocks":
+                    itemGroup = ItemGroup.BUILDING_BLOCKS;
+                    break;
+                case "decorations":
+                    itemGroup = ItemGroup.DECORATIONS;
+                    break;
+                case "redstone":
+                    itemGroup = ItemGroup.REDSTONE;
+                    break;
+                case "transportation":
+                    itemGroup = ItemGroup.TRANSPORTATION;
+                    break;
+                case "food":
+                    itemGroup = ItemGroup.FOOD;
+                    break;
+                case "tools":
+                    itemGroup = ItemGroup.TOOLS;
+                    break;
+                case "combat":
+                    itemGroup = ItemGroup.COMBAT;
+                    break;
+                case "brewing":
+                    itemGroup = ItemGroup.BREWING;
+                    break;
+                default:
+                    itemGroup = ItemGroup.MISC;
+                    break;
             };
 
-            List<Block> blocks = new ArrayList<>();
+            ImmutableSet.Builder<Block> blocks = new ImmutableSet.Builder<>();
             for (Identifier block : Registry.BLOCK.getIds()) {
                 blocks.add(Registry.BLOCK.get(block));
             }
-            Tag<Block> allBlocks = Tag.of(ImmutableSet.copyOf(blocks));
+            Set<Block> allBlocks = blocks.build();
 
             Item ITEM;
             FabricItemSettings settings = new FabricItemSettings().group(itemGroup).maxCount(maxStackSize);

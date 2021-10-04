@@ -9,7 +9,6 @@ import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.NumberConverter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
@@ -25,7 +24,6 @@ public class BlockMakerGUI extends LightweightGuiDescription {
 
     public BlockMakerGUI() {
         WPlainPanel root = new WPlainPanel();
-        root.setInsets(Insets.ROOT_PANEL);
         WScrollPanel scroll = new WScrollPanel(root);
         scroll.setHost(this);
         setRootPanel(scroll);

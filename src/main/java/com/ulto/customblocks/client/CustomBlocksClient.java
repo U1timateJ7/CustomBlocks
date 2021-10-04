@@ -29,7 +29,7 @@ public class CustomBlocksClient implements ClientModInitializer {
         ));
         ClientTickEvents.END_CLIENT_TICK.register(client -> {
             while (openBlockMenu.wasPressed()) {
-                MinecraftClient.getInstance().setScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
+                MinecraftClient.getInstance().openScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
             }
         });
         //Resource Injection

@@ -24,8 +24,8 @@ public abstract class TitleScreenMixin extends Screen {
     private void addCustomButtons(CallbackInfo ci) {
         int jj = this.height / 4 + 48;
         ButtonWidget.TooltipSupplier tooltipSupplier = (buttonWidget, matrixStack, i, j) -> this.renderOrderedTooltip(matrixStack, this.client.textRenderer.wrapLines(new TranslatableText("title.maker.tooltip"), Math.max(this.width / 2 - 43, 170)), i, j);
-        this.addDrawableChild(new TexturedButtonWidget(this.width / 2 + 104, jj + 72 + 12 - 36, 20, 20, 0, 0, 20, new Identifier("custom_blocks", "textures/gui/block_menu_icon.png"), 20, 40, (buttonWidget) -> {
-            this.client.setScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
+        this.addButton(new TexturedButtonWidget(this.width / 2 + 104, jj + 72 + 12 - 36, 20, 20, 0, 0, 20, new Identifier("custom_blocks", "textures/gui/block_menu_icon.png"), 20, 40, (buttonWidget) -> {
+            this.client.openScreen(new MakerSelectorScreen(new MakerSelectorGUI()));
         }, tooltipSupplier, new TranslatableText("narrator.button.blockmenu")));
     }
 }

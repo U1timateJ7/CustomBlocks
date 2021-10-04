@@ -9,7 +9,6 @@ import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.NumberConverter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
@@ -27,10 +26,8 @@ public class ItemMakerGUI extends LightweightGuiDescription {
 
     public ItemMakerGUI() {
         WPlainPanel root = new WPlainPanel();
-        root.setInsets(Insets.ROOT_PANEL);
         WScrollPanel scroll = new WScrollPanel(root);
         WPlainPanel foodRoot = new WPlainPanel();
-        foodRoot.setInsets(Insets.ROOT_PANEL);
         WScrollPanel foodScroll = new WScrollPanel(foodRoot);
         WTabPanel main = new WTabPanel();
         main.add(new WTabPanel.Tab.Builder(scroll).title(new TranslatableText("gui.item_maker.tab.item")).icon(new ItemIcon(Items.DIAMOND)).build());
