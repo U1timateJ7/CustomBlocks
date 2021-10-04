@@ -1,12 +1,18 @@
 package com.ulto.customblocks.util;
 
 import com.google.gson.*;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ulto.customblocks.CustomBlocksMod;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.effect.StatusEffects;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
+import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.potion.PotionUtil;
+import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.util.shape.VoxelShape;
@@ -291,11 +297,63 @@ public class JsonUtils {
                         item.setNbt(jsonObjectListToNbtCompound(nbtObjects));
                     }
                 }
+                if (itemIn.has("nbt")) {
+                    if (itemIn.get("nbt").isJsonArray()) item.setNbt(jsonObjectListToNbtCompound(jsonArrayToJsonObjectList(itemIn.getAsJsonArray("nbt"))));
+                    else if (itemIn.get("nbt").isJsonPrimitive()) {
+                        try {
+                            item.setNbt(StringNbtReader.parse(itemIn.get("nbt").getAsString()));
+                        } catch (CommandSyntaxException e) {
+                            CustomBlocksMod.LOGGER.error("Failed to set Nbt of an item stack!");
+                        }
+                    }
+                }
                 return item;
             }
         } else {
             return ItemStack.EMPTY;
         }
+    }
+
+    public static StatusEffectInstance statusEffectInstanceFromJsonObject(JsonObject jsonObject) {
+        if (jsonObject.has("id")) {
+            Identifier effectId = new Identifier(jsonObject.get("id").getAsString());
+            int amplifier = 0;
+            if (jsonObject.has("amplifier")) amplifier = jsonObject.get("amplifier").getAsInt();
+            if (amplifier > 128) amplifier = 128;
+            if (amplifier < 1) amplifier = 1;
+            int duration = 3600;
+            if (jsonObject.has("duration")) duration = (int) (jsonObject.get("duration").getAsFloat() * 20);
+            if (duration > 20000000) duration = 20000000;
+            if (duration < 0) duration = 0;
+            return new StatusEffectInstance(Registry.STATUS_EFFECT.get(effectId), duration, amplifier);
+        }
+        return new StatusEffectInstance(StatusEffects.INSTANT_HEALTH, 0, 0);
+    }
+
+    public static NbtCompound jsonElementToNbtCompound(JsonElement element) {
+        if (element.isJsonArray()) return jsonObjectListToNbtCompound(jsonArrayToJsonObjectList(element.getAsJsonArray()));
+        else if (element.isJsonPrimitive()) {
+            try {
+                return StringNbtReader.parse(element.getAsString());
+            } catch (CommandSyntaxException e) {
+                CustomBlocksMod.LOGGER.error("Failed to set Nbt of an item stack!");
+            }
+        }
+        return new NbtCompound();
+    }
+
+    public static Text jsonElementToText(JsonElement element) {
+        if (element.isJsonPrimitive()) return new LiteralText(element.getAsString());
+        else if (element.isJsonArray() || element.isJsonObject()) return Text.Serializer.fromJson(element);
+        return new LiteralText("");
+    }
+
+    public static List<Text> jsonArrayToTextList(JsonArray jsonArray) {
+        List<Text> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            list.add(jsonElementToText(jsonArray.get(i)));
+        }
+        return list;
     }
 
     public static JsonObject copy(JsonObject objectIn) {

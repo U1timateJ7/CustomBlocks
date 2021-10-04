@@ -1,6 +1,7 @@
 package com.ulto.customblocks;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.block.*;
 import com.ulto.customblocks.util.JsonUtils;
@@ -18,9 +19,12 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.BlockView;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BlockGenerator {
 	public static boolean add(JsonObject block) {
@@ -84,9 +88,10 @@ public class BlockGenerator {
 			else maxStackSize = 64;
 			if (maxStackSize > 64) maxStackSize = 64;
 			if (maxStackSize < 1) maxStackSize = 1;
-			boolean fireproof;
+			boolean fireproof = false;
 			if (block.has("fireproof")) fireproof = block.get("fireproof").getAsBoolean();
-			else fireproof = false;
+			boolean hasRandomTick = false;
+			if (block.has("randomly_ticks")) hasRandomTick = block.get("randomly_ticks").getAsBoolean();
 			String _itemGroup;
 			if (block.has("item_group")) _itemGroup = block.get("item_group").getAsString();
 			else {
@@ -296,6 +301,7 @@ public class BlockGenerator {
 				if (requiresTool) blockSettings.requiresTool();
 			}
 			if (!renderType.equals("opaque")) blockSettings.nonOpaque().blockVision(BlockGenerator::never).suffocates(BlockGenerator::never).solidBlock(BlockGenerator::never);
+			if (hasRandomTick) blockSettings.ticksRandomly();
 			switch (base) {
 				case "slab":
 					if (hasGravity) {
@@ -483,6 +489,89 @@ public class BlockGenerator {
 				Registry.register(Registry.ITEM, new Identifier(namespace, id), BLOCK_ITEM);
 			}
 			return true;
+		}
+		return false;
+	}
+
+	public static boolean addBedrock(JsonObject block, @Nullable File file) {
+		if (block.has("format_version") && block.has("minecraft:block")) {
+			JsonObject minecraftBlock = block.getAsJsonObject("minecraft:block");
+			if (minecraftBlock.has("description")) {
+				JsonObject javaBlock = new JsonObject();
+				JsonObject components = new JsonObject();
+				if (minecraftBlock.has("components")) components = minecraftBlock.getAsJsonObject("components");
+				Identifier identifier = new Identifier(minecraftBlock.getAsJsonObject("description").get("identifier").getAsString());
+				String namespace = identifier.getNamespace();
+				String id = identifier.getPath();
+				StringBuilder displayName = new StringBuilder();
+				String[] words = id.split("_");
+				for (int i = 0; i < words.length; i++) {
+					String word = words[i];
+					String firstChar = String.valueOf(word.charAt(0)).toUpperCase(Locale.ROOT);
+					StringBuilder otherChars = new StringBuilder();
+					for (int j = 1; j < word.length(); j++) {
+						otherChars.append(word.charAt(j));
+					}
+					if (i > 0) displayName.append(" ");
+					displayName.append(firstChar).append(otherChars);
+				}
+				if (minecraftBlock.getAsJsonObject("description").has("display_name")) displayName = new StringBuilder(minecraftBlock.getAsJsonObject("description").get("display_name").getAsString());
+				String itemGroup = "building_blocks";
+				if (minecraftBlock.getAsJsonObject("description").has("creative_tab")) itemGroup = minecraftBlock.getAsJsonObject("description").get("creative_tab").getAsString();
+				String mapColor = "default";
+				if (components.has("minecraft:map_color")) mapColor = components.get("minecraft:map_color").getAsString();
+				JsonElement drops = new JsonArray();
+				JsonObject drop = new JsonObject();
+				drop.addProperty("id", identifier.toString());
+				drops.getAsJsonArray().add(drop);
+				if (components.has("minecraft:loot")) drops = components.get("minecraft:loot");
+				int luminance = 0;
+				if (components.has("minecraft:block_light_emission")) luminance = components.get("minecraft:block_light_emission").getAsInt();
+				if (luminance > 15) luminance = 15;
+				if (luminance < 0) luminance = 0;
+				float hardness = 1f;
+				if (components.has("minecraft:destroy_time")) hardness = components.get("minecraft:destroy_time").getAsFloat();
+				float resistance = 10f;
+				if (components.has("minecraft:explosion_resistance")) resistance = components.get("minecraft:explosion_resistance").getAsFloat();
+				float slipperiness = 10f;
+				if (components.has("minecraft:friction")) slipperiness = components.get("minecraft:friction").getAsFloat();
+				String material = "stone";
+				if (components.has("custom_blocks:material")) material = components.get("custom_blocks:material").getAsString();
+				String base = "block";
+				if (components.has("custom_blocks:base")) base = components.get("custom_blocks:base").getAsString();
+				String textureNamespace = namespace;
+				JsonObject textures = new JsonObject();
+				if (components.has("custom_blocks:textures")) {
+					if (components.getAsJsonObject("custom_blocks:textures").has("namespace"))
+						textureNamespace = components.getAsJsonObject("custom_blocks:textures").get("namespace").getAsString();
+					textures = components.getAsJsonObject("custom_blocks:textures");
+					textures.remove("namespace");
+				} else {
+					textures.addProperty("all", id);
+				}
+
+				javaBlock.addProperty("namespace", namespace);
+				javaBlock.addProperty("id", id);
+				javaBlock.addProperty("display_name", displayName.toString());
+				javaBlock.addProperty("item_group", itemGroup);
+				javaBlock.addProperty("map_color", mapColor);
+				javaBlock.add("drops", drops);
+				javaBlock.addProperty("luminance", luminance);
+				javaBlock.addProperty("texture_namespace", textureNamespace);
+				javaBlock.addProperty("hardness", hardness);
+				javaBlock.addProperty("resistance", resistance);
+				javaBlock.addProperty("slipperiness", slipperiness);
+				javaBlock.addProperty("material", material);
+				javaBlock.addProperty("base", base);
+				javaBlock.add("textures", textures);
+				if (add(javaBlock) && CustomResourceCreator.generateBlockResources(javaBlock) && LanguageHandler.addBlockKey(javaBlock)) {
+					CustomBlocksMod.LOGGER.info("Generated Block " + javaBlock.get("namespace").getAsString() + ":" + javaBlock.get("id").getAsString());
+				} else {
+					if (file != null) CustomBlocksMod.LOGGER.error("Failed to generate block " + file.getName() + "!");
+					else CustomBlocksMod.LOGGER.error("Failed to generate block!");
+				}
+				return true;
+			}
 		}
 		return false;
 	}

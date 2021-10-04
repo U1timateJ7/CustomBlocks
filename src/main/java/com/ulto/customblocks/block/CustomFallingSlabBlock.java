@@ -25,6 +25,7 @@ public class CustomFallingSlabBlock extends CustomSlabBlock {
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
+        super.onBlockAdded(state, world, pos, oldState, notify);
         world.getBlockTickScheduler().schedule(pos, this, this.getFallDelay());
     }
 
@@ -34,6 +35,7 @@ public class CustomFallingSlabBlock extends CustomSlabBlock {
     }
 
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
+        super.scheduledTick(state, world, pos, random);
         if (canFallThrough(world.getBlockState(pos.down())) && pos.getY() >= 0) {
             FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(world, (double)pos.getX() + 0.5D, (double)pos.getY(), (double)pos.getZ() + 0.5D, world.getBlockState(pos));
             this.configureFallingBlockEntity(fallingBlockEntity);
