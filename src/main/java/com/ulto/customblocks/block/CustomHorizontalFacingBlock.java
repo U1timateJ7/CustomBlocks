@@ -3,7 +3,10 @@ package com.ulto.customblocks.block;
 import com.google.gson.JsonObject;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
-import net.minecraft.world.level.block.*;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.HorizontalDirectionalBlock;
+import net.minecraft.world.level.block.Mirror;
+import net.minecraft.world.level.block.Rotation;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
@@ -14,8 +17,8 @@ public class CustomHorizontalFacingBlock extends CustomBlock {
     public static final DirectionProperty FACING = HorizontalDirectionalBlock.FACING;
     private static boolean fromPlayerFacing;
 
-    public CustomHorizontalFacingBlock(Properties settings, boolean _fromPlayerFacing, List<JsonObject> drops, List<JsonObject> shape, JsonObject block) {
-        super(settings, drops, shape, block);
+    public CustomHorizontalFacingBlock(Properties settings, boolean _fromPlayerFacing, List<JsonObject> shape, JsonObject block) {
+        super(settings, shape, block);
         fromPlayerFacing = _fromPlayerFacing;
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }

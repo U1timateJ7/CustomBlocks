@@ -1,12 +1,16 @@
 package com.ulto.customblocks;
 
 import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.block.*;
 import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.BlockItem;
+import net.minecraft.world.item.CreativeModeTab;
+import net.minecraft.world.item.DoubleHighBlockItem;
+import net.minecraft.world.item.Item;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
@@ -15,9 +19,12 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.jetbrains.annotations.Nullable;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 public class BlockGenerator {
 	public static boolean add(JsonObject block) {
@@ -54,16 +61,6 @@ public class BlockGenerator {
 			boolean requiresTool;
 			if (block.has("requires_tool")) requiresTool = block.get("requires_tool").getAsBoolean();
 			else requiresTool = true;
-			List<JsonObject> drops = new ArrayList<>();
-			if (block.has("drops")) {
-				JsonArray stacks = block.getAsJsonArray("drops");
-				drops = JsonUtils.jsonArrayToJsonObjectList(stacks);
-			}
-			else {
-				JsonObject thisBlock = new JsonObject();
-				thisBlock.addProperty("id", namespace + ":" + id);
-				drops.add(thisBlock);
-			}
 			int luminance;
 			if (block.has("luminance")) luminance = block.get("luminance").getAsInt();
 			else luminance = 0;
@@ -85,9 +82,10 @@ public class BlockGenerator {
 			else maxStackSize = 64;
 			if (maxStackSize > 64) maxStackSize = 64;
 			if (maxStackSize < 1) maxStackSize = 1;
-			boolean fireproof;
+			boolean fireproof = false;
 			if (block.has("fireproof")) fireproof = block.get("fireproof").getAsBoolean();
-			else fireproof = false;
+			boolean hasRandomTick = false;
+			if (block.has("randomly_ticks")) hasRandomTick = block.get("randomly_ticks").getAsBoolean();
 			String _itemGroup;
 			if (block.has("item_group")) _itemGroup = block.get("item_group").getAsString();
 			else {
@@ -287,64 +285,68 @@ public class BlockGenerator {
 			BlockBehaviour.Properties blockSettings = BlockBehaviour.Properties.of(material, mapColor).strength((float) _hardness, (float) _resistance).friction((float) _slipperiness).sound(sounds).lightLevel((state) -> finalLuminance).speedFactor(speedFactor).jumpFactor(jumpFactor);
 			if (requiresTool) blockSettings.requiresCorrectToolForDrops();
 			if (!renderType.equals("opaque")) blockSettings.noOcclusion().isViewBlocking(BlockGenerator::never).isSuffocating(BlockGenerator::never).isRedstoneConductor(BlockGenerator::never);
+			if (hasRandomTick) blockSettings.randomTicks();
 			ResourceLocation registryName = new ResourceLocation(namespace, id);
 			switch (base) {
 				case "slab":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingSlabBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomSlabBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingSlabBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomSlabBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "stairs":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingStairBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomStairBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingStairBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomStairBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "wall":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingWallBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomWallBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingWallBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomWallBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "fence":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingFenceBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomFenceBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingFenceBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomFenceBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "fence_gate":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingFenceGateBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomFenceGateBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingFenceGateBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomFenceGateBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "pane":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingPaneBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomPaneBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingPaneBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomPaneBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "pressure_plate":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingPressurePlateBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomPressurePlateBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingPressurePlateBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomPressurePlateBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "button":
-					NEW_BLOCK = register(new CustomButtonBlock(blockSettings, drops, block).setRegistryName(registryName));
+					NEW_BLOCK = register(new CustomButtonBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "trapdoor":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingTrapdoorBlock(blockSettings, drops, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomTrapdoorBlock(blockSettings, drops, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(new CustomFallingTrapdoorBlock(blockSettings, block).setRegistryName(registryName));
+					else NEW_BLOCK = register(new CustomTrapdoorBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				case "door":
-					NEW_BLOCK = register(new CustomDoorBlock(blockSettings, drops, block).setRegistryName(registryName));
+					NEW_BLOCK = register(new CustomDoorBlock(blockSettings, block).setRegistryName(registryName));
+					break;
+				case "lever":
+					NEW_BLOCK = register(new CustomLeverBlock(blockSettings, block).setRegistryName(registryName));
 					break;
 				default:
 					if (hasGravity) {
 						switch (rotationType) {
-							case "axis" -> NEW_BLOCK = register(new CustomFallingPillarBlock(blockSettings, drops, shape, block).setRegistryName(registryName));
-							case "y_axis_player" -> NEW_BLOCK = register(new CustomFallingHorizontalFacingBlock(blockSettings, true, drops, shape, block).setRegistryName(registryName));
-							case "y_axis" -> NEW_BLOCK = register(new CustomFallingHorizontalFacingBlock(blockSettings, false, drops, shape, block).setRegistryName(registryName));
-							case "all_player" -> NEW_BLOCK = register(new CustomFallingFacingBlock(blockSettings, true, drops, shape, block).setRegistryName(registryName));
-							case "all" -> NEW_BLOCK = register(new CustomFallingFacingBlock(blockSettings, false, drops, shape, block).setRegistryName(registryName));
-							default -> NEW_BLOCK = register(new CustomFallingBlock(blockSettings, drops, shape, block).setRegistryName(registryName));
+							case "axis" -> NEW_BLOCK = register(new CustomFallingPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "y_axis_player" -> NEW_BLOCK = register(new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "y_axis" -> NEW_BLOCK = register(new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							case "all_player" -> NEW_BLOCK = register(new CustomFallingFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "all" -> NEW_BLOCK = register(new CustomFallingFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							default -> NEW_BLOCK = register(new CustomFallingBlock(blockSettings, shape, block).setRegistryName(registryName));
 						}
 					} else {
 						switch (rotationType) {
-							case "axis" -> NEW_BLOCK = register(new CustomPillarBlock(blockSettings, drops, shape, block).setRegistryName(registryName));
-							case "y_axis_player" -> NEW_BLOCK = register(new CustomHorizontalFacingBlock(blockSettings, true, drops, shape, block).setRegistryName(registryName));
-							case "y_axis" -> NEW_BLOCK = register(new CustomHorizontalFacingBlock(blockSettings, false, drops, shape, block).setRegistryName(registryName));
-							case "all_player" -> NEW_BLOCK = register(new CustomFacingBlock(blockSettings, true, drops, shape, block).setRegistryName(registryName));
-							case "all" -> NEW_BLOCK = register(new CustomFacingBlock(blockSettings, false, drops, shape, block).setRegistryName(registryName));
-							default -> NEW_BLOCK = register(new CustomBlock(blockSettings, drops, shape, block).setRegistryName(registryName));
+							case "axis" -> NEW_BLOCK = register(new CustomPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "y_axis_player" -> NEW_BLOCK = register(new CustomHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "y_axis" -> NEW_BLOCK = register(new CustomHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							case "all_player" -> NEW_BLOCK = register(new CustomFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "all" -> NEW_BLOCK = register(new CustomFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							default -> NEW_BLOCK = register(new CustomBlock(blockSettings, shape, block).setRegistryName(registryName));
 						}
 					}
 					break;
@@ -370,6 +372,89 @@ public class BlockGenerator {
 	private static Item register(Item item) {
 		ForgeRegistries.ITEMS.register(item);
 		return item;
+	}
+
+	public static boolean addBedrock(JsonObject block, @Nullable File file) {
+		if (block.has("format_version") && block.has("minecraft:block")) {
+			JsonObject minecraftBlock = block.getAsJsonObject("minecraft:block");
+			if (minecraftBlock.has("description")) {
+				JsonObject javaBlock = new JsonObject();
+				JsonObject components = new JsonObject();
+				if (minecraftBlock.has("components")) components = minecraftBlock.getAsJsonObject("components");
+				ResourceLocation identifier = new ResourceLocation(minecraftBlock.getAsJsonObject("description").get("identifier").getAsString());
+				String namespace = identifier.getNamespace();
+				String id = identifier.getPath();
+				StringBuilder displayName = new StringBuilder();
+				String[] words = id.split("_");
+				for (int i = 0; i < words.length; i++) {
+					String word = words[i];
+					String firstChar = String.valueOf(word.charAt(0)).toUpperCase(Locale.ROOT);
+					StringBuilder otherChars = new StringBuilder();
+					for (int j = 1; j < word.length(); j++) {
+						otherChars.append(word.charAt(j));
+					}
+					if (i > 0) displayName.append(" ");
+					displayName.append(firstChar).append(otherChars);
+				}
+				if (minecraftBlock.getAsJsonObject("description").has("display_name")) displayName = new StringBuilder(minecraftBlock.getAsJsonObject("description").get("display_name").getAsString());
+				String itemGroup = "building_blocks";
+				if (minecraftBlock.getAsJsonObject("description").has("creative_tab")) itemGroup = minecraftBlock.getAsJsonObject("description").get("creative_tab").getAsString();
+				String mapColor = "default";
+				if (components.has("minecraft:map_color")) mapColor = components.get("minecraft:map_color").getAsString();
+				JsonElement drops = new JsonArray();
+				JsonObject drop = new JsonObject();
+				drop.addProperty("id", identifier.toString());
+				drops.getAsJsonArray().add(drop);
+				if (components.has("minecraft:loot")) drops = components.get("minecraft:loot");
+				int luminance = 0;
+				if (components.has("minecraft:block_light_emission")) luminance = components.get("minecraft:block_light_emission").getAsInt();
+				if (luminance > 15) luminance = 15;
+				if (luminance < 0) luminance = 0;
+				float hardness = 1f;
+				if (components.has("minecraft:destroy_time")) hardness = components.get("minecraft:destroy_time").getAsFloat();
+				float resistance = 10f;
+				if (components.has("minecraft:explosion_resistance")) resistance = components.get("minecraft:explosion_resistance").getAsFloat();
+				float slipperiness = 10f;
+				if (components.has("minecraft:friction")) slipperiness = components.get("minecraft:friction").getAsFloat();
+				String material = "stone";
+				if (components.has("custom_blocks:material")) material = components.get("custom_blocks:material").getAsString();
+				String base = "block";
+				if (components.has("custom_blocks:base")) base = components.get("custom_blocks:base").getAsString();
+				String textureNamespace = namespace;
+				JsonObject textures = new JsonObject();
+				if (components.has("custom_blocks:textures")) {
+					if (components.getAsJsonObject("custom_blocks:textures").has("namespace"))
+						textureNamespace = components.getAsJsonObject("custom_blocks:textures").get("namespace").getAsString();
+					textures = components.getAsJsonObject("custom_blocks:textures");
+					textures.remove("namespace");
+				} else {
+					textures.addProperty("all", id);
+				}
+
+				javaBlock.addProperty("namespace", namespace);
+				javaBlock.addProperty("id", id);
+				javaBlock.addProperty("display_name", displayName.toString());
+				javaBlock.addProperty("item_group", itemGroup);
+				javaBlock.addProperty("map_color", mapColor);
+				javaBlock.add("drops", drops);
+				javaBlock.addProperty("luminance", luminance);
+				javaBlock.addProperty("texture_namespace", textureNamespace);
+				javaBlock.addProperty("hardness", hardness);
+				javaBlock.addProperty("resistance", resistance);
+				javaBlock.addProperty("slipperiness", slipperiness);
+				javaBlock.addProperty("material", material);
+				javaBlock.addProperty("base", base);
+				javaBlock.add("textures", textures);
+				if (add(javaBlock) && CustomResourceCreator.generateBlockResources(javaBlock) && LanguageHandler.addBlockKey(javaBlock)) {
+					CustomBlocksMod.LOGGER.info("Generated Block " + javaBlock.get("namespace").getAsString() + ":" + javaBlock.get("id").getAsString());
+				} else {
+					if (file != null) CustomBlocksMod.LOGGER.error("Failed to generate block " + file.getName() + "!");
+					else CustomBlocksMod.LOGGER.error("Failed to generate block!");
+				}
+				return true;
+			}
+		}
+		return false;
 	}
 
 	private static boolean never(BlockState blockState, BlockGetter blockGetter, BlockPos blockPos) {

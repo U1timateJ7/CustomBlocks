@@ -157,7 +157,7 @@ public class PackGenerator {
                 if (BlockGenerator.add(strippedLog) && CustomResourceCreator.generateBlockResources(strippedLog) && LanguageHandler.addBlockKey(strippedLog)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + strippedLog.get("namespace").getAsString() + ":" + strippedLog.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate log!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate stripped log!");
                 }
                 ResourceLocation strippedLogId = new ResourceLocation(strippedLog.get("namespace").getAsString(), strippedLog.get("id").getAsString());
                 JsonObject strippedWoodBlock = new JsonObject();
@@ -192,7 +192,7 @@ public class PackGenerator {
                 if (BlockGenerator.add(strippedWoodBlock) && CustomResourceCreator.generateBlockResources(strippedWoodBlock) && LanguageHandler.addBlockKey(strippedWoodBlock)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + strippedWoodBlock.get("namespace").getAsString() + ":" + strippedWoodBlock.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate wood!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate stripped wood!");
                 }
                 ResourceLocation strippedWoodBlockId = new ResourceLocation(strippedWoodBlock.get("namespace").getAsString(), strippedWoodBlock.get("id").getAsString());
                 JsonObject slab = new JsonObject();
@@ -362,7 +362,7 @@ public class PackGenerator {
                 if (BlockGenerator.add(pressurePlate) && CustomResourceCreator.generateBlockResources(pressurePlate) && LanguageHandler.addBlockKey(pressurePlate)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + pressurePlate.get("namespace").getAsString() + ":" + pressurePlate.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate fence gate!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate pressure plate!");
                 }
                 ResourceLocation pressurePlateId = new ResourceLocation(pressurePlate.get("namespace").getAsString(), pressurePlate.get("id").getAsString());
                 JsonObject button = new JsonObject();
@@ -392,7 +392,7 @@ public class PackGenerator {
                 if (BlockGenerator.add(button) && CustomResourceCreator.generateBlockResources(button) && LanguageHandler.addBlockKey(button)) {
                     CustomBlocksMod.LOGGER.info("Generated Block " + button.get("namespace").getAsString() + ":" + button.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate fence gate!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate button!");
                 }
                 ResourceLocation buttonId = new ResourceLocation(button.get("namespace").getAsString(), button.get("id").getAsString());
                 JsonObject door = new JsonObject();
@@ -580,10 +580,16 @@ public class PackGenerator {
         if (pack.has("blocks")) {
             List<JsonObject> blocks = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("blocks"));
             for (JsonObject block : blocks) {
-                if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
-                    CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
+                if (block.has("format_version")) {
+                    if (!BlockGenerator.addBedrock(block, null)) {
+                        CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                    }
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                    if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
+                        CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
+                    } else {
+                        CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                    }
                 }
             }
         }

@@ -56,6 +56,7 @@ public class TagGenerator {
                     JsonElement value = tagToWrite.getAsJsonArray("values").get(i);
                     if (values.contains(value)) values.remove(value);
                 }
+                values.addAll(tagToWrite.getAsJsonArray("values"));
                 for (int i = 0; i < values.size(); i++) {
                     JsonElement value = values.get(i);
                     switch (type) {
@@ -67,13 +68,16 @@ public class TagGenerator {
                             if (!ForgeRegistries.FLUIDS.getKeys().contains(new ResourceLocation(value.getAsString())))
                                 values.remove(value);
                             break;
+                        case "entity_types":
+                            if (!ForgeRegistries.ENTITIES.getKeys().contains(new ResourceLocation(value.getAsString())))
+                                values.remove(value);
+                            break;
                         default:
                             if (!ForgeRegistries.BLOCKS.getKeys().contains(new ResourceLocation(value.getAsString())))
                                 values.remove(value);
                             break;
                     }
                 }
-                values.addAll(tagToWrite.getAsJsonArray("values"));
                 tagToWrite.remove("values");
                 tagToWrite.add("values", values);
                 try {

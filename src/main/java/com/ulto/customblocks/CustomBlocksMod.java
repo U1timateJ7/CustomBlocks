@@ -1,35 +1,20 @@
 package com.ulto.customblocks;
 
 import com.ulto.customblocks.resource.CustomResourcePackFinder;
-import net.minecraft.client.Minecraft;
-import net.minecraft.server.level.ServerPlayer;
-import net.minecraft.world.item.Item;
-import net.minecraft.world.level.block.Block;
-import net.minecraftforge.api.distmarker.Dist;
-import net.minecraftforge.client.event.RecipesUpdatedEvent;
+import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.event.OnDatapackSyncEvent;
-import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
+import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
-import net.minecraftforge.fml.loading.FMLEnvironment;
-import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.fmllegacy.network.NetworkHooks;
-import net.minecraftforge.fmlserverevents.FMLServerAboutToStartEvent;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-import net.minecraftforge.fmlserverevents.FMLServerStartingEvent;
+import net.minecraftforge.fml.loading.FMLPaths;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
-// The value here should match an entry in the META-INF/mods.toml file
 @Mod("custom_blocks")
 public class CustomBlocksMod {
     // Directly reference a log4j logger.
@@ -50,14 +35,11 @@ public class CustomBlocksMod {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::enqueueIMC);
         // Register the processIMC method for modloading
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::processIMC);
+        // Register the addPackFinder method for modloading
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(this::addPackFinder);
 
         // Register ourselves for server and other game events we are interested in
         MinecraftForge.EVENT_BUS.register(this);
-
-        if (FMLEnvironment.dist == Dist.CLIENT) {
-
-            Minecraft.getInstance().getResourcePackRepository().addPackFinder(CustomResourcePackFinder.RESOUCE);
-        }
     }
 
     private void construct(final FMLConstructModEvent event) {
@@ -91,9 +73,8 @@ public class CustomBlocksMod {
     private void processIMC(final InterModProcessEvent event) {
     }
 
-    @SubscribeEvent
-    public void onServerStart (final FMLServerAboutToStartEvent event) {
-        event.getServer().getPackRepository().addPackFinder(CustomResourcePackFinder.DATA);
-        LOGGER.info("Added custom data pack finder to server pack repository.");
+    private void addPackFinder(final AddPackFindersEvent event) {
+        if (event.getPackType() == PackType.SERVER_DATA) event.addRepositorySource(CustomResourcePackFinder.DATA);
+        else event.addRepositorySource(CustomResourcePackFinder.RESOUCE);
     }
 }

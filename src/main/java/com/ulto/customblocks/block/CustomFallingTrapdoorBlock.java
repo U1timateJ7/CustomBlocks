@@ -15,15 +15,15 @@ import net.minecraft.world.level.block.Fallable;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 
-import java.util.List;
 import java.util.Random;
 
 public class CustomFallingTrapdoorBlock extends CustomTrapdoorBlock implements Fallable {
-    public CustomFallingTrapdoorBlock(Properties settings, List<JsonObject> drops, JsonObject block) {
-        super(settings, drops, block);
+    public CustomFallingTrapdoorBlock(Properties settings, JsonObject block) {
+        super(settings, block);
     }
 
     public void onPlace(BlockState p_53233_, Level p_53234_, BlockPos p_53235_, BlockState p_53236_, boolean p_53237_) {
+        super.onPlace(p_53233_, p_53234_, p_53235_, p_53236_, p_53237_);
         p_53234_.getBlockTicks().scheduleTick(p_53235_, this, this.getDelayAfterPlace());
     }
 
@@ -33,6 +33,7 @@ public class CustomFallingTrapdoorBlock extends CustomTrapdoorBlock implements F
     }
 
     public void tick(BlockState p_53216_, ServerLevel p_53217_, BlockPos p_53218_, Random p_53219_) {
+        super.tick(p_53216_, p_53217_, p_53218_, p_53219_);
         if (isFree(p_53217_.getBlockState(p_53218_.below())) && p_53218_.getY() >= 0) {
             FallingBlockEntity fallingblockentity = new FallingBlockEntity(p_53217_, (double)p_53218_.getX() + 0.5D, (double)p_53218_.getY(), (double)p_53218_.getZ() + 0.5D, p_53217_.getBlockState(p_53218_));
             this.falling(fallingblockentity);

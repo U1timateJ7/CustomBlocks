@@ -17,8 +17,8 @@ public class CustomFacingBlock extends CustomBlock {
     public static final DirectionProperty FACING = DirectionalBlock.FACING;
     private static boolean fromPlayerFacing;
 
-    public CustomFacingBlock(Properties settings, boolean _fromPlayerFacing, List<JsonObject> drops, List<JsonObject> shape, JsonObject block) {
-        super(settings, drops, shape, block);
+    public CustomFacingBlock(Properties settings, boolean _fromPlayerFacing, List<JsonObject> shape, JsonObject block) {
+        super(settings, shape, block);
         fromPlayerFacing = _fromPlayerFacing;
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }

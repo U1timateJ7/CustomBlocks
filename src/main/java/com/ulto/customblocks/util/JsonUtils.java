@@ -1,16 +1,23 @@
 package com.ulto.customblocks.util;
 
 import com.google.gson.*;
+import com.mojang.brigadier.exceptions.CommandSyntaxException;
+import com.ulto.customblocks.CustomBlocksMod;
 import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
+import net.minecraft.nbt.TagParser;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
+import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.registries.ForgeRegistries;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -298,11 +305,74 @@ public class JsonUtils {
         }
     }
 
+    public static MobEffectInstance mobEffectInstanceFromJsonObject(JsonObject jsonObject) {
+        if (jsonObject.has("id")) {
+            ResourceLocation effectId = new ResourceLocation(jsonObject.get("id").getAsString());
+            int amplifier = 0;
+            if (jsonObject.has("amplifier")) amplifier = jsonObject.get("amplifier").getAsInt();
+            if (amplifier > 128) amplifier = 128;
+            if (amplifier < 1) amplifier = 1;
+            int duration = 3600;
+            if (jsonObject.has("duration")) duration = (int) (jsonObject.get("duration").getAsFloat() * 20);
+            if (duration > 20000000) duration = 20000000;
+            if (duration < 0) duration = 0;
+            return new MobEffectInstance(ForgeRegistries.MOB_EFFECTS.getValue(effectId), duration, amplifier);
+        }
+        return new MobEffectInstance(MobEffects.HEAL, 0, 0);
+    }
+
+    public static CompoundTag jsonElementToCompoundTag(JsonElement element) {
+        if (element.isJsonArray()) return jsonObjectListToCompoundTag(jsonArrayToJsonObjectList(element.getAsJsonArray()));
+        else if (element.isJsonPrimitive()) {
+            try {
+                return TagParser.parseTag(element.getAsString());
+            } catch (CommandSyntaxException e) {
+                CustomBlocksMod.LOGGER.error("Failed to set Nbt of an item stack!");
+            }
+        }
+        return new CompoundTag();
+    }
+
+    public static Component jsonElementToComponent(JsonElement element) {
+        if (element.isJsonPrimitive()) return new TextComponent(element.getAsString());
+        else if (element.isJsonArray() || element.isJsonObject()) return Component.Serializer.fromJson(element);
+        return new TextComponent("");
+    }
+
+    public static List<Component> jsonArrayToComponentList(JsonArray jsonArray) {
+        List<Component> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            list.add(jsonElementToComponent(jsonArray.get(i)));
+        }
+        return list;
+    }
+
     public static JsonObject copy(JsonObject objectIn) {
         JsonObject newObject = new JsonObject();
         for (Map.Entry<String, JsonElement> entry : objectIn.entrySet()) {
             newObject.add(entry.getKey(), entry.getValue());
         }
         return newObject;
+    }
+
+    public static boolean isJsonObjectValid(String json) {
+        return isJsonValid(json, JsonObject.class);
+    }
+
+    public static boolean isJsonArrayValid(String json) {
+        return isJsonValid(json, JsonArray.class);
+    }
+
+    public static boolean isJsonPrimitiveValid(String json) {
+        return isJsonValid(json, JsonPrimitive.class);
+    }
+
+    public static boolean isJsonValid(String json, Class<? extends JsonElement> clazz) {
+        try {
+            new Gson().fromJson(json, clazz);
+        } catch (JsonSyntaxException ex) {
+            return false;
+        }
+        return true;
     }
 }

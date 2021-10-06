@@ -1,12 +1,12 @@
 package com.ulto.customblocks;
 
 import com.google.common.collect.ImmutableSet;
+import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.item.CustomFoodItem;
 import com.ulto.customblocks.item.CustomItem;
 import com.ulto.customblocks.item.CustomMiningToolItem;
 import com.ulto.customblocks.item.CustomSwordItem;
-import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.Tag;
 import net.minecraft.world.food.FoodProperties;
@@ -26,8 +26,8 @@ public class ItemGenerator {
         if (item.has("namespace") && item.has("id")) {
             String namespace = item.get("namespace").getAsString();
             String id = item.get("id").getAsString();
-            List<String> tooltip = new ArrayList<>();
-            if (item.has("tooltips")) tooltip = JsonUtils.jsonArrayToStringList(item.getAsJsonArray("tooltips"));
+            JsonArray tooltip = new JsonArray();
+            if (item.has("tooltips")) tooltip = item.getAsJsonArray("tooltips");
             int maxStackSize;
             if (item.has("max_stack_size")) maxStackSize = item.get("max_stack_size").getAsInt();
             else maxStackSize = 64;
@@ -151,12 +151,12 @@ public class ItemGenerator {
 
                 if (!item.has("item_group")) itemGroup = CreativeModeTab.TAB_FOOD;
                 settings.tab(itemGroup);
-                ITEM = new CustomFoodItem(settings.food(foodBuilder.build()), eatingSpeed, tooltip);
+                ITEM = new CustomFoodItem(settings.food(foodBuilder.build()), eatingSpeed, tooltip, item);
             } else {
                 if (!toolType.equals("none")) {
-                    ITEM = toolType.equals("sword") ? new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip) : new CustomMiningToolItem(-1, attackSpeed - 4, tool, allBlocks, settings, tooltip);
+                    ITEM = toolType.equals("sword") ? new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip, item) : new CustomMiningToolItem(-1, attackSpeed - 4, tool, allBlocks, settings, tooltip, item);
                 } else {
-                    ITEM = new CustomItem(settings, tooltip);
+                    ITEM = new CustomItem(settings, tooltip, item);
                 }
             }
             ITEM.setRegistryName(new ResourceLocation(namespace, id));
