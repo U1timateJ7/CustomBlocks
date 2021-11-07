@@ -317,7 +317,7 @@ public class JsonUtils {
     public static StatusEffectInstance statusEffectInstanceFromJsonObject(JsonObject jsonObject) {
         if (jsonObject.has("id")) {
             Identifier effectId = new Identifier(jsonObject.get("id").getAsString());
-            int amplifier = 0;
+            int amplifier = 1;
             if (jsonObject.has("amplifier")) amplifier = jsonObject.get("amplifier").getAsInt();
             if (amplifier > 128) amplifier = 128;
             if (amplifier < 1) amplifier = 1;
