@@ -21,7 +21,7 @@ public class PackTypeSelectorGUI extends LightweightGuiDescription {
         WLabel topLabel = new WLabel(new TranslatableText("gui.pack_type_selector.label.top"));
         root.add(topLabel, 108, 10);
         WButton blockItemPackButton = new WButton(new TranslatableText("gui.pack_type_selector.button.block_item_pack"));
-        blockItemPackButton.setOnClick(() -> MinecraftClient.getInstance().setScreen(new PackMakerScreen(new BlockItemPackMakerGUI())));
+        blockItemPackButton.setOnClick(() -> MinecraftClient.getInstance().openScreen(new PackMakerScreen(new BlockItemPackMakerGUI())));
         root.add(blockItemPackButton, 110, 50, 90, 20);
         WButton openFolderButton = new WButton(new TranslatableText("gui.maker.button.open_folder"));
         openFolderButton.setOnClick(() -> Util.getOperatingSystem().open(GenerateCustomElements.packsFolder));

@@ -541,7 +541,7 @@ public class BlockGenerator {
 			}
 
 			Block NEW_BLOCK;
-			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).mapColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
+			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).materialColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
 			if (!breakTool.equals("none")) {
 				blockSettings.breakByTool(efficientTool, harvestLevel);
 				if (requiresTool) blockSettings.requiresTool();
@@ -659,69 +659,81 @@ public class BlockGenerator {
 				default:
 					if (hasGravity) {
 						switch (rotationType) {
-							case "axis":
+							case "axis": {
 								CustomFallingPillarBlock BLOCK = new CustomFallingPillarBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
-							case "y_axis_player":
+							}
+							break;
+							case "y_axis_player": {
 								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
-							case "y_axis":
+							}
+							break;
+							case "y_axis": {
 								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
-							case "all_player":
+							}
+							break;
+							case "all_player": {
 								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
-							case "all":
+							}
+							break;
+							case "all": {
 								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
-							default:
+							}
+							break;
+							default: {
 								FallingBlock BLOCK = new CustomFallingBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
-								break;
+							}
+							break;
 						}
 					} else {
 						switch (rotationType) {
-							case "axis" -> {
+							case "axis": {
 								PillarBlock BLOCK = new CustomPillarBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
-							case "y_axis_player" -> {
+							break;
+							case "y_axis_player": {
 								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
-							case "y_axis" -> {
+							break;
+							case "y_axis": {
 								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
-							case "all_player" -> {
+							break;
+							case "all_player": {
 								Block BLOCK = new CustomFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
-							case "all" -> {
+							break;
+							case "all": {
 								Block BLOCK = new CustomFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
-							default -> {
+							break;
+							default: {
 								Block BLOCK = new CustomBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
+							break;
 						}
 					}
 					break;
