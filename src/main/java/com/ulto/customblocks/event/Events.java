@@ -1,18 +1,22 @@
 package com.ulto.customblocks.event;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.commands.CommandFunction;
 import net.minecraft.commands.CommandSource;
 import net.minecraft.commands.CommandSourceStack;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.Registry;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.tags.Tag;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -22,12 +26,16 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.GameRules;
 import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.Vec2;
 import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
 
 @SuppressWarnings("SimplifiableConditionalExpression")
@@ -55,6 +63,35 @@ public class Events {
                                 }
                             }
                         });
+                    }
+                }
+                case "get_entity_attribute" -> {
+                    if (dependencies.containsKey("entity") && condition.has("attribute") && condition.has("value")) {
+                        Entity entity = (Entity) dependencies.get("entity");
+                        double value = condition.get("value").getAsDouble();
+                        if (entity instanceof LivingEntity livingEntity) {
+                            returnValue[0] = value == livingEntity.getAttributes().getBaseValue(ForgeRegistries.ATTRIBUTES.getValue(new ResourceLocation(condition.get("attribute").getAsString())));
+                        }
+                    }
+                }
+                case "get_block_at_pos" -> {
+                    if (dependencies.containsKey("world") && condition.has("block")) {
+                        Level world = (Level) dependencies.get("world");
+                        Block block = ForgeRegistries.BLOCKS.getValue(new ResourceLocation(condition.get("block").getAsString()));
+                        int x = dependencies.containsKey("x") ? (int) dependencies.get("x") : condition.has("x") ? condition.get("x").getAsInt() : 0;
+                        int y = dependencies.containsKey("y") ? (int) dependencies.get("y") : condition.has("y") ? condition.get("y").getAsInt() : 0;
+                        int z = dependencies.containsKey("z") ? (int) dependencies.get("z") : condition.has("z") ? condition.get("z").getAsInt() : 0;
+                        returnValue[0] = world.getBlockState(new BlockPos(x, y, z)).is(block);
+                    }
+                }
+                case "is_block_at_pos_in_tag" -> {
+                    if (dependencies.containsKey("world") && condition.has("tag")) {
+                        Level world = (Level) dependencies.get("world");
+                        Tag<Block> tag = world.getTagManager().getOrEmpty(Registry.BLOCK_REGISTRY).getTag(new ResourceLocation(condition.get("tag").getAsString()));
+                        int x = dependencies.containsKey("x") ? (int) dependencies.get("x") : condition.has("x") ? condition.get("x").getAsInt() : 0;
+                        int y = dependencies.containsKey("y") ? (int) dependencies.get("y") : condition.has("y") ? condition.get("y").getAsInt() : 0;
+                        int z = dependencies.containsKey("z") ? (int) dependencies.get("z") : condition.has("z") ? condition.get("z").getAsInt() : 0;
+                        returnValue[0] = world.getBlockState(new BlockPos(x, y, z)).is(tag);
                     }
                 }
             }
@@ -207,6 +244,28 @@ public class Events {
                 double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                 if(!world.isClientSide()) (world).playSound(null, x, y, z, ForgeRegistries.SOUND_EVENTS.getValue(sound), SoundSource.MASTER, volume, pitch);
+                result = InteractionResult.SUCCESS;
+            }
+        }
+        if (event.has("block_event")) {
+            if (event.get("block_event").isJsonObject()) {
+                JsonObject eventObject = event.getAsJsonObject("block_event");
+                String blockId = eventObject.get("custom_block").getAsString();
+                String eventName = eventObject.get("event_name").getAsString();
+                for (File value : GenerateCustomElements.blocks) {
+                    try {
+                        BufferedReader blockReader = new BufferedReader(new FileReader(value));
+                        StringBuilder json = new StringBuilder();
+                        String line;
+                        while ((line = blockReader.readLine()) != null) {
+                            json.append(line);
+                        }
+                        JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
+                        if (blockId.equals(new ResourceLocation(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
+                        blockReader.close();
+                    } catch (Exception e) {
+                    }
+                }
                 result = InteractionResult.SUCCESS;
             }
         }
