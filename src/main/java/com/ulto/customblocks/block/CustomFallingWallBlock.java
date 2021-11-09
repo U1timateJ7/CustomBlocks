@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LandingBlock;
 import net.minecraft.block.Material;
 import net.minecraft.entity.FallingBlockEntity;
 import net.minecraft.particle.BlockStateParticleEffect;
@@ -18,18 +19,18 @@ import net.minecraft.world.WorldAccess;
 
 import java.util.Random;
 
-public class CustomFallingWallBlock extends CustomWallBlock {
+public class CustomFallingWallBlock extends CustomWallBlock implements LandingBlock {
     public CustomFallingWallBlock(Settings settings, JsonObject block) {
         super(settings, block);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
         super.onBlockAdded(state, world, pos, oldState, notify);
-        world.getBlockTickScheduler().schedule(pos, this, this.getFallDelay());
+        world.createAndScheduleBlockTick(pos, this, this.getFallDelay());
     }
 
     public BlockState getStateForNeighborUpdate(BlockState state, Direction direction, BlockState newState, WorldAccess world, BlockPos pos, BlockPos posFrom) {
-        world.getBlockTickScheduler().schedule(pos, this, this.getFallDelay());
+        world.createAndScheduleBlockTick(pos, this, this.getFallDelay());
         return super.getStateForNeighborUpdate(state, direction, newState, world, pos, posFrom);
     }
 

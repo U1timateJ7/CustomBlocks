@@ -7,8 +7,8 @@ plugins {
 sourceCompatibility = JavaVersion.VERSION_16
 targetCompatibility = JavaVersion.VERSION_16
 
-archivesBaseName = project.archives_base_name
-version = project.mod_version
+archivesBaseName = project.archives_base_name+"-"+mod_version
+version = project.minecraft_version
 group = project.maven_group
 
 minecraft {
@@ -30,15 +30,15 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	//Libraries
-	modImplementation include("io.github.cottonmc:LibGui:4.1.5+1.17.1")
+	modImplementation include("io.github.cottonmc:LibGui:4.2.1+1.17.1")
 }
 
 processResources {
 	setDuplicatesStrategy(DuplicatesStrategy.INHERIT)
-	inputs.property "version", project.version
+	inputs.property "version", mod_version
 
 	filesMatching("fabric.mod.json") {
-		expand "version": project.version
+		expand "version": mod_version
 	}
 }
 
@@ -58,6 +58,7 @@ task sourcesJar(type: Jar, dependsOn: classes) {
 }
 
 jar {
+	name
 	from "LICENSE"
 }
 
@@ -69,7 +70,7 @@ publishing {
 			artifact(jar) {
 				builtBy remapJar
 			}
-			artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}-${project.minecraft_version}.jar"){
+			artifact("${project.buildDir.absolutePath}/libs/${archivesBaseName}-${project.version}.jar"){
 				builtBy remapJar
 			}
 			artifact(sourcesJar) {

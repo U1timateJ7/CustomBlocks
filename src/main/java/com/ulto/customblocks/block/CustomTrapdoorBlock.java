@@ -98,7 +98,7 @@ public class CustomTrapdoorBlock extends TrapdoorBlock {
         super.onBlockAdded(state, world, pos, oldState, notify);
         int tickRate = 10;
         if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
-        if (!randomTicks) world.getBlockTickScheduler().schedule(pos, this, tickRate);
+        if (!randomTicks) world.createAndScheduleBlockTick(pos, this, tickRate);
         if (block.has("on_added")) Events.playBlockEvent(state, pos, world, Map.of("oldstate", oldState, "notify", notify), block.getAsJsonObject("on_added"));
     }
 
@@ -107,7 +107,7 @@ public class CustomTrapdoorBlock extends TrapdoorBlock {
         super.scheduledTick(state, world, pos, random);
         int tickRate = 10;
         if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
-        if (!randomTicks) world.getBlockTickScheduler().schedule(pos, this, tickRate);
+        if (!randomTicks) world.createAndScheduleBlockTick(pos, this, tickRate);
         if (block.has("on_tick")) Events.playBlockEvent(state, pos, world, Map.of("random", random), block.getAsJsonObject("on_tick"));
     }
 
