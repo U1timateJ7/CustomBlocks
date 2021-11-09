@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "custom_blocks",
-  "version": "1.0.1",
+  "version": "${version}",
   "name": "Custom Blocks",
   "description": "Custom Blocks without Coding!",
   "authors": [
