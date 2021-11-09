@@ -1,10 +1,13 @@
 package com.ulto.customblocks.event;
 
+import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.GenerateCustomElements;
 import com.ulto.customblocks.util.JsonUtils;
 import com.ulto.customblocks.util.MiscUtils;
+import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -20,6 +23,7 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.function.CommandFunction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.tag.Tag;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -33,6 +37,9 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.util.*;
 
 @SuppressWarnings("SimplifiableConditionalExpression")
@@ -62,6 +69,36 @@ public class Events {
                                 }
                             }
                         });
+                    }
+                    break;
+                case "get_entity_attribute":
+                    if (dependencies.containsKey("entity") && condition.has("attribute") && condition.has("value")) {
+                        Entity entity = (Entity) dependencies.get("entity");
+                        double value = condition.get("value").getAsDouble();
+                        if (entity instanceof LivingEntity) {
+                            LivingEntity livingEntity = (LivingEntity) entity;
+                            returnValue[0] = value == livingEntity.getAttributes().getBaseValue(Registry.ATTRIBUTE.get(new Identifier(condition.get("attribute").getAsString())));
+                        }
+                    }
+                    break;
+                case "get_block_at_pos":
+                    if (dependencies.containsKey("world") && condition.has("block")) {
+                        World world = (World) dependencies.get("world");
+                        Block block = Registry.BLOCK.get(new Identifier(condition.get("block").getAsString()));
+                        int x = dependencies.containsKey("x") ? (int) dependencies.get("x") : condition.has("x") ? condition.get("x").getAsInt() : 0;
+                        int y = dependencies.containsKey("y") ? (int) dependencies.get("y") : condition.has("y") ? condition.get("y").getAsInt() : 0;
+                        int z = dependencies.containsKey("z") ? (int) dependencies.get("z") : condition.has("z") ? condition.get("z").getAsInt() : 0;
+                        returnValue[0] = world.getBlockState(new BlockPos(x, y, z)).isOf(block);
+                    }
+                    break;
+                case "is_block_at_pos_in_tag":
+                    if (dependencies.containsKey("world") && condition.has("tag")) {
+                        World world = (World) dependencies.get("world");
+                        Tag<Block> tag = world.getTagManager().getBlocks().getTag(new Identifier(condition.get("tag").getAsString()));
+                        int x = dependencies.containsKey("x") ? (int) dependencies.get("x") : condition.has("x") ? condition.get("x").getAsInt() : 0;
+                        int y = dependencies.containsKey("y") ? (int) dependencies.get("y") : condition.has("y") ? condition.get("y").getAsInt() : 0;
+                        int z = dependencies.containsKey("z") ? (int) dependencies.get("z") : condition.has("z") ? condition.get("z").getAsInt() : 0;
+                        returnValue[0] = world.getBlockState(new BlockPos(x, y, z)).isIn(tag);
                     }
                     break;
             }
@@ -214,6 +251,28 @@ public class Events {
                 double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                 if(!world.isClient()) (world).playSound(null, x, y, z, Registry.SOUND_EVENT.get(sound), SoundCategory.MASTER, volume, pitch);
+                result = ActionResult.SUCCESS;
+            }
+        }
+        if (event.has("block_event")) {
+            if (event.get("block_event").isJsonObject()) {
+                JsonObject eventObject = event.getAsJsonObject("block_event");
+                String blockId = eventObject.get("custom_block").getAsString();
+                String eventName = eventObject.get("event_name").getAsString();
+                for (File value : GenerateCustomElements.blocks) {
+                    try {
+                        BufferedReader blockReader = new BufferedReader(new FileReader(value));
+                        StringBuilder json = new StringBuilder();
+                        String line;
+                        while ((line = blockReader.readLine()) != null) {
+                            json.append(line);
+                        }
+                        JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
+                        if (blockId.equals(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
+                        blockReader.close();
+                    } catch (Exception e) {
+                    }
+                }
                 result = ActionResult.SUCCESS;
             }
         }
