@@ -410,6 +410,13 @@ public class BlockGenerator {
 					NEW_BLOCK = BLOCK;
 				}
 				break;
+				case "lichen":
+				{
+					CustomLichenBlock BLOCK = new CustomLichenBlock(blockSettings, block);
+					Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
+					NEW_BLOCK = BLOCK;
+				}
+				break;
 				default:
 					if (hasGravity) {
 						switch (rotationType) {
