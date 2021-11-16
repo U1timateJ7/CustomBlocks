@@ -2263,8 +2263,11 @@ public class CustomResourceCreator {
 		return false;
 	}
 
-	public static boolean generateItemResources(JsonObject _item, String _namespace, String id, String texture) {
+	public static boolean generateItemResources(JsonObject _item) {
 		if (_item.has("namespace") && _item.has("id") && _item.has("texture")) {
+			String _namespace = _item.get("namespace").getAsString();
+			String id = _item.get("id").getAsString();
+			String texture = _item.get("texture").getAsString();
 			String resourceNamespace;
 			if (_item.has("texture_namespace")) resourceNamespace = _item.get("texture_namespace").getAsString();
 			else resourceNamespace = _namespace;
@@ -2384,7 +2387,7 @@ public class CustomResourceCreator {
 			item.addProperty("id", id + "_bucket");
 			item.addProperty("texture_namespace", resourceNamespace);
 			item.addProperty("texture", _fluid.get("bucket_texture").getAsString());
-			generateItemResources(item, _namespace, id + "_bucket", _fluid.get("bucket_texture").getAsString());
+			generateItemResources(item);
 			return true;
 		}
 		return false;
