@@ -596,7 +596,7 @@ public class PackGenerator {
         if (pack.has("items")) {
             List<JsonObject> items = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("items"));
             for (JsonObject item : items) {
-                if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item, item.get("namespace").getAsString(), item.get("id").getAsString(), item.get("texture").getAsString()) && LanguageHandler.addItemKey(item)) {
+                if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item) && LanguageHandler.addItemKey(item)) {
                     CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
                 } else {
                     CustomBlocksMod.LOGGER.error("Failed to generate item!");

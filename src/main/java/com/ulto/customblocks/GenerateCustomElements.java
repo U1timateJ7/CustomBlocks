@@ -92,7 +92,7 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject item = new Gson().fromJson(json.toString(), JsonObject.class);
-				if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item, item.get("namespace").getAsString(), item.get("id").getAsString(), item.get("texture").getAsString()) && LanguageHandler.addItemKey(item)) {
+				if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item) && LanguageHandler.addItemKey(item)) {
 					CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
 				} else {
 					CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + "!");

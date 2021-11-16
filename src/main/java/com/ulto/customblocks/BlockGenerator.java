@@ -329,6 +329,9 @@ public class BlockGenerator {
 				case "lever":
 					NEW_BLOCK = register(new CustomLeverBlock(blockSettings, block).setRegistryName(registryName));
 					break;
+				case "lichen":
+					NEW_BLOCK = register(new CustomLichenBlock(blockSettings, block).setRegistryName(registryName));
+					break;
 				default:
 					if (hasGravity) {
 						switch (rotationType) {

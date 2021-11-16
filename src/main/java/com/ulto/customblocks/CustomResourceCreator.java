@@ -30,7 +30,7 @@ public class CustomResourceCreator {
 			mcmetabw.write("""
 					{
 					  "pack": {
-					    "pack_format": 7,
+					    "pack_format": 8,
 					    "description": "In the config folder."
 					  }
 					}""");
@@ -836,6 +836,34 @@ public class CustomResourceCreator {
 									"        }\n" +
 									"    ]\n" +
 									"}\n");
+							blockBottomHingebw.close();
+							blockBottomHingewriter.close();
+						} catch (IOException fileNotFoundException) {
+							fileNotFoundException.printStackTrace();
+						}
+						break;
+					case "lichen":
+						try {
+							FileWriter blockModelwriter = new FileWriter(blockModel);
+							BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
+							blockModelbw.write("{\n" +
+									"    \"ambientocclusion\": false,\n" +
+									"    \"textures\": {\n" +
+									"        \"particle\": \"" + resourceNamespace + ":block/" + texture + "\",\n" +
+									"        \"glow_lichen\": \"" + resourceNamespace + ":block/" + texture + "\"\n" +
+									"    },\n" +
+									"    \"elements\": [\n" +
+									"        {   \"from\": [ 0, 0, 0.1 ],\n" +
+									"            \"to\": [ 16, 16, 0.1 ],\n" +
+									"            \"faces\": {\n" +
+									"                \"north\": { \"uv\": [ 16, 0, 0, 16 ], \"texture\": \"#glow_lichen\" },\n" +
+									"                \"south\": { \"uv\": [ 0, 0, 16, 16 ], \"texture\": \"#glow_lichen\" }\n" +
+									"            }\n" +
+									"        }\n" +
+									"    ]\n" +
+									"}\n");
+							blockModelbw.close();
+							blockModelwriter.close();
 						} catch (IOException fileNotFoundException) {
 							fileNotFoundException.printStackTrace();
 						}
@@ -2058,6 +2086,165 @@ public class CustomResourceCreator {
 							fileNotFoundException.printStackTrace();
 						}
 						break;
+					try {
+						FileWriter blockStatewriter = new FileWriter(blockState);
+						BufferedWriter blockStatebw = new BufferedWriter(blockStatewriter);
+						blockStatebw.write("{\n" +
+								"  \"multipart\": [\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"true\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"x\": 270,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"false\",\n" +
+								"        \"north\": \"false\",\n" +
+								"        \"west\": \"false\",\n" +
+								"        \"south\": \"false\",\n" +
+								"        \"east\": \"false\",\n" +
+								"        \"down\": \"false\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"x\": 270,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"north\": \"true\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"false\",\n" +
+								"        \"north\": \"false\",\n" +
+								"        \"west\": \"false\",\n" +
+								"        \"south\": \"false\",\n" +
+								"        \"east\": \"false\",\n" +
+								"        \"down\": \"false\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"west\": \"true\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"y\": 270,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"false\",\n" +
+								"        \"north\": \"false\",\n" +
+								"        \"west\": \"false\",\n" +
+								"        \"south\": \"false\",\n" +
+								"        \"east\": \"false\",\n" +
+								"        \"down\": \"false\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"y\": 270,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"south\": \"true\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"y\": 180,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"false\",\n" +
+								"        \"north\": \"false\",\n" +
+								"        \"west\": \"false\",\n" +
+								"        \"south\": \"false\",\n" +
+								"        \"east\": \"false\",\n" +
+								"        \"down\": \"false\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"y\": 180,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"east\": \"true\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"y\": 90,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"false\",\n" +
+								"        \"north\": \"false\",\n" +
+								"        \"west\": \"false\",\n" +
+								"        \"south\": \"false\",\n" +
+								"        \"east\": \"false\",\n" +
+								"        \"down\": \"false\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"y\": 90,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"down\": \"true\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"x\": 90,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    },\n" +
+								"    {\n" +
+								"      \"when\": {\n" +
+								"        \"up\": \"false\",\n" +
+								"        \"north\": \"false\",\n" +
+								"        \"west\": \"false\",\n" +
+								"        \"south\": \"false\",\n" +
+								"        \"east\": \"false\",\n" +
+								"        \"down\": \"false\"\n" +
+								"      },\n" +
+								"      \"apply\": {\n" +
+								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+								"        \"x\": 90,\n" +
+								"        \"uvlock\": true\n" +
+								"      }\n" +
+								"    }\n" +
+								"  ]\n" +
+								"}");
+						blockStatebw.close();
+						blockStatewriter.close();
+					} catch (IOException fileNotFoundException) {
+						fileNotFoundException.printStackTrace();
+					}
+					break;
 					default:
 						switch (rotationType) {
 							case "axis":
@@ -2264,8 +2451,11 @@ public class CustomResourceCreator {
 		return false;
 	}
 
-	public static boolean generateItemResources(JsonObject _item, String _namespace, String id, String texture) {
+	public static boolean generateItemResources(JsonObject _item) {
 		if (_item.has("namespace") && _item.has("id") && _item.has("texture")) {
+			String _namespace = _item.get("namespace").getAsString();
+			String id = _item.get("id").getAsString();
+			String texture = _item.get("texture").getAsString();
 			String resourceNamespace;
 			if (_item.has("texture_namespace")) resourceNamespace = _item.get("texture_namespace").getAsString();
 			else resourceNamespace = _namespace;
@@ -2386,7 +2576,7 @@ public class CustomResourceCreator {
 			item.addProperty("id", id + "_bucket");
 			item.addProperty("texture_namespace", resourceNamespace);
 			item.addProperty("texture", _fluid.get("bucket_texture").getAsString());
-			generateItemResources(item, _namespace, id + "_bucket", _fluid.get("bucket_texture").getAsString());
+			generateItemResources(item);
 			return true;
 		}
 		return false;
