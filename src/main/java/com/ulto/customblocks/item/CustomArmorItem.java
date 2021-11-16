@@ -4,18 +4,14 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.event.Events;
 import com.ulto.customblocks.util.JsonUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.ItemEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.MiningToolItem;
-import net.minecraft.item.ToolMaterial;
-import net.minecraft.tag.Tag;
+import net.minecraft.item.*;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Hand;
@@ -27,12 +23,12 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 import java.util.Map;
 
-public class CustomMiningToolItem extends MiningToolItem {
+public class CustomArmorItem extends ArmorItem {
     JsonArray tooltips;
     JsonObject item;
 
-    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Tag<Block> effectiveBlocks, Settings settings, JsonArray tooltip, JsonObject itemIn) {
-        super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
+    public CustomArmorItem(Settings settings, ArmorMaterial material, EquipmentSlot slot, JsonArray tooltip, JsonObject itemIn) {
+        super(material, slot, settings);
         tooltips = tooltip;
         item = itemIn;
     }
