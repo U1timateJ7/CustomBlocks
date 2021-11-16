@@ -925,6 +925,7 @@ public class CustomResourceCreator {
 						}
 						break;
 					case "pane":
+					case "lichen":
 						try {
 							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
@@ -2086,165 +2087,166 @@ public class CustomResourceCreator {
 							fileNotFoundException.printStackTrace();
 						}
 						break;
-					try {
-						FileWriter blockStatewriter = new FileWriter(blockState);
-						BufferedWriter blockStatebw = new BufferedWriter(blockStatewriter);
-						blockStatebw.write("{\n" +
-								"  \"multipart\": [\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"true\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"x\": 270,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"false\",\n" +
-								"        \"north\": \"false\",\n" +
-								"        \"west\": \"false\",\n" +
-								"        \"south\": \"false\",\n" +
-								"        \"east\": \"false\",\n" +
-								"        \"down\": \"false\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"x\": 270,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"north\": \"true\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"false\",\n" +
-								"        \"north\": \"false\",\n" +
-								"        \"west\": \"false\",\n" +
-								"        \"south\": \"false\",\n" +
-								"        \"east\": \"false\",\n" +
-								"        \"down\": \"false\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"west\": \"true\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"y\": 270,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"false\",\n" +
-								"        \"north\": \"false\",\n" +
-								"        \"west\": \"false\",\n" +
-								"        \"south\": \"false\",\n" +
-								"        \"east\": \"false\",\n" +
-								"        \"down\": \"false\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"y\": 270,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"south\": \"true\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"y\": 180,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"false\",\n" +
-								"        \"north\": \"false\",\n" +
-								"        \"west\": \"false\",\n" +
-								"        \"south\": \"false\",\n" +
-								"        \"east\": \"false\",\n" +
-								"        \"down\": \"false\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"y\": 180,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"east\": \"true\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"y\": 90,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"false\",\n" +
-								"        \"north\": \"false\",\n" +
-								"        \"west\": \"false\",\n" +
-								"        \"south\": \"false\",\n" +
-								"        \"east\": \"false\",\n" +
-								"        \"down\": \"false\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"y\": 90,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"down\": \"true\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"x\": 90,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    },\n" +
-								"    {\n" +
-								"      \"when\": {\n" +
-								"        \"up\": \"false\",\n" +
-								"        \"north\": \"false\",\n" +
-								"        \"west\": \"false\",\n" +
-								"        \"south\": \"false\",\n" +
-								"        \"east\": \"false\",\n" +
-								"        \"down\": \"false\"\n" +
-								"      },\n" +
-								"      \"apply\": {\n" +
-								"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
-								"        \"x\": 90,\n" +
-								"        \"uvlock\": true\n" +
-								"      }\n" +
-								"    }\n" +
-								"  ]\n" +
-								"}");
-						blockStatebw.close();
-						blockStatewriter.close();
-					} catch (IOException fileNotFoundException) {
-						fileNotFoundException.printStackTrace();
-					}
-					break;
+					case "lichen":
+						try {
+							FileWriter blockStatewriter = new FileWriter(blockState);
+							BufferedWriter blockStatebw = new BufferedWriter(blockStatewriter);
+							blockStatebw.write("{\n" +
+									"  \"multipart\": [\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"true\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"x\": 270,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"false\",\n" +
+									"        \"north\": \"false\",\n" +
+									"        \"west\": \"false\",\n" +
+									"        \"south\": \"false\",\n" +
+									"        \"east\": \"false\",\n" +
+									"        \"down\": \"false\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"x\": 270,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"north\": \"true\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"false\",\n" +
+									"        \"north\": \"false\",\n" +
+									"        \"west\": \"false\",\n" +
+									"        \"south\": \"false\",\n" +
+									"        \"east\": \"false\",\n" +
+									"        \"down\": \"false\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"west\": \"true\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"y\": 270,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"false\",\n" +
+									"        \"north\": \"false\",\n" +
+									"        \"west\": \"false\",\n" +
+									"        \"south\": \"false\",\n" +
+									"        \"east\": \"false\",\n" +
+									"        \"down\": \"false\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"y\": 270,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"south\": \"true\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"y\": 180,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"false\",\n" +
+									"        \"north\": \"false\",\n" +
+									"        \"west\": \"false\",\n" +
+									"        \"south\": \"false\",\n" +
+									"        \"east\": \"false\",\n" +
+									"        \"down\": \"false\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"y\": 180,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"east\": \"true\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"y\": 90,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"false\",\n" +
+									"        \"north\": \"false\",\n" +
+									"        \"west\": \"false\",\n" +
+									"        \"south\": \"false\",\n" +
+									"        \"east\": \"false\",\n" +
+									"        \"down\": \"false\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"y\": 90,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"down\": \"true\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"x\": 90,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    },\n" +
+									"    {\n" +
+									"      \"when\": {\n" +
+									"        \"up\": \"false\",\n" +
+									"        \"north\": \"false\",\n" +
+									"        \"west\": \"false\",\n" +
+									"        \"south\": \"false\",\n" +
+									"        \"east\": \"false\",\n" +
+									"        \"down\": \"false\"\n" +
+									"      },\n" +
+									"      \"apply\": {\n" +
+									"        \"model\": \"" + _namespace + ":block/" + id + "\",\n" +
+									"        \"x\": 90,\n" +
+									"        \"uvlock\": true\n" +
+									"      }\n" +
+									"    }\n" +
+									"  ]\n" +
+									"}");
+							blockStatebw.close();
+							blockStatewriter.close();
+						} catch (IOException fileNotFoundException) {
+							fileNotFoundException.printStackTrace();
+						}
+						break;
 					default:
 						switch (rotationType) {
 							case "axis":
