@@ -1,25 +1,20 @@
 package com.ulto.customblocks;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.item.CustomFoodItem;
-import com.ulto.customblocks.item.CustomItem;
-import com.ulto.customblocks.item.CustomMiningToolItem;
-import com.ulto.customblocks.item.CustomSwordItem;
+import com.ulto.customblocks.item.*;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.tags.Tag;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.food.FoodProperties;
+import net.minecraft.world.item.ArmorMaterial;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.Tier;
 import net.minecraft.world.item.crafting.Ingredient;
-import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.ComposterBlock;
 import net.minecraftforge.registries.ForgeRegistries;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ItemGenerator {
     public static boolean add(JsonObject item) {
@@ -64,9 +59,27 @@ public class ItemGenerator {
             String repairIngredientId;
             if (item.has("repair_ingredient")) repairIngredientId = item.get("repair_ingredient").getAsString();
             else repairIngredientId = "none";
-            String toolType;
-            if (item.has("tool_type")) toolType = item.get("tool_type").getAsString();
-            else toolType = "none";
+            String type;
+            if (item.has("type")) type = item.get("type").getAsString();
+            else type = "none";
+            int protection;
+            if (item.has("protection")) protection = item.get("protection").getAsInt();
+            else protection = 0;
+            SoundEvent equipSound;
+            if (item.has("equip_sound")) equipSound = ForgeRegistries.SOUND_EVENTS.getValue(new ResourceLocation(item.get("equip_sound").getAsString()));
+            else equipSound = SoundEvents.ARMOR_EQUIP_GENERIC;
+            String armorName;
+            if (item.has("armor_name")) armorName = item.get("armor_name").getAsString();
+            else armorName = "iron";
+            float toughness;
+            if (item.has("efficiency")) toughness = item.get("efficiency").getAsFloat();
+            else toughness = 0f;
+            float knockbackResistance;
+            if (item.has("knockback_resistance")) knockbackResistance = item.get("knockback_resistance").getAsFloat() / 10;
+            else knockbackResistance = 0f;
+            EquipmentSlot equipmentSlot;
+            if (item.has("equipment_slot")) equipmentSlot = EquipmentSlot.byName(item.get("equipment_slot").getAsString());
+            else equipmentSlot = EquipmentSlot.HEAD;
             Ingredient repairIngredient;
             if (ForgeRegistries.ITEMS.containsKey(new ResourceLocation(repairIngredientId))) repairIngredient = Ingredient.of(ForgeRegistries.ITEMS.getValue(new ResourceLocation(repairIngredientId)));
             else repairIngredient = null;
@@ -81,13 +94,6 @@ public class ItemGenerator {
                 case "brewing" -> CreativeModeTab.TAB_BREWING;
                 default -> CreativeModeTab.TAB_BUILDING_BLOCKS;
             };
-
-            List<Block> blocks = new ArrayList<>();
-            for (ResourceLocation block : ForgeRegistries.BLOCKS.getKeys()) {
-                blocks.add(ForgeRegistries.BLOCKS.getValue(block));
-            }
-            Tag<Block> allBlocks = Tag.fromSet(ImmutableSet.copyOf(blocks));
-
             Item ITEM;
             Item.Properties settings = new Item.Properties().tab(itemGroup).stacksTo(maxStackSize);
             Tier tool = new Tier() {
@@ -119,6 +125,47 @@ public class ItemGenerator {
                 @Override
                 public Ingredient getRepairIngredient() {
                     return repairIngredient;
+                }
+            };
+            ArmorMaterial armor = new ArmorMaterial() {
+                @Override
+                public int getDurabilityForSlot(EquipmentSlot slot) {
+                    return durability;
+                }
+
+                @Override
+                public int getDefenseForSlot(EquipmentSlot slot) {
+                    return protection;
+                }
+
+                @Override
+                public int getEnchantmentValue() {
+                    return enchantability;
+                }
+
+                @Override
+                public SoundEvent getEquipSound() {
+                    return equipSound;
+                }
+
+                @Override
+                public Ingredient getRepairIngredient() {
+                    return repairIngredient;
+                }
+
+                @Override
+                public String getName() {
+                    return armorName;
+                }
+
+                @Override
+                public float getToughness() {
+                    return toughness;
+                }
+
+                @Override
+                public float getKnockbackResistance() {
+                    return knockbackResistance;
                 }
             };
             if (fireproof) settings = settings.fireResistant();
@@ -153,10 +200,15 @@ public class ItemGenerator {
                 settings.tab(itemGroup);
                 ITEM = new CustomFoodItem(settings.food(foodBuilder.build()), eatingSpeed, tooltip, item);
             } else {
-                if (!toolType.equals("none")) {
-                    ITEM = toolType.equals("sword") ? new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip, item) : new CustomMiningToolItem(-1, attackSpeed - 4, tool, allBlocks, settings, tooltip, item);
-                } else {
-                    ITEM = new CustomItem(settings, tooltip, item);
+                switch (type) {
+                    case "sword" -> ITEM = new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip, item);
+                    case "pickaxe" -> ITEM = new CustomPickaxeItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                    case "axe" -> ITEM = new CustomAxeItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                    case "shovel" -> ITEM = new CustomShovelItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                    case "hoe" -> ITEM = new CustomHoeItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                    case "shears" -> ITEM = new CustomShearsItem(settings, tooltip, item);
+                    case "armor" -> ITEM = new CustomArmorItem(settings, armor, equipmentSlot, tooltip, item);
+                    default -> ITEM = new CustomItem(settings, tooltip, item);
                 }
             }
             ITEM.setRegistryName(new ResourceLocation(namespace, id));
