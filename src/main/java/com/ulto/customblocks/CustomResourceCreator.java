@@ -925,6 +925,7 @@ public class CustomResourceCreator {
 						}
 						break;
 					case "pane":
+					case "lichen":
 						try {
 							FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 							BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
