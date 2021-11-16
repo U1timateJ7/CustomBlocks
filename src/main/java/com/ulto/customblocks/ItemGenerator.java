@@ -1,24 +1,17 @@
 package com.ulto.customblocks;
 
-import com.google.common.collect.ImmutableSet;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.item.CustomFoodItem;
-import com.ulto.customblocks.item.CustomItem;
-import com.ulto.customblocks.item.CustomMiningToolItem;
-import com.ulto.customblocks.item.CustomSwordItem;
+import com.ulto.customblocks.item.*;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.minecraft.block.Block;
 import net.minecraft.block.ComposterBlock;
-import net.minecraft.item.FoodComponent;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.item.ToolMaterial;
+import net.minecraft.entity.EquipmentSlot;
+import net.minecraft.item.*;
 import net.minecraft.recipe.Ingredient;
+import net.minecraft.sound.SoundEvent;
+import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
-
-import java.util.Set;
 
 public class ItemGenerator {
     public static boolean add(JsonObject item) {
@@ -63,9 +56,27 @@ public class ItemGenerator {
             String repairIngredientId;
             if (item.has("repair_ingredient")) repairIngredientId = item.get("repair_ingredient").getAsString();
             else repairIngredientId = "none";
-            String toolType;
-            if (item.has("tool_type")) toolType = item.get("tool_type").getAsString();
-            else toolType = "none";
+            String type;
+            if (item.has("type")) type = item.get("type").getAsString();
+            else type = "item";
+            int protection;
+            if (item.has("protection")) protection = item.get("protection").getAsInt();
+            else protection = 0;
+            SoundEvent equipSound;
+            if (item.has("equip_sound")) equipSound = Registry.SOUND_EVENT.get(new Identifier(item.get("equip_sound").getAsString()));
+            else equipSound = SoundEvents.ITEM_ARMOR_EQUIP_GENERIC;
+            String armorName;
+            if (item.has("armor_name")) armorName = item.get("armor_name").getAsString();
+            else armorName = "iron";
+            float toughness;
+            if (item.has("efficiency")) toughness = item.get("efficiency").getAsFloat();
+            else toughness = 0f;
+            float knockbackResistance;
+            if (item.has("knockback_resistance")) knockbackResistance = item.get("knockback_resistance").getAsFloat() / 10;
+            else knockbackResistance = 0f;
+            EquipmentSlot equipmentSlot;
+            if (item.has("equipment_slot")) equipmentSlot = EquipmentSlot.byName(item.get("equipment_slot").getAsString());
+            else equipmentSlot = EquipmentSlot.HEAD;
             Ingredient repairIngredient;
             if (Registry.ITEM.containsId(new Identifier(repairIngredientId))) repairIngredient = Ingredient.ofItems(Registry.ITEM.get(new Identifier(repairIngredientId)));
             else repairIngredient = null;
@@ -98,14 +109,7 @@ public class ItemGenerator {
                 default:
                     itemGroup = ItemGroup.MISC;
                     break;
-            };
-
-            ImmutableSet.Builder<Block> blocks = new ImmutableSet.Builder<>();
-            for (Identifier block : Registry.BLOCK.getIds()) {
-                blocks.add(Registry.BLOCK.get(block));
             }
-            Set<Block> allBlocks = blocks.build();
-
             Item ITEM;
             FabricItemSettings settings = new FabricItemSettings().group(itemGroup).maxCount(maxStackSize);
             ToolMaterial tool = new ToolMaterial() {
@@ -137,6 +141,47 @@ public class ItemGenerator {
                 @Override
                 public Ingredient getRepairIngredient() {
                     return repairIngredient;
+                }
+            };
+            ArmorMaterial armor = new ArmorMaterial() {
+                @Override
+                public int getDurability(EquipmentSlot slot) {
+                    return durability;
+                }
+
+                @Override
+                public int getProtectionAmount(EquipmentSlot slot) {
+                    return protection;
+                }
+
+                @Override
+                public int getEnchantability() {
+                    return enchantability;
+                }
+
+                @Override
+                public SoundEvent getEquipSound() {
+                    return equipSound;
+                }
+
+                @Override
+                public Ingredient getRepairIngredient() {
+                    return repairIngredient;
+                }
+
+                @Override
+                public String getName() {
+                    return armorName;
+                }
+
+                @Override
+                public float getToughness() {
+                    return toughness;
+                }
+
+                @Override
+                public float getKnockbackResistance() {
+                    return knockbackResistance;
                 }
             };
             if (fireproof) settings = settings.fireproof();
@@ -171,10 +216,37 @@ public class ItemGenerator {
                 settings.group(itemGroup);
                 ITEM = new CustomFoodItem(settings.food(foodBuilder.build()), eatingSpeed, tooltip, item);
             } else {
-                if (!toolType.equals("none")) {
-                    ITEM = toolType.equals("sword") ? new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip, item) : new CustomMiningToolItem(-1, attackSpeed - 4, tool, allBlocks, settings, tooltip, item);
-                } else {
-                    ITEM = new CustomItem(settings, tooltip, item);
+                switch (type) {
+                    case "sword":
+                        ITEM = new CustomSwordItem(tool, -1, attackSpeed - 4, settings, tooltip, item);
+                        TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "swords"), "items", new Identifier(namespace, id)));
+                        break;
+                    case "pickaxe":
+                        ITEM = new CustomPickaxeItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                        TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "pickaxes"), "items", new Identifier(namespace, id)));
+                        break;
+                    case "axe":
+                        ITEM = new CustomAxeItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                        TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "axes"), "items", new Identifier(namespace, id)));
+                        break;
+                    case "shovel":
+                        ITEM = new CustomShovelItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                        TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "shovels"), "items", new Identifier(namespace, id)));
+                        break;
+                    case "hoe":
+                        ITEM = new CustomHoeItem(-1, attackSpeed - 4, tool, settings, tooltip, item);
+                        TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "hoes"), "items", new Identifier(namespace, id)));
+                        break;
+                    case "shears":
+                        ITEM = new CustomShearsItem(settings, tooltip, item);
+                        TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "shears"), "items", new Identifier(namespace, id)));
+                        break;
+                    case "armor":
+                        ITEM = new CustomArmorItem(settings, armor, equipmentSlot, tooltip, item);
+                        break;
+                    default:
+                        ITEM = new CustomItem(settings, tooltip, item);
+                        break;
                 }
             }
             Registry.register(Registry.ITEM, new Identifier(namespace, id), ITEM);

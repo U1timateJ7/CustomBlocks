@@ -5,15 +5,14 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.event.Events;
 import com.ulto.customblocks.util.JsonUtils;
 import com.ulto.customblocks.util.MiscUtils;
-import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.HoeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.ItemUsageContext;
-import net.minecraft.item.MiningToolItem;
 import net.minecraft.item.ToolMaterial;
 import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
@@ -24,14 +23,13 @@ import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
-import java.util.Set;
 
-public class CustomMiningToolItem extends MiningToolItem {
+public class CustomHoeItem extends HoeItem {
     JsonArray tooltips;
     JsonObject item;
 
-    public CustomMiningToolItem(float attackDamage, float attackSpeed, ToolMaterial material, Set<Block> effectiveBlocks, Settings settings, JsonArray tooltip, JsonObject itemIn) {
-        super(attackDamage, attackSpeed, material, effectiveBlocks, settings);
+    public CustomHoeItem(int attackDamage, float attackSpeed, ToolMaterial material, Settings settings, JsonArray tooltip, JsonObject itemIn) {
+        super(material, attackDamage, attackSpeed, settings);
         tooltips = tooltip;
         item = itemIn;
     }
