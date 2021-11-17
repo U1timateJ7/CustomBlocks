@@ -60,15 +60,15 @@ public class GenerateCustomElements {
 		recipesFolder.mkdirs();
 		globalEventsFolder.mkdirs();
 		packsFolder.mkdirs();
-		copyOldFiles();
-		listFiles(blocksFolder, blocks);
-		listFiles(itemsFolder, items);
-		listFiles(fluidsFolder, fluids);
-		listFiles(itemGroupsFolder, itemGroups);
-		listFiles(paintingsFolder, paintings);
-		listFiles(recipesFolder, recipes);
-		listFiles(globalEventsFolder, globalEvents);
-		listFiles(packsFolder, packs);
+		copyOldFiles();;
+		listFiles(blocksFolder, blocks, ".json");
+		listFiles(itemsFolder, items, ".json");
+		listFiles(fluidsFolder, fluids, ".json");
+		listFiles(itemGroupsFolder, itemGroups, ".json");
+		listFiles(paintingsFolder, paintings, ".json");
+		listFiles(recipesFolder, recipes, ".json");
+		listFiles(globalEventsFolder, globalEvents, ".json");
+		listFiles(packsFolder, packs, ".json");
 		LanguageHandler.setupLanguage();
 		CustomResourceCreator.setupResourcePack();
 		for (File value : blocks) {
@@ -339,26 +339,26 @@ public class GenerateCustomElements {
 		FluidRenderHandlerRegistry.INSTANCE.register(flowing, renderHandler);
 	}
 
-	private static void listFiles(final File folder, List<File> list) {
+	private static void listFiles(final File folder, List<File> list, String fileExtension) {
 		if (folder.exists()) {
 			for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
 				if (fileEntry.isDirectory()) {
-					listFiles(fileEntry, list);
+					listFiles(fileEntry, list, fileExtension);
 				} else {
-					list.add(fileEntry);
+					if (fileEntry.getName().endsWith(fileExtension) || fileExtension.equals("*")) list.add(fileEntry);
 				}
 			}
 		}
 	}
 
-	private static List<File> listFiles(final File folder) {
+	private static List<File> listFiles(final File folder, String fileExtension) {
 		List<File> list = new ArrayList<>();
 		if (folder.exists()) {
 			for (final File fileEntry : folder.listFiles()) {
 				if (fileEntry.isDirectory()) {
-					listFiles(fileEntry, list);
+					listFiles(fileEntry, list, fileExtension);
 				} else {
-					list.add(fileEntry);
+					if (fileEntry.getName().endsWith(fileExtension) || fileExtension.equals("*")) list.add(fileEntry);
 				}
 			}
 		}
@@ -366,21 +366,21 @@ public class GenerateCustomElements {
 	}
 
 	public static File blocksFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "blocks");
-	public static List<File> blocksFv0 = listFiles(blocksFolderFv0);
+	public static List<File> blocksFv0 = listFiles(blocksFolderFv0, ".json");
 	public static File itemsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "items");
-	public static List<File> itemsFv0 = listFiles(itemsFolderFv0);
+	public static List<File> itemsFv0 = listFiles(itemsFolderFv0, ".json");
 	public static File fluidsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "fluids");
-	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0);
+	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0, ".json");
 	public static File itemGroupsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
-	public static List<File> itemGroupsFv0 = listFiles(itemGroupsFolderFv0);
+	public static List<File> itemGroupsFv0 = listFiles(itemGroupsFolderFv0, ".json");
 	public static File paintingsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
-	public static List<File> paintingsFv0 = listFiles(paintingsFolderFv0);
+	public static List<File> paintingsFv0 = listFiles(paintingsFolderFv0, ".json");
 	public static File recipesFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
-	public static List<File> recipesFv0 = listFiles(recipesFolderFv0);
+	public static List<File> recipesFv0 = listFiles(recipesFolderFv0, ".json");
 	public static File globalEventsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "global_events");
-	public static List<File> globalEventsFv0 = listFiles(globalEventsFolderFv0);
+	public static List<File> globalEventsFv0 = listFiles(globalEventsFolderFv0, ".json");
 	public static File packsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
-	public static List<File> packsFv0 = listFiles(packsFolderFv0);
+	public static List<File> packsFv0 = listFiles(packsFolderFv0, ".json");
 
 	private static void copyOldFiles() {
 		for (File fv0 : blocksFv0) {

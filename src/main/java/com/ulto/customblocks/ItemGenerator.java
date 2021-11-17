@@ -69,7 +69,7 @@ public class ItemGenerator {
             if (item.has("armor_name")) armorName = item.get("armor_name").getAsString();
             else armorName = "iron";
             float toughness;
-            if (item.has("efficiency")) toughness = item.get("efficiency").getAsFloat();
+            if (item.has("toughness")) toughness = item.get("toughness").getAsFloat();
             else toughness = 0f;
             float knockbackResistance;
             if (item.has("knockback_resistance")) knockbackResistance = item.get("knockback_resistance").getAsFloat() / 10;
