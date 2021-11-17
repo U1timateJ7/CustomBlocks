@@ -170,10 +170,10 @@ public class Events {
                         double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                         double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                         if(world instanceof ServerWorld) {
-                            Optional<CommandFunction> _fopt = ((ServerWorld) world).getServer().getCommandFunctionManager().getFunction(function);
-                            if (_fopt.isPresent()) {
-                                CommandFunction _fobj = _fopt.get();
-                                ((ServerWorld) world).getServer().getCommandFunctionManager().execute(_fobj,
+                            Optional<CommandFunction> optionalCommandFunction = ((ServerWorld) world).getServer().getCommandFunctionManager().getFunction(function);
+                            if (optionalCommandFunction.isPresent()) {
+                                CommandFunction commandFunction = optionalCommandFunction.get();
+                                ((ServerWorld) world).getServer().getCommandFunctionManager().execute(commandFunction,
                                         new ServerCommandSource(CommandOutput.DUMMY, new Vec3d(x, y, z), Vec2f.ZERO,
                                                 (ServerWorld) world, 4, "", new LiteralText(""), ((ServerWorld) world).getServer(), null));
                             }
@@ -188,10 +188,10 @@ public class Events {
                 double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                 if(world instanceof ServerWorld) {
-                    Optional<CommandFunction> _fopt = ((ServerWorld) world).getServer().getCommandFunctionManager().getFunction(function);
-                    if (_fopt.isPresent()) {
-                        CommandFunction _fobj = _fopt.get();
-                        ((ServerWorld) world).getServer().getCommandFunctionManager().execute(_fobj,
+                    Optional<CommandFunction> optionalCommandFunction = ((ServerWorld) world).getServer().getCommandFunctionManager().getFunction(function);
+                    if (optionalCommandFunction.isPresent()) {
+                        CommandFunction commandFunction = optionalCommandFunction.get();
+                        ((ServerWorld) world).getServer().getCommandFunctionManager().execute(commandFunction,
                                 new ServerCommandSource(CommandOutput.DUMMY, new Vec3d(x, y, z), Vec2f.ZERO,
                                         (ServerWorld) world, 4, "", new LiteralText(""), ((ServerWorld) world).getServer(), null));
                     }
@@ -287,9 +287,9 @@ public class Events {
                         }
                         nbt.putString("id", entity.toString());
                         if (!world.isClient()) {
-                            Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (entityx) -> {
-                                entityx.refreshPositionAndAngles(x, y, z, entityx.getYaw(), entityx.getPitch());
-                                return entityx;
+                            Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (newEntity) -> {
+                                newEntity.refreshPositionAndAngles(x, y, z, newEntity.getYaw(), newEntity.getPitch());
+                                return newEntity;
                             });
                             if (initialize && entity2 instanceof MobEntity) ((MobEntity) entity2).initialize((ServerWorld) world, world.getLocalDifficulty(entity2.getBlockPos()), SpawnReason.COMMAND, null, null);
                         }
@@ -311,9 +311,9 @@ public class Events {
                 }
                 nbt.putString("id", entity);
                 if (!world.isClient()) {
-                    Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (entityx) -> {
-                        entityx.refreshPositionAndAngles(x, y, z, entityx.getYaw(), entityx.getPitch());
-                        return entityx;
+                    Entity entity2 = EntityType.loadEntityWithPassengers(nbt, world, (newEntity) -> {
+                        newEntity.refreshPositionAndAngles(x, y, z, newEntity.getYaw(), newEntity.getPitch());
+                        return newEntity;
                     });
                     if (initialize && entity2 instanceof MobEntity) ((MobEntity) entity2).initialize((ServerWorld) world, world.getLocalDifficulty(entity2.getBlockPos()), SpawnReason.COMMAND, null, null);
                 }
@@ -337,6 +337,7 @@ public class Events {
                         if (blockId.equals(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
                         blockReader.close();
                     } catch (Exception e) {
+                        e.printStackTrace();
                     }
                 }
                 result = ActionResult.SUCCESS;
@@ -348,9 +349,7 @@ public class Events {
     public static void playBlockEvent(BlockState state, BlockPos pos, World world, @Nullable Map<String, Object> dependencies, JsonObject event) {
         Map<String, Object> deps = new HashMap<>(Map.of("blockstate", state, "x", pos.getX(), "y", pos.getY(), "z", pos.getZ(), "world", world));
         if (dependencies != null) {
-            for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
-                deps.put(entry.getKey(), entry.getValue());
-            }
+            deps.putAll(dependencies);
         }
         playEvent(deps, event);
     }
@@ -358,9 +357,7 @@ public class Events {
     public static ActionResult playBlockActionEvent(BlockState state, BlockPos pos, World world, @Nullable Map<String, Object> dependencies, JsonObject event) {
         Map<String, Object> deps = new HashMap<>(Map.of("blockstate", state, "x", pos.getX(), "y", pos.getY(), "z", pos.getZ(), "world", world));
         if (dependencies != null) {
-            for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
-                deps.put(entry.getKey(), entry.getValue());
-            }
+            deps.putAll(dependencies);
         }
         return playEvent(deps, event);
     }
@@ -368,9 +365,7 @@ public class Events {
     public static void playItemEvent(ItemStack stack, @Nullable Map<String, Object> dependencies, JsonObject event) {
         Map<String, Object> deps = new HashMap<>(Map.of("itemstack", stack));
         if (dependencies != null) {
-            for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
-                deps.put(entry.getKey(), entry.getValue());
-            }
+            deps.putAll(dependencies);
         }
         playEvent(deps, event);
     }
@@ -378,9 +373,7 @@ public class Events {
     public static ActionResult playItemActionEvent(ItemStack stack, @Nullable Map<String, Object> dependencies, JsonObject event) {
         Map<String, Object> deps = new HashMap<>(Map.of("itemstack", stack));
         if (dependencies != null) {
-            for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
-                deps.put(entry.getKey(), entry.getValue());
-            }
+            deps.putAll(dependencies);
         }
         return playEvent(deps, event);
     }
@@ -388,9 +381,7 @@ public class Events {
     public static TypedActionResult<ItemStack> playItemTypedActionEvent(ItemStack stack, boolean swingHand, @Nullable Map<String, Object> dependencies, JsonObject event) {
         Map<String, Object> deps = new HashMap<>(Map.of("itemstack", stack));
         if (dependencies != null) {
-            for (Map.Entry<String, Object> entry : dependencies.entrySet()) {
-                deps.put(entry.getKey(), entry.getValue());
-            }
+            deps.putAll(dependencies);
         }
         return switch (playEvent(deps, event)) {
             case SUCCESS -> TypedActionResult.success(stack, swingHand);

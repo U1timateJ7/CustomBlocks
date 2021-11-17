@@ -1,23 +1,23 @@
 {
   "required": true,
   "package": "com.ulto.customblocks.mixin",
-  "compatibilityLevel": "JAVA_16",
+  "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractFileResourcePackMixin",
+    "EntityMixin",
     "FenceBlockMixin",
-    "WallBlockMixin",
-    "PaneBlockMixin",
     "FenceGateBlockMixin",
     "ItemStackMixin",
-    "MixinResourcePackManager",
     "MixinMinecraftServer",
-    "AbstractFileResourcePackMixin",
+    "MixinResourcePackManager",
+    "PaneBlockMixin",
+    "PlayerEntityMixin",
     "RecipeManagerMixin",
-    "EntityMixin",
-    "PlayerEntityMixin"
+    "WallBlockMixin"
   ],
   "client": [
-    "TitleScreenMixin",
-    "PackScreenMixin"
+    "PackScreenMixin",
+    "TitleScreenMixin"
   ],
   "server": [],
   "injectors": {

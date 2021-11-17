@@ -13,16 +13,11 @@ import java.io.File;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
 
-public class CustomResourcePackProvider implements ResourcePackProvider {
+public record CustomResourcePackProvider(Type type) implements ResourcePackProvider {
     public static File customBlocksPath = new File(CustomBlocksMod.customBlocksConfig, File.separator + "custom_blocks_resources");
-    private final Type type;
-
-    public CustomResourcePackProvider(Type type) {
-        this.type = type;
-    }
 
     @Override
-    public void register (Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
+    public void register(Consumer<ResourcePackProfile> consumer, ResourcePackProfile.Factory factory) {
         File candidate = type.getDirectory();
         String packName = "Custom Block Resources";
         type.getLogger().info("Loading pack {} from {}.", packName, candidate.getAbsolutePath());
@@ -31,8 +26,7 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
         if (profile != null) {
             consumer.accept(profile);
             type.getLogger().info("Loaded pack {}.", packName);
-        }
-        else {
+        } else {
             type.getLogger().error("Failed to build pack profile {} from {}.", packName, candidate.getAbsolutePath());
         }
     }
@@ -56,11 +50,11 @@ public class CustomResourcePackProvider implements ResourcePackProvider {
             logger = LogManager.getLogger("Custom Blocks Mod");
         }
 
-        public Logger getLogger () {
+        public Logger getLogger() {
             return this.logger;
         }
 
-        public File getDirectory () {
+        public File getDirectory() {
             File directory = FabricLoader.getInstance().getConfigDir().resolve(path).toFile();
             if (!directory.exists()) {
                 directory.mkdirs();

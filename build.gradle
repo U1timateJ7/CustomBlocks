@@ -4,8 +4,8 @@ plugins {
 	id "idea"
 }
 
-sourceCompatibility = JavaVersion.VERSION_16
-targetCompatibility = JavaVersion.VERSION_16
+sourceCompatibility = JavaVersion.VERSION_17
+targetCompatibility = JavaVersion.VERSION_17
 
 archivesBaseName = project.archives_base_name+"-"+mod_version
 version = project.minecraft_version
@@ -30,7 +30,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	//Libraries
-	modImplementation include("io.github.cottonmc:LibGui:4.2.1+1.17.1")
+	modImplementation include("io.github.cottonmc:LibGui:5.0.0-beta.1+1.18-pre2")
 }
 
 processResources {
