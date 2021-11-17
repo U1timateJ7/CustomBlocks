@@ -14,7 +14,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public class MixinMinecraftServer {
     @Inject(method = "loadDataPacks", at = @At("HEAD"))
     private static void loadDataPacks (ResourcePackManager manager, DataPackSettings settings, boolean safe, CallbackInfoReturnable<DataPackSettings> info) {
-        CustomResourcePackProvider.Type.DATA.getLogger().info("Injecting datapack provider for server.");
+        CustomResourcePackProvider.Type.DATA.getLogger().info("Injecting data pack provider for server.");
         final IMutableResourcePackManager mutable = (IMutableResourcePackManager) manager;
         mutable.customblocks$addProvider(new CustomResourcePackProvider(CustomResourcePackProvider.Type.DATA));
     }

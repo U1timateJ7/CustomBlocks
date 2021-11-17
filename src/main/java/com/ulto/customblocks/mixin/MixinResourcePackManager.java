@@ -12,7 +12,7 @@ import java.util.Set;
 
 @Mixin(ResourcePackManager.class)
 public class MixinResourcePackManager implements IMutableResourcePackManager {
-    @Shadow(prefix = "customblocksshadow$")
+    @Shadow
     private Set<ResourcePackProvider> providers;
     
     @Override
