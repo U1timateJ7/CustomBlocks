@@ -46,7 +46,7 @@ public class CustomWaterloggedFacingBlock extends CustomFacingBlock implements W
     @Override
     public BlockState getStateForNeighborUpdate(BlockState state, Direction facing, BlockState facingState, WorldAccess world, BlockPos currentPos, BlockPos facingPos) {
 	    if (state.get(WATERLOGGED)) {
-            world.getFluidTickScheduler().schedule(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(world));
+            world.createAndScheduleFluidTick(currentPos, Fluids.WATER, Fluids.WATER.getTickRate(world));
         }
         return super.getStateForNeighborUpdate(state, facing, facingState, world, currentPos, facingPos);
     }
