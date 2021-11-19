@@ -15,7 +15,7 @@ import java.util.List;
 
 public class CustomHorizontalFacingBlock extends CustomBlock {
     public static final DirectionProperty FACING = HorizontalFacingBlock.FACING;
-    private static boolean fromPlayerFacing;
+    protected static boolean fromPlayerFacing;
 
     public CustomHorizontalFacingBlock(Settings settings, boolean _fromPlayerFacing, List<JsonObject> shape, JsonObject block) {
         super(settings, shape, block);
