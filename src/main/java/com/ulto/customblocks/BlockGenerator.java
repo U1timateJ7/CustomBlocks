@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.block.*;
+import com.ulto.customblocks.block.waterlogged.*;
 import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
@@ -75,6 +76,9 @@ public class BlockGenerator {
 			float jumpFactor;
 			if (block.has("jump_factor")) jumpFactor = block.get("jump_factor").getAsFloat();
 			else jumpFactor = 1f;
+			boolean waterloggable;
+			if (block.has("waterloggable")) waterloggable = block.get("waterloggable").getAsBoolean();
+			else waterloggable = false;
 			boolean hasItem = true;
 			if (block.has("has_item")) hasItem = block.get("has_item").getAsBoolean();
 			int maxStackSize;
@@ -335,21 +339,21 @@ public class BlockGenerator {
 				default:
 					if (hasGravity) {
 						switch (rotationType) {
-							case "axis" -> NEW_BLOCK = register(new CustomFallingPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
-							case "y_axis_player" -> NEW_BLOCK = register(new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "y_axis" -> NEW_BLOCK = register(new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							case "all_player" -> NEW_BLOCK = register(new CustomFallingFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "all" -> NEW_BLOCK = register(new CustomFallingFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							default -> NEW_BLOCK = register(new CustomFallingBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingPillarBlock(blockSettings, shape, block) : new CustomFallingPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "y_axis_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "y_axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							case "all_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, true, shape, block) : new CustomFallingFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "all" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, false, shape, block) : new CustomFallingFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							default -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingBlock(blockSettings, shape, block) : new CustomFallingBlock(blockSettings, shape, block).setRegistryName(registryName));
 						}
 					} else {
 						switch (rotationType) {
-							case "axis" -> NEW_BLOCK = register(new CustomPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
-							case "y_axis_player" -> NEW_BLOCK = register(new CustomHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "y_axis" -> NEW_BLOCK = register(new CustomHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							case "all_player" -> NEW_BLOCK = register(new CustomFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "all" -> NEW_BLOCK = register(new CustomFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							default -> NEW_BLOCK = register(new CustomBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedPillarBlock(blockSettings, shape, block) : new CustomPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "y_axis_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "y_axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							case "all_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, true, shape, block) : new CustomFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
+							case "all" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, false, shape, block) : new CustomFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
+							default -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedBlock(blockSettings, shape, block) : new CustomBlock(blockSettings, shape, block).setRegistryName(registryName));
 						}
 					}
 					break;

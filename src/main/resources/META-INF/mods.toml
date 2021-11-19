@@ -23,7 +23,7 @@ version="${file.jarVersion}" #mandatory
  # A display name for the mod
 displayName="Custom Blocks Mod" #mandatory
 # A URL to query for updates for this mod. See the JSON update specification https://mcforge.readthedocs.io/en/latest/gettingstarted/autoupdate/
-updateJSONURL="https://github.com/U1timateJ7/CustomBlocks/blob/forge-1.17.1/update.json" #optional
+updateJSONURL="https://raw.githubusercontent.com/U1timateJ7/CustomBlocks/forge-1.17.1/update.json" #optional
 # A URL for the "homepage" for this mod, displayed in the mod UI
 #displayURL="https://change.me.to.your.mods.homepage.example.invalid/" #optional
 # A file name (in the root of the mod JAR) containing a logo for display
