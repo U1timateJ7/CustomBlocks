@@ -4,6 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.block.*;
+import com.ulto.customblocks.block.waterlogged.*;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
@@ -81,6 +82,9 @@ public class BlockGenerator {
 			float jumpFactor;
 			if (block.has("jump_factor")) jumpFactor = block.get("jump_factor").getAsFloat();
 			else jumpFactor = 1f;
+			boolean waterloggable;
+			if (block.has("waterloggable")) waterloggable = block.get("waterloggable").getAsBoolean();
+			else waterloggable = false;
 			boolean hasItem = true;
 			if (block.has("has_item")) hasItem = block.get("has_item").getAsBoolean();
 			int maxStackSize;
@@ -660,37 +664,37 @@ public class BlockGenerator {
 					if (hasGravity) {
 						switch (rotationType) {
 							case "axis": {
-								CustomFallingPillarBlock BLOCK = new CustomFallingPillarBlock(blockSettings, shape, block);
+								CustomPillarBlock BLOCK = waterloggable ? new CustomWaterloggedFallingPillarBlock(blockSettings, shape, block) : new CustomFallingPillarBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "y_axis_player": {
-								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block);
+								CustomHorizontalFacingBlock BLOCK = waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "y_axis": {
-								CustomFallingHorizontalFacingBlock BLOCK = new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block);
+								CustomHorizontalFacingBlock BLOCK = waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "all_player": {
-								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, true, shape, block);
+								CustomFacingBlock BLOCK = waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, true, shape, block) : new CustomFallingFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "all": {
-								CustomFallingFacingBlock BLOCK = new CustomFallingFacingBlock(blockSettings, false, shape, block);
+								CustomFacingBlock BLOCK = waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, false, shape, block) : new CustomFallingFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							default: {
-								FallingBlock BLOCK = new CustomFallingBlock(blockSettings, shape, block);
+								Block BLOCK = waterloggable ? new CustomWaterloggedFallingBlock(blockSettings, shape, block) : new CustomFallingBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
@@ -699,37 +703,37 @@ public class BlockGenerator {
 					} else {
 						switch (rotationType) {
 							case "axis": {
-								PillarBlock BLOCK = new CustomPillarBlock(blockSettings, shape, block);
+								PillarBlock BLOCK = waterloggable ? new CustomWaterloggedPillarBlock(blockSettings, shape, block) : new CustomPillarBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "y_axis_player": {
-								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, true, shape, block);
+								Block BLOCK = waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomHorizontalFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "y_axis": {
-								Block BLOCK = new CustomHorizontalFacingBlock(blockSettings, false, shape, block);
+								Block BLOCK = waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomHorizontalFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "all_player": {
-								Block BLOCK = new CustomFacingBlock(blockSettings, true, shape, block);
+								Block BLOCK = waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, true, shape, block) : new CustomFacingBlock(blockSettings, true, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							case "all": {
-								Block BLOCK = new CustomFacingBlock(blockSettings, false, shape, block);
+								Block BLOCK = waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, false, shape, block) : new CustomFacingBlock(blockSettings, false, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
 							break;
 							default: {
-								Block BLOCK = new CustomBlock(blockSettings, shape, block);
+								Block BLOCK = waterloggable ? new CustomWaterloggedBlock(blockSettings, shape, block) : new CustomBlock(blockSettings, shape, block);
 								Registry.register(Registry.BLOCK, new Identifier(namespace, id), BLOCK);
 								NEW_BLOCK = BLOCK;
 							}
