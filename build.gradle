@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '0.9-SNAPSHOT'
+	id 'fabric-loom' version '0.10-SNAPSHOT'
 	id 'maven-publish'
 	id "idea"
 }
@@ -30,7 +30,7 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	//Libraries
-	modImplementation include("io.github.cottonmc:LibGui:5.0.0-beta.1+1.18-pre2")
+	modImplementation include("io.github.cottonmc:LibGui:5.0.0-beta.2+1.18-rc1")
 }
 
 processResources {
