@@ -26,11 +26,11 @@ public class CustomWaterloggedFallingHorizontalFacingBlock extends CustomWaterlo
 
     public void onPlace(BlockState state, Level world, BlockPos pos, BlockState oldState, boolean notify) {
         super.onPlace(state, world, pos, oldState, notify);
-        world.getBlockTicks().scheduleTick(pos, this, this.getFallDelay());
+        world.scheduleTick(pos, this, this.getFallDelay());
     }
 
     public BlockState updateShape(BlockState state, Direction direction, BlockState newState, LevelAccessor world, BlockPos pos, BlockPos posFrom) {
-        world.getBlockTicks().scheduleTick(pos, this, this.getFallDelay());
+        world.scheduleTick(pos, this, this.getFallDelay());
         return super.updateShape(state, direction, newState, world, pos, posFrom);
     }
 

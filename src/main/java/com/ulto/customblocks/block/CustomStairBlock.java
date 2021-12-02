@@ -108,7 +108,7 @@ public class CustomStairBlock extends StairBlock {
         super.onPlace(state, world, pos, oldState, notify);
         int tickRate = 10;
         if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
-        if (!isRandomlyTicking) world.getBlockTicks().scheduleTick(pos, this, tickRate);
+        if (!isRandomlyTicking) world.scheduleTick(pos, this, tickRate);
         if (block.has("on_added")) Events.playBlockEvent(state, pos, world, Map.of("oldstate", oldState, "notify", notify), block.getAsJsonObject("on_added"));
     }
 
@@ -117,7 +117,7 @@ public class CustomStairBlock extends StairBlock {
         super.tick(state, world, pos, random);
         int tickRate = 10;
         if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
-        if (!isRandomlyTicking) world.getBlockTicks().scheduleTick(pos, this, tickRate);
+        if (!isRandomlyTicking) world.scheduleTick(pos, this, tickRate);
         if (block.has("on_tick")) Events.playBlockEvent(state, pos, world, Map.of("random", random), block.getAsJsonObject("on_tick"));
     }
 
