@@ -40,6 +40,9 @@ public class GenerateCustomElements {
 	public static List<File> items = new ArrayList<>();
 	public static File fluidsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "fluids");
 	public static List<File> fluids = new ArrayList<>();
+	public static File entitiesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "entities");
+	public static File entityModelsFolder = new File(entitiesFolder, File.separator + "models");
+	public static List<File> entities = new ArrayList<>();
 	public static File itemGroupsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "item_groups");
 	public static List<File> itemGroups = new ArrayList<>();
 	public static File paintingsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "paintings");
@@ -57,6 +60,7 @@ public class GenerateCustomElements {
 		blocksFolder.mkdirs();
 		itemsFolder.mkdirs();
 		fluidsFolder.mkdirs();
+		entityModelsFolder.mkdirs();
 		itemGroupsFolder.mkdirs();
 		paintingsFolder.mkdirs();
 		recipesFolder.mkdirs();
@@ -67,6 +71,7 @@ public class GenerateCustomElements {
 		listFiles(blocksFolder, blocks, ".json");
 		listFiles(itemsFolder, items, ".json");
 		listFiles(fluidsFolder, fluids, ".json");
+		listFiles(entitiesFolder, entities, ".json");
 		listFiles(itemGroupsFolder, itemGroups, ".json");
 		listFiles(paintingsFolder, paintings, ".json");
 		listFiles(recipesFolder, recipes, ".json");
@@ -99,7 +104,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Block " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : items) {
@@ -120,7 +125,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Item " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : fluids) {
@@ -141,7 +146,28 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate fluid " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Fluid " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : entities) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (EntityGenerator.add(entity) && LanguageHandler.addEntityKey(entity)) {
+					CustomBlocksMod.LOGGER.info("Generated Entity " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate entity " + value.getName() + "!");
+				}
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Entity " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : itemGroups) {
@@ -162,7 +188,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate item group " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Item group " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : paintings) {
@@ -183,7 +209,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate painting " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Painting " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : recipes) {
@@ -204,7 +230,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate recipe " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Recipe " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : globalEvents) {
@@ -225,7 +251,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to register global event " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Global event " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : trees) {
@@ -246,7 +272,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate tree " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Tree " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : packs) {
@@ -269,7 +295,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to load pack " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Pack " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		LanguageHandler.saveLang();
@@ -316,7 +342,26 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+			}
+		}
+		for (File value : entities) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (EntityGenerator.addClient(entity)) {
+					CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to create entity renderer for " + value.getName() + "!");
+				}
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
 			}
 		}
 		for (File value : trees) {

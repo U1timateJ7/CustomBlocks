@@ -212,6 +212,22 @@ public class LanguageHandler {
 		return false;
 	}
 
+	public static boolean addEntityKey(JsonObject entity) {
+		if (entity.has("namespace") && entity.has("id") && entity.has("display_name")) {
+			String namespace = entity.get("namespace").getAsString();
+			String id = entity.get("id").getAsString();
+			String text = entity.get("display_name").getAsString();
+			languageObject.addProperty("entity." + namespace + "." + id, text);
+			if (entity.has("languages")) {
+				for (Map.Entry<String, JsonElement> lang : entity.getAsJsonObject("languages").entrySet()) {
+					languageObjects.get(lang.getKey()).addProperty("entity." + namespace + "." + id, lang.getValue().getAsString());
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean addItemGroupKey(JsonObject itemGroup) {
 		if (itemGroup.has("namespace") && itemGroup.has("id") && itemGroup.has("name")) {
 			String namespace = itemGroup.get("namespace").getAsString();
