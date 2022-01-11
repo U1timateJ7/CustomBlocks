@@ -9,6 +9,7 @@ import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Random;
 
 @SuppressWarnings("SuspiciousNameCombination")
 public class CustomResourceCreator {
@@ -2593,6 +2594,108 @@ public class CustomResourceCreator {
 			textures.mkdirs();
 			File painting = new File(textures, File.separator + "painting");
 			painting.mkdirs();
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean generateSaplingResources(JsonObject sapling) {
+		if (sapling.has("namespace") && sapling.has("id")) {
+			if (sapling.has("has_sapling")) {
+				if (sapling.get("has_sapling").getAsBoolean() && sapling.has("sapling_texture")) {
+					String _namespace = sapling.get("namespace").getAsString();
+					String id = (new Object() {
+						String getSaplingId(String id) {
+							String saplingId = id.replace("_tree", "_sapling");
+							if (!saplingId.contains("_sapling")) saplingId += "_sapling";
+							return saplingId;
+						}
+					}).getSaplingId(sapling.get("id").getAsString());
+					String saplingTexture = sapling.get("sapling_texture").getAsString();
+					String textureNamespace = _namespace;
+					if (sapling.has("texture_namespace"))
+						textureNamespace = sapling.get("texture_namespace").getAsString();
+					File namespace = new File(assets, File.separator + _namespace);
+					File blockstates = new File(namespace, File.separator + "blockstates");
+					blockstates.mkdirs();
+					File models = new File(namespace, File.separator + "models");
+					File block = new File(models, File.separator + "block");
+					block.mkdirs();
+					File item = new File(models, File.separator + "item");
+					item.mkdirs();
+					File _textureNamespace = new File(assets, File.separator + textureNamespace);
+					File textures = new File(_textureNamespace, File.separator + "textures");
+					File _block = new File(textures, File.separator + "block");
+					_block.mkdirs();
+					File blockModel = new File(block, File.separator + id + ".json");
+					if (!blockModel.exists()) {
+						try {
+							blockModel.createNewFile();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
+					}
+					File blockItemModel = new File(item, File.separator + id + ".json");
+					if (!blockItemModel.exists()) {
+						try {
+							blockItemModel.createNewFile();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
+					}
+					File blockstate = new File(blockstates, File.separator + id + ".json");
+					if (!blockstate.exists()) {
+						try {
+							blockModel.createNewFile();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
+					}
+					try {
+						FileWriter blockModelwriter = new FileWriter(blockModel);
+						BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
+						blockModelbw.write("{\n" +
+								"  \"parent\": \"minecraft:block/cross\",\n" +
+								"  \"textures\": {\n" +
+								"    \"cross\": \"" + textureNamespace + ":block/" + saplingTexture + "\"\n" +
+								"  }\n" +
+								"}");
+						blockModelbw.close();
+						blockModelwriter.close();
+					} catch (IOException fileNotFoundException) {
+						fileNotFoundException.printStackTrace();
+					}
+					try {
+						FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
+						BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
+						blockItemModelbw.write("{\n" +
+								"  \"parent\": \"minecraft:item/generated\",\n" +
+								"  \"textures\": {\n" +
+								"    \"layer0\": \"" + textureNamespace + ":block/" + saplingTexture + "\"\n" +
+								"  }\n" +
+								"}");
+						blockItemModelbw.close();
+						blockItemModelwriter.close();
+					} catch (IOException fileNotFoundException) {
+						fileNotFoundException.printStackTrace();
+					}
+					try {
+						FileWriter blockstatewriter = new FileWriter(blockstate);
+						BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
+						blockstatebw.write("{\n" +
+								"  \"variants\": {\n" +
+								"    \"\": {\n" +
+								"      \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+								"    }\n" +
+								"  }\n" +
+								"}");
+						blockstatebw.close();
+						blockstatewriter.close();
+					} catch (IOException fileNotFoundException) {
+						fileNotFoundException.printStackTrace();
+					}
+				}
+			}
 			return true;
 		}
 		return false;
