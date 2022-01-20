@@ -66,6 +66,9 @@ public class TreeGenerator {
                 Block SAPLING = new CustomSaplingBlock(new CustomSaplingGenerator(id), AbstractBlock.Settings.copy(Blocks.OAK_SAPLING));
                 Registry.register(Registry.BLOCK, new Identifier(id.getNamespace(), getSaplingId(id.getPath())), SAPLING);
                 Registry.register(Registry.ITEM, new Identifier(id.getNamespace(), getSaplingId(id.getPath())), new BlockItem(SAPLING, new Item.Settings().group(ItemGroup.DECORATIONS)));
+
+                Block POTTED_SAPLING = new FlowerPotBlock(SAPLING, AbstractBlock.Settings.copy(Blocks.POTTED_OAK_SAPLING));
+                Registry.register(Registry.BLOCK, new Identifier(id.getNamespace(), "potted_" + getSaplingId(id.getPath())), POTTED_SAPLING);
             }
 
             TreeFeatureConfig.Builder builder = new TreeFeatureConfig.Builder(
@@ -101,7 +104,7 @@ public class TreeGenerator {
         return false;
     }
 
-    private static String getSaplingId(String id) {
+    public static String getSaplingId(String id) {
         String saplingId = id.replace("_tree", "_sapling");
         if (!saplingId.contains("_sapling")) saplingId += "_sapling";
         return saplingId;

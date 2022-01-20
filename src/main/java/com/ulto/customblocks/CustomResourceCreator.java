@@ -2731,6 +2731,52 @@ public class CustomResourceCreator {
 					} catch (IOException fileNotFoundException) {
 						fileNotFoundException.printStackTrace();
 					}
+					//Potted Sapling
+					File pottedBlockstate = new File(blockstates, File.separator + id + ".json");
+					if (!pottedBlockstate.exists()) {
+						try {
+							blockModel.createNewFile();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
+					}
+					try {
+						FileWriter blockstatewriter = new FileWriter(pottedBlockstate);
+						BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
+						blockstatebw.write("{\n" +
+								"  \"variants\": {\n" +
+								"    \"\": {\n" +
+								"      \"model\": \"" + _namespace + ":block/potted_" + id + "\"\n" +
+								"    }\n" +
+								"  }\n" +
+								"}");
+						blockstatebw.close();
+						blockstatewriter.close();
+					} catch (IOException fileNotFoundException) {
+						fileNotFoundException.printStackTrace();
+					}
+					File pottedBlockModel = new File(block, File.separator + id + ".json");
+					if (!pottedBlockModel.exists()) {
+						try {
+							pottedBlockModel.createNewFile();
+						} catch (IOException exception) {
+							exception.printStackTrace();
+						}
+					}
+					try {
+						FileWriter blockModelwriter = new FileWriter(pottedBlockModel);
+						BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
+						blockModelbw.write("{\n" +
+								"  \"parent\": \"minecraft:block/flower_pot_cross\",\n" +
+								"  \"textures\": {\n" +
+								"    \"plant\": \"" + textureNamespace + ":block/" + saplingTexture + "\"\n" +
+								"  }\n" +
+								"}");
+						blockModelbw.close();
+						blockModelwriter.close();
+					} catch (IOException fileNotFoundException) {
+						fileNotFoundException.printStackTrace();
+					}
 				}
 			}
 			return true;

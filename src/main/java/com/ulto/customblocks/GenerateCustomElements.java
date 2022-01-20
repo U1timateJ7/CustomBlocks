@@ -13,6 +13,7 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.Sprite;
@@ -404,8 +405,27 @@ public class GenerateCustomElements {
 			} catch (JsonSyntaxException e) {
 			}
 		}
+		for (File value : packs) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (pack.has("name")) {
+					PackGenerator.addClient(pack);
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void setupFluidRendering(final Fluid still, final Fluid flowing, final Identifier textureFluidId) {
 		final Identifier stillSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_still");
 		final Identifier flowingSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_flow");
@@ -482,23 +502,27 @@ public class GenerateCustomElements {
 		return list;
 	}
 
-	public static File blocksFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "blocks");
+	public static File blocksFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "blocks");
 	public static List<File> blocksFv0 = listFiles(blocksFolderFv0, ".json");
-	public static File itemsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "items");
+	public static File itemsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "items");
 	public static List<File> itemsFv0 = listFiles(itemsFolderFv0, ".json");
-	public static File fluidsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "fluids");
+	public static File fluidsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "fluids");
 	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0, ".json");
-	public static File itemGroupsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
+	public static File entitiesFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "entities");
+	public static List<File> entitiesFv0 = listFiles(entitiesFolderFv0, ".json", "models");
+	public static File entityModelsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "models");
+	public static List<File> entityModelsFv0 = listFiles(entityModelsFolderFv0, ".json");
+	public static File itemGroupsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "itemgroups");
 	public static List<File> itemGroupsFv0 = listFiles(itemGroupsFolderFv0, ".json");
-	public static File paintingsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
+	public static File paintingsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "paintings");
 	public static List<File> paintingsFv0 = listFiles(paintingsFolderFv0, ".json");
-	public static File recipesFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
+	public static File recipesFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "recipes");
 	public static List<File> recipesFv0 = listFiles(recipesFolderFv0, ".json");
-	public static File globalEventsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "global_events");
+	public static File globalEventsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "global_events");
 	public static List<File> globalEventsFv0 = listFiles(globalEventsFolderFv0, ".json");
-	public static File treesFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "trees");
+	public static File treesFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "trees");
 	public static List<File> treesFv0 = listFiles(treesFolderFv0, ".json");
-	public static File packsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
+	public static File packsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "packs");
 	public static List<File> packsFv0 = listFiles(packsFolderFv0, ".json");
 
 	private static void copyOldFiles() {
@@ -521,6 +545,22 @@ public class GenerateCustomElements {
 		for (File fv0 : fluidsFv0) {
 			try {
 				Files.copy(fv0.toPath(), fluidsFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : entitiesFv0) {
+			try {
+				Files.copy(fv0.toPath(), entitiesFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : entityModelsFv0) {
+			try {
+				Files.copy(fv0.toPath(), entityModelsFolder.toPath().resolve(fv0.getName()));
 				fv0.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -577,6 +617,8 @@ public class GenerateCustomElements {
 		blocksFolderFv0.delete();
 		itemsFolderFv0.delete();
 		fluidsFolderFv0.delete();
+		entityModelsFolderFv0.delete();
+		entitiesFolderFv0.delete();
 		itemGroupsFolderFv0.delete();
 		paintingsFolderFv0.delete();
 		recipesFolderFv0.delete();
