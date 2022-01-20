@@ -1,7 +1,7 @@
 package com.ulto.customblocks.client.renderer.entity;
 
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.entity.CustomEntity;
+import com.ulto.customblocks.entity.*;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.entity.EntityRendererFactory;
@@ -19,6 +19,10 @@ public class CustomEntityRenderer<E extends PathAwareEntity, M extends EntityMod
     @Override
     public Identifier getTexture(E entity) {
         if (entity instanceof CustomEntity customEntity) return customEntity.getTexture();
+        if (entity instanceof CustomPassiveEntity customEntity) return customEntity.getTexture();
+        if (entity instanceof CustomHostileEntity customEntity) return customEntity.getTexture();
+        if (entity instanceof CustomIllagerEntity customEntity) return customEntity.getTexture();
+        if (entity instanceof CustomWaterEntity customEntity) return customEntity.getTexture();
         return new Identifier("pish:posh");
     }
 }

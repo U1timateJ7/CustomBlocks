@@ -404,8 +404,27 @@ public class GenerateCustomElements {
 			} catch (JsonSyntaxException e) {
 			}
 		}
+		for (File value : packs) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (pack.has("name")) {
+					PackGenerator.addClient(pack);
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void setupFluidRendering(final Fluid still, final Fluid flowing, final Identifier textureFluidId) {
 		final Identifier stillSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_still");
 		final Identifier flowingSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_flow");
@@ -488,6 +507,10 @@ public class GenerateCustomElements {
 	public static List<File> itemsFv0 = listFiles(itemsFolderFv0, ".json");
 	public static File fluidsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "fluids");
 	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0, ".json");
+	public static File entitiesFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "entities");
+	public static List<File> entitiesFv0 = listFiles(entitiesFolderFv0, ".json", "models");
+	public static File entityModelsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "models");
+	public static List<File> entityModelsFv0 = listFiles(entityModelsFolderFv0, ".json");
 	public static File itemGroupsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
 	public static List<File> itemGroupsFv0 = listFiles(itemGroupsFolderFv0, ".json");
 	public static File paintingsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
@@ -521,6 +544,22 @@ public class GenerateCustomElements {
 		for (File fv0 : fluidsFv0) {
 			try {
 				Files.copy(fv0.toPath(), fluidsFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : entitiesFv0) {
+			try {
+				Files.copy(fv0.toPath(), entitiesFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : entityModelsFv0) {
+			try {
+				Files.copy(fv0.toPath(), entityModelsFolder.toPath().resolve(fv0.getName()));
 				fv0.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -577,6 +616,8 @@ public class GenerateCustomElements {
 		blocksFolderFv0.delete();
 		itemsFolderFv0.delete();
 		fluidsFolderFv0.delete();
+		entityModelsFolderFv0.delete();
+		entitiesFolderFv0.delete();
 		itemGroupsFolderFv0.delete();
 		paintingsFolderFv0.delete();
 		recipesFolderFv0.delete();

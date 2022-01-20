@@ -4,7 +4,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.client.renderer.entity.CustomEntityRenderer;
 import com.ulto.customblocks.client.renderer.entity.model.CustomEntityModel;
-import com.ulto.customblocks.entity.CustomEntity;
+import com.ulto.customblocks.entity.*;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -18,8 +18,8 @@ import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
-import net.minecraft.entity.mob.MobEntity;
-import net.minecraft.entity.mob.PathAwareEntity;
+import net.minecraft.entity.mob.*;
+import net.minecraft.entity.passive.PassiveEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemGroup;
 import net.minecraft.item.SpawnEggItem;
@@ -62,8 +62,32 @@ public class EntityGenerator {
 
             DefaultAttributeContainer.Builder attributeBuilder = MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, health).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, movementSpeed);
             EntityType.EntityFactory<? extends PathAwareEntity> factory = (t, w) -> new CustomEntity(t, w, entity);
+            EntityType.EntityFactory<? extends PassiveEntity> passiveFactory = (t, w) -> new CustomPassiveEntity(t, w, entity);
+            EntityType.EntityFactory<? extends HostileEntity> hostileFactory = (t, w) -> new CustomHostileEntity(t, w, entity);
+            EntityType.EntityFactory<? extends IllagerEntity> illagerFactory = (t, w) -> new CustomIllagerEntity(t, w, entity);
+            EntityType.EntityFactory<? extends WaterCreatureEntity> waterFactory = (t, w) -> new CustomWaterEntity(t, w, entity);
 
             EntityType<? extends PathAwareEntity> ENTITY_TYPE = entities.put(id, switch (base) {
+                case "passive" -> Registry.register(
+                        Registry.ENTITY_TYPE,
+                        id,
+                        PathAware.createPathAware(spawnGroup, passiveFactory).defaultAttributes(() -> attributeBuilder).dimensions(EntityDimensions.fixed(width, height)).build()
+                );
+                case "hostile" -> Registry.register(
+                        Registry.ENTITY_TYPE,
+                        id,
+                        PathAware.createPathAware(spawnGroup, hostileFactory).defaultAttributes(() -> attributeBuilder).dimensions(EntityDimensions.fixed(width, height)).build()
+                );
+                case "illager" -> Registry.register(
+                        Registry.ENTITY_TYPE,
+                        id,
+                        PathAware.createPathAware(spawnGroup, illagerFactory).defaultAttributes(() -> attributeBuilder).dimensions(EntityDimensions.fixed(width, height)).build()
+                );
+                case "water" -> Registry.register(
+                        Registry.ENTITY_TYPE,
+                        id,
+                        PathAware.createPathAware(spawnGroup, waterFactory).defaultAttributes(() -> attributeBuilder).dimensions(EntityDimensions.fixed(width, height)).build()
+                );
                 default -> Registry.register(
                         Registry.ENTITY_TYPE,
                         id,
