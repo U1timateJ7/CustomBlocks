@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.resource.CustomResourcePackProvider;
 import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.util.Identifier;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -2580,6 +2581,42 @@ public class CustomResourceCreator {
 			item.addProperty("texture_namespace", resourceNamespace);
 			item.addProperty("texture", _fluid.get("bucket_texture").getAsString());
 			generateItemResources(item);
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean generateEntityResources(JsonObject _entity) {
+		if (_entity.has("namespace") && _entity.has("id")) {
+			String _namespace = (_entity.has("texture") ? new Identifier(_entity.get("texture").getAsString()) : new Identifier(_entity.get("namespace").getAsString(), "textures/entity/" + _entity.get("id").getAsString() + ".png")).getNamespace();
+			Identifier id = new Identifier(_entity.get("namespace").getAsString(), _entity.get("id").getAsString() + "_spawn_egg");
+			File namespace = new File(assets, File.separator + _namespace);
+			File textures = new File(namespace, File.separator + "textures");
+			File entity = new File(textures, File.separator + "entity");
+			entity.mkdirs();
+			File models = new File(namespace, File.separator + "models");
+			File item = new File(models, File.separator + "item");
+			item.mkdirs();
+			File itemModel = new File(item, File.separator + id.getPath() + ".json");
+			if (!itemModel.exists()) {
+				try {
+					itemModel.createNewFile();
+				} catch (IOException exception) {
+					exception.printStackTrace();
+				}
+			}
+			try {
+				FileWriter itemModelwriter = new FileWriter(itemModel);
+				BufferedWriter itemModelbw = new BufferedWriter(itemModelwriter);
+				itemModelbw.write("""
+						{
+						  "parent": "minecraft:item/template_spawn_egg"
+						}""");
+				itemModelbw.close();
+				itemModelwriter.close();
+			} catch (IOException fileNotFoundException) {
+				fileNotFoundException.printStackTrace();
+			}
 			return true;
 		}
 		return false;

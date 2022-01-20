@@ -85,6 +85,35 @@ public class LanguageHandler {
 			} catch (JsonSyntaxException e) {
 			}
 		}
+		for (File value : GenerateCustomElements.entities) {
+			try {
+				BufferedReader blockReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = blockReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (entity.has("languages")) {
+					for (Map.Entry<String, JsonElement> lang : entity.getAsJsonObject("languages").entrySet()) {
+						if (!languages.containsKey(lang.getKey())) {
+							File language = languages.put(lang.getKey(), new File(LanguageHandler.lang, File.separator + lang.getKey() + ".json"));
+							if (!language.exists()) {
+								try {
+									language.createNewFile();
+								} catch (IOException exception) {
+									exception.printStackTrace();
+								}
+							}
+						}
+					}
+				}
+				blockReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
 		for (File value : GenerateCustomElements.itemGroups) {
 			try {
 				BufferedReader blockReader = new BufferedReader(new FileReader(value));
@@ -219,8 +248,18 @@ public class LanguageHandler {
 			String text = entity.get("display_name").getAsString();
 			languageObject.addProperty("entity." + namespace + "." + id, text);
 			if (entity.has("languages")) {
-				for (Map.Entry<String, JsonElement> lang : entity.getAsJsonObject("languages").entrySet()) {
+				JsonObject languages = entity.getAsJsonObject("languages");
+				for (Map.Entry<String, JsonElement> lang : languages.getAsJsonObject("name").entrySet()) {
 					languageObjects.get(lang.getKey()).addProperty("entity." + namespace + "." + id, lang.getValue().getAsString());
+				}
+			}
+			if (entity.has("has_spawn_egg") && entity.get("has_spawn_egg").getAsBoolean()) {
+				languageObject.addProperty("entity." + namespace + "." + id + "_spawn_egg", text + " Spawn Egg");
+				if (entity.has("languages")) {
+					JsonObject languages = entity.getAsJsonObject("languages");
+					for (Map.Entry<String, JsonElement> lang : languages.getAsJsonObject("spawn_egg").entrySet()) {
+						languageObjects.get(lang.getKey()).addProperty("entity." + namespace + "." + id + "_spawn_egg", lang.getValue().getAsString());
+					}
 				}
 			}
 			return true;

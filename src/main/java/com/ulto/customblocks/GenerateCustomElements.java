@@ -29,6 +29,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -41,8 +42,9 @@ public class GenerateCustomElements {
 	public static File fluidsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "fluids");
 	public static List<File> fluids = new ArrayList<>();
 	public static File entitiesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "entities");
-	public static File entityModelsFolder = new File(entitiesFolder, File.separator + "models");
 	public static List<File> entities = new ArrayList<>();
+	public static File entityModelsFolder = new File(entitiesFolder, File.separator + "models");
+	public static List<File> entityModels = new ArrayList<>();
 	public static File itemGroupsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "item_groups");
 	public static List<File> itemGroups = new ArrayList<>();
 	public static File paintingsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "paintings");
@@ -71,7 +73,8 @@ public class GenerateCustomElements {
 		listFiles(blocksFolder, blocks, ".json");
 		listFiles(itemsFolder, items, ".json");
 		listFiles(fluidsFolder, fluids, ".json");
-		listFiles(entitiesFolder, entities, ".json");
+		listFiles(entitiesFolder, entities, ".json", "models");
+		listFiles(entityModelsFolder, entityModels, ".json");
 		listFiles(itemGroupsFolder, itemGroups, ".json");
 		listFiles(paintingsFolder, paintings, ".json");
 		listFiles(recipesFolder, recipes, ".json");
@@ -158,7 +161,7 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
-				if (EntityGenerator.add(entity) && LanguageHandler.addEntityKey(entity)) {
+				if (EntityGenerator.add(entity) && CustomResourceCreator.generateEntityResources(entity) && LanguageHandler.addEntityKey(entity)) {
 					CustomBlocksMod.LOGGER.info("Generated Entity " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
 				} else {
 					CustomBlocksMod.LOGGER.error("Failed to generate entity " + value.getName() + "!");
@@ -353,15 +356,28 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
-				if (EntityGenerator.addClient(entity)) {
-					CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
-				} else {
-					CustomBlocksMod.LOGGER.error("Failed to create entity renderer for " + value.getName() + "!");
-				}
+				if (EntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
 				itemReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
+			}
+		}
+		for (File value : entityModels) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject model = new Gson().fromJson(json.toString(), JsonObject.class);
+				EntityGenerator.entityModels.put(model.get("name").getAsString(), model);
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Entity model " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : trees) {
@@ -426,11 +442,18 @@ public class GenerateCustomElements {
 		FluidRenderHandlerRegistry.INSTANCE.register(flowing, renderHandler);
 	}
 
-	private static void listFiles(final File folder, List<File> list, String fileExtension) {
+	private static void listFiles(final File folder, List<File> list, String fileExtension, String... excludedSubfolders) {
 		if (folder.exists()) {
 			for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
 				if (fileEntry.isDirectory()) {
-					listFiles(fileEntry, list, fileExtension);
+					boolean isExcluded = false;
+					for (String excludedName : excludedSubfolders) {
+						if (fileEntry.getName().contains(excludedName)) {
+							isExcluded = true;
+							break;
+						}
+					}
+					if (!isExcluded) listFiles(fileEntry, list, fileExtension);
 				} else {
 					if (fileEntry.getName().endsWith(fileExtension) || fileExtension.equals("*")) list.add(fileEntry);
 				}
@@ -438,12 +461,19 @@ public class GenerateCustomElements {
 		}
 	}
 
-	private static List<File> listFiles(final File folder, String fileExtension) {
+	private static List<File> listFiles(final File folder, String fileExtension, String... excludedSubfolders) {
 		List<File> list = new ArrayList<>();
 		if (folder.exists()) {
 			for (final File fileEntry : folder.listFiles()) {
 				if (fileEntry.isDirectory()) {
-					listFiles(fileEntry, list, fileExtension);
+					boolean isExcluded = false;
+					for (String excludedName : excludedSubfolders) {
+						if (fileEntry.getName().contains(excludedName)) {
+							isExcluded = true;
+							break;
+						}
+					}
+					if (!isExcluded) listFiles(fileEntry, list, fileExtension);
 				} else {
 					if (fileEntry.getName().endsWith(fileExtension) || fileExtension.equals("*")) list.add(fileEntry);
 				}

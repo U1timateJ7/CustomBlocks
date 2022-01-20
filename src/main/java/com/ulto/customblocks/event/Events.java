@@ -390,4 +390,12 @@ public class Events {
             default -> TypedActionResult.pass(stack);
         };
     }
+
+    public static ActionResult playEntityEvent(Entity entity, @Nullable Map<String, Object> dependencies, JsonObject event) {
+        Map<String, Object> deps = new HashMap<>(Map.of("entity", entity, "x", entity.getX(), "y", entity.getY(), "z", entity.getZ(), "world", entity.world));
+        if (dependencies != null) {
+            deps.putAll(dependencies);
+        }
+        return playEvent(deps, event);
+    }
 }
