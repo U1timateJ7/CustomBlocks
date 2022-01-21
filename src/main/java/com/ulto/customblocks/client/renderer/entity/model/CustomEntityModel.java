@@ -3,7 +3,6 @@ package com.ulto.customblocks.client.renderer.entity.model;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.CustomBlocksMod;
 import com.ulto.customblocks.util.JsonUtils;
 import io.github.cottonmc.cotton.gui.widget.data.Vec2i;
 import net.fabricmc.api.EnvType;
@@ -11,10 +10,8 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.model.*;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.mob.PathAwareEntity;
-import net.minecraft.util.Identifier;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3f;
 

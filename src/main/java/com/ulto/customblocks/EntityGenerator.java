@@ -2,18 +2,13 @@ package com.ulto.customblocks;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import com.ulto.customblocks.client.renderer.entity.CustomEntityRenderer;
-import com.ulto.customblocks.client.renderer.entity.model.CustomEntityModel;
 import com.ulto.customblocks.entity.*;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
-import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
 import net.fabricmc.fabric.mixin.object.builder.SpawnRestrictionAccessor;
 import net.minecraft.block.Block;
-import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.entity.*;
 import net.minecraft.entity.ai.goal.*;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -103,18 +98,6 @@ public class EntityGenerator {
 
     private static Identifier getEggId(Identifier id) {
         return new Identifier(id.getNamespace(), id.getPath() + "_spawn_egg");
-    }
-
-    @Environment(EnvType.CLIENT)
-    public static boolean addClient(JsonObject entity) {
-        if (entity.has("model_name")) {
-            EntityModelLayer entityModelLayer = new EntityModelLayer(new Identifier(entity.get("namespace").getAsString(), entity.get("id").getAsString()), "main");
-            EntityModelLayerRegistry.registerModelLayer(entityModelLayer, () -> CustomEntityModel.getTexturedModelData(entityModels.get(entity.get("model_name").getAsString())));
-
-            EntityRendererRegistry.register(entities.get(new Identifier(entity.get("namespace").getAsString(), entity.get("id").getAsString())), (context) -> new CustomEntityRenderer<>(context, new CustomEntityModel<>(context.getPart(entityModelLayer), entityModels.get(entity.get("model_name").getAsString()), entity), entity.has("shadow_size") ? entity.get("shadow_size").getAsFloat() : 0.5f, entity));
-            return true;
-        }
-        return false;
     }
 
     public static <T extends PathAwareEntity> void addGoals(GoalSelector goalSelector, GoalSelector targetSelector, JsonObject entity, T pathAwareEntity) {

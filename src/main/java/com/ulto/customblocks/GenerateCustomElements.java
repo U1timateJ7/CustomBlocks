@@ -3,6 +3,8 @@ package com.ulto.customblocks;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.ulto.customblocks.client.ClientEntityGenerator;
+import com.ulto.customblocks.client.ClientPackGenerator;
 import com.ulto.customblocks.event.global.GlobalEvents;
 import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.api.EnvType;
@@ -30,7 +32,6 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 import java.util.function.Function;
@@ -357,7 +358,7 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
-				if (EntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+				if (ClientEntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
 				itemReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -415,7 +416,7 @@ public class GenerateCustomElements {
 				}
 				JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
 				if (pack.has("name")) {
-					PackGenerator.addClient(pack);
+					ClientPackGenerator.addClient(pack);
 				}
 				packReader.close();
 			} catch (IOException e) {

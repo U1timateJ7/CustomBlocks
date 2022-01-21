@@ -320,6 +320,18 @@ public class Events {
                 result = ActionResult.SUCCESS;
             }
         }
+        if (event.has("emit_game_event")) {
+            if (event.get("emit_game_event").isJsonPrimitive() && dependencies.containsKey("world") && dependencies.containsKey("x") && dependencies.containsKey("y") && dependencies.containsKey("z")) {
+                World world = (World) dependencies.get("world");
+                double x = dependencies.get("x") instanceof Integer ? (int) dependencies.get("x") : (double) dependencies.get("x");
+                double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
+                double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
+                Identifier gameEvent = new Identifier(event.get("emit_game_event").getAsString());
+                if (dependencies.containsKey("entity")) world.emitGameEvent((Entity) dependencies.get("entity"), Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                else world.emitGameEvent(Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                result = ActionResult.SUCCESS;
+            }
+        }
         if (event.has("block_event")) {
             if (event.get("block_event").isJsonObject()) {
                 JsonObject eventObject = event.getAsJsonObject("block_event");
