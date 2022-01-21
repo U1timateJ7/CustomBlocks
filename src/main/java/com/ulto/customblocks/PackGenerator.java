@@ -471,6 +471,21 @@ public class PackGenerator {
                 } else {
                     CustomBlocksMod.LOGGER.error("Failed to generate trapdoor!");
                 }
+                JsonObject tree = new JsonObject();
+                tree.addProperty("namespace", woodPack.get("namespace").getAsString());
+                tree.addProperty("id", woodPack.get("id").getAsString() + "_trapdoor");
+                tree.addProperty("display_name", woodPack.get("display_name").getAsString() + " Trapdoor");
+                if (woodPack.has("texture_namespace"))
+                    tree.addProperty("texture_namespace", woodPack.get("texture_namespace").getAsString());
+                else tree.addProperty("texture_namespace", woodPack.get("namespace").getAsString());
+                tree.addProperty("all", woodPack.get("sapling_texture").getAsString());
+                if (TreeGenerator.add(tree) && CustomResourceCreator.generateSaplingResources(tree) && LanguageHandler.addSaplingKey(tree)) {
+                    CustomBlocksMod.LOGGER.info("Generated Tree " + tree.get("namespace").getAsString() + ":" + tree.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate tree!");
+                }
+                Identifier saplingId = new Identifier(tree.get("namespace").getAsString(), TreeGenerator.getSaplingId(tree.get("id").getAsString()));
+                Identifier pottedSaplingId = new Identifier(saplingId.getNamespace(), "potted_" + saplingId.getPath());
                 Identifier trapdoorId = new Identifier(trapdoor.get("namespace").getAsString(), trapdoor.get("id").getAsString());
                 BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), Registry.BLOCK.get(doorId), Registry.BLOCK.get(trapdoorId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fence_gates"), "blocks", fenceGateId));
@@ -483,6 +498,8 @@ public class PackGenerator {
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_slabs"), "blocks", slabId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_stairs"), "blocks", stairId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_trapdoors"), "blocks", trapdoorId));
+                TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("saplings"), "blocks", saplingId));
+                TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("flower_pots"), "blocks", pottedSaplingId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("logs_that_burn"), "items", logId, woodBlockId, strippedLogId, strippedWoodBlockId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("planks"), "items", planksId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_buttons"), "items", buttonId));
@@ -492,6 +509,7 @@ public class PackGenerator {
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_slabs"), "items", slabId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_stairs"), "items", stairId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_trapdoors"), "items", trapdoorId));
+                TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("saplings"), "items", saplingId));
                 Ingredient logs = Ingredient.ofItems(Registry.BLOCK.get(logId), Registry.BLOCK.get(woodBlockId), Registry.BLOCK.get(strippedLogId), Registry.BLOCK.get(strippedWoodBlockId));
                 Ingredient logIngredient = Ingredient.ofItems(Registry.BLOCK.get(logId));
                 Ingredient strippedLogIngredient = Ingredient.ofItems(Registry.BLOCK.get(strippedLogId));
@@ -603,32 +621,6 @@ public class PackGenerator {
                         CustomBlocksMod.LOGGER.error("Failed to generate block!");
                     }
                 }
-                if (BooleanUtils.isValidBlock(block) && block.has("render_type")) {
-                    switch (block.get("render_type").getAsString()) {
-                        case "cutout":
-                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutout());
-                            break;
-                        case "cutout_mipped":
-                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutoutMipped());
-                            break;
-                        case "translucent":
-                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getTranslucent());
-                            break;
-                    }
-                }
-                if (BooleanUtils.isValidBlock(block) && block.has("render_type")) {
-                    switch (block.get("render_type").getAsString()) {
-                        case "cutout":
-                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutout());
-                            break;
-                        case "cutout_mipped":
-                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getCutoutMipped());
-                            break;
-                        case "translucent":
-                            BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString())), RenderLayer.getTranslucent());
-                            break;
-                    }
-                }
             }
         }
         if (pack.has("items")) {
@@ -649,9 +641,15 @@ public class PackGenerator {
                 } else {
                     CustomBlocksMod.LOGGER.error("Failed to generate fluid!");
                 }
-                if (BooleanUtils.isValidFluid(fluid)) {
-                    setupFluidRendering(Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())), new Identifier(fluid.get("texture").getAsString()));
-                    BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())));
+            }
+        }
+        if (pack.has("entities")) {
+            List<JsonObject> entities = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("entities"));
+            for (JsonObject entity : entities) {
+                if (EntityGenerator.add(entity) && CustomResourceCreator.generateEntityResources(entity) && LanguageHandler.addEntityKey(entity)) {
+                    CustomBlocksMod.LOGGER.info("Generated Entity {}", entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate entity!");
                 }
             }
         }
@@ -685,6 +683,16 @@ public class PackGenerator {
                 }
             }
         }
+        if (pack.has("trees")) {
+            List<JsonObject> trees = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("trees"));
+            for (JsonObject tree : trees) {
+                if (TreeGenerator.add(tree) && CustomResourceCreator.generateSaplingResources(tree) && LanguageHandler.addSaplingKey(tree)) {
+                    CustomBlocksMod.LOGGER.info("Generated Tree {}", tree.get("namespace").getAsString() + ":" + tree.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate tree!");
+                }
+            }
+        }
         if (pack.has("packs")) {
             List<JsonObject> packs = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("packs"));
             for (JsonObject subPack : packs) {
@@ -697,41 +705,5 @@ public class PackGenerator {
                 }
             }
         }
-    }
-
-    public static void setupFluidRendering(final Fluid still, final Fluid flowing, final Identifier textureFluidId) {
-        final Identifier stillSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_still");
-        final Identifier flowingSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_flow");
-
-        // If they're not already present, add the sprites to the block atlas
-        ClientSpriteRegistryCallback.event(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE).register((atlasTexture, registry) -> {
-            registry.register(stillSpriteId);
-            registry.register(flowingSpriteId);
-        });
-
-        final Identifier fluidId = Registry.FLUID.getId(still);
-        final Identifier listenerId = new Identifier(fluidId.getNamespace(), fluidId.getPath() + "_reload_listener");
-
-        final Sprite[] fluidSprites = { null, null };
-
-        ResourceManagerHelper.get(ResourceType.CLIENT_RESOURCES).registerReloadListener(new SimpleSynchronousResourceReloadListener() {
-            @Override
-            public Identifier getFabricId() {
-                return listenerId;
-            }
-
-            @Override
-            public void reload(ResourceManager resourceManager) {
-                final Function<Identifier, Sprite> atlas = MinecraftClient.getInstance().getSpriteAtlas(SpriteAtlasTexture.BLOCK_ATLAS_TEXTURE);
-                fluidSprites[0] = atlas.apply(stillSpriteId);
-                fluidSprites[1] = atlas.apply(flowingSpriteId);
-            }
-        });
-
-        // The FluidRenderer gets the sprites and color from a FluidRenderHandler during rendering
-        final FluidRenderHandler renderHandler = (view, pos, state) -> fluidSprites;
-
-        FluidRenderHandlerRegistry.INSTANCE.register(still, renderHandler);
-        FluidRenderHandlerRegistry.INSTANCE.register(flowing, renderHandler);
     }
 }

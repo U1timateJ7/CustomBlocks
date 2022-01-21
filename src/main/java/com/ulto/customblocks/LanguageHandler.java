@@ -4,6 +4,7 @@ import com.google.gson.*;
 
 import java.io.*;
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 
 public class LanguageHandler {
@@ -131,6 +132,39 @@ public class LanguageHandler {
 		return false;
 	}
 
+	public static boolean addSaplingKey(JsonObject sapling) {
+		if (sapling.has("namespace") && sapling.has("id")) {
+			String namespace = sapling.get("namespace").getAsString();
+			String id = (new Object() {
+				String getSaplingId(String id) {
+					String saplingId = id.replace("_tree", "_sapling");
+					if (!saplingId.contains("_sapling")) saplingId += "_sapling";
+					return saplingId;
+				}
+			}).getSaplingId(sapling.get("id").getAsString());
+			StringBuilder text = new StringBuilder();
+			String[] words = id.split("_");
+			for (int i = 0; i < words.length; i++) {
+				String word = words[i];
+				String firstChar = String.valueOf(word.charAt(0)).toUpperCase(Locale.ROOT);
+				StringBuilder otherChars = new StringBuilder();
+				for (int j = 1; j < word.length(); j++) {
+					otherChars.append(word.charAt(j));
+				}
+				if (i > 0) text.append(" ");
+				text.append(firstChar).append(otherChars);
+			}
+			languageObject.addProperty("block." + namespace + "." + id, text.toString());
+			if (sapling.has("languages")) {
+				for (Map.Entry<String, JsonElement> lang : sapling.getAsJsonObject("languages").entrySet()) {
+					languageObjects.get(lang.getKey()).addProperty("block." + namespace + "." + id, lang.getValue().getAsString());
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
 	public static boolean addItemKey(JsonObject item) {
 		if (item.has("namespace") && item.has("id") && item.has("display_name")) {
 			String namespace = item.get("namespace").getAsString();
@@ -170,6 +204,32 @@ public class LanguageHandler {
 				if (languages.has("bucket")) {
 					for (Map.Entry<String, JsonElement> lang : languages.getAsJsonObject("bucket").entrySet()) {
 						languageObjects.get(lang.getKey()).addProperty("item." + namespace + "." + id, lang.getValue().getAsString());
+					}
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean addEntityKey(JsonObject entity) {
+		if (entity.has("namespace") && entity.has("id") && entity.has("display_name")) {
+			String namespace = entity.get("namespace").getAsString();
+			String id = entity.get("id").getAsString();
+			String text = entity.get("display_name").getAsString();
+			languageObject.addProperty("entity." + namespace + "." + id, text);
+			if (entity.has("languages")) {
+				JsonObject languages = entity.getAsJsonObject("languages");
+				for (Map.Entry<String, JsonElement> lang : languages.getAsJsonObject("name").entrySet()) {
+					languageObjects.get(lang.getKey()).addProperty("entity." + namespace + "." + id, lang.getValue().getAsString());
+				}
+			}
+			if (entity.has("has_spawn_egg") && entity.get("has_spawn_egg").getAsBoolean()) {
+				languageObject.addProperty("item." + namespace + "." + id + "_spawn_egg", text + " Spawn Egg");
+				if (entity.has("languages")) {
+					JsonObject languages = entity.getAsJsonObject("languages");
+					for (Map.Entry<String, JsonElement> lang : languages.getAsJsonObject("spawn_egg").entrySet()) {
+						languageObjects.get(lang.getKey()).addProperty("entity." + namespace + "." + id + "_spawn_egg", lang.getValue().getAsString());
 					}
 				}
 			}

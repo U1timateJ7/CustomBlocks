@@ -15,8 +15,10 @@ import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
+import net.minecraft.util.registry.RegistryKey;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
+import net.minecraft.world.biome.Biome;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
@@ -169,6 +171,14 @@ public class JsonUtils {
         List<VoxelShape> list = new ArrayList<>();
         for (JsonObject obj : shape) {
             list.add(VoxelShapes.cuboid(obj.get("min_x").getAsDouble() / 16, obj.get("min_y").getAsDouble() / 16, obj.get("min_z").getAsDouble() / 16, obj.get("max_x").getAsDouble() / 16, obj.get("max_y").getAsDouble() / 16, obj.get("max_z").getAsDouble() / 16));
+        }
+        return list;
+    }
+
+    public static List<RegistryKey<Biome>> jsonArrayToBiomeRegistryKeyList(JsonArray jsonArray) {
+        List<RegistryKey<Biome>> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            list.add(RegistryKey.of(Registry.BIOME_KEY, new Identifier(jsonArray.get(i).getAsString())));
         }
         return list;
     }

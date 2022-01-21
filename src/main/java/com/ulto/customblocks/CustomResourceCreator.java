@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.resource.CustomResourcePackProvider;
 import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.fabric.api.util.TriState;
+import net.minecraft.util.Identifier;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -2394,7 +2395,42 @@ public class CustomResourceCreator {
 		return false;
 	}
 
-	public static boolean generatePaintingResources(JsonObject _painting) {
+    public static boolean generateEntityResources(JsonObject _entity) {
+        if (_entity.has("namespace") && _entity.has("id")) {
+            String _namespace = (_entity.has("texture") ? new Identifier(_entity.get("texture").getAsString()) : new Identifier(_entity.get("namespace").getAsString(), "textures/entity/" + _entity.get("id").getAsString() + ".png")).getNamespace();
+            Identifier id = new Identifier(_entity.get("namespace").getAsString(), _entity.get("id").getAsString() + "_spawn_egg");
+            File namespace = new File(assets, File.separator + _namespace);
+            File textures = new File(namespace, File.separator + "textures");
+            File entity = new File(textures, File.separator + "entity");
+            entity.mkdirs();
+            File models = new File(namespace, File.separator + "models");
+            File item = new File(models, File.separator + "item");
+            item.mkdirs();
+            File itemModel = new File(item, File.separator + id.getPath() + ".json");
+            if (!itemModel.exists()) {
+                try {
+                    itemModel.createNewFile();
+                } catch (IOException exception) {
+                    exception.printStackTrace();
+                }
+            }
+            try {
+                FileWriter itemModelwriter = new FileWriter(itemModel);
+                BufferedWriter itemModelbw = new BufferedWriter(itemModelwriter);
+                itemModelbw.write("{\n" +
+                        "  \"parent\": \"minecraft:item/template_spawn_egg\"\n" +
+                        "}");
+                itemModelbw.close();
+                itemModelwriter.close();
+            } catch (IOException fileNotFoundException) {
+                fileNotFoundException.printStackTrace();
+            }
+            return true;
+        }
+        return false;
+    }
+
+    public static boolean generatePaintingResources(JsonObject _painting) {
 		if (_painting.has("namespace") && _painting.has("id")) {
 			String _namespace = _painting.get("namespace").getAsString();
 			File namespace = new File(assets, File.separator + _namespace);
@@ -2407,4 +2443,146 @@ public class CustomResourceCreator {
 		}
 		return false;
 	}
+
+    public static boolean generateSaplingResources(JsonObject sapling) {
+        if (sapling.has("namespace") && sapling.has("id")) {
+            if (sapling.has("has_sapling")) {
+                if (sapling.get("has_sapling").getAsBoolean() && sapling.has("sapling_texture")) {
+                    String _namespace = sapling.get("namespace").getAsString();
+                    String id = TreeGenerator.getSaplingId(sapling.get("id").getAsString());
+                    String saplingTexture = sapling.get("sapling_texture").getAsString();
+                    String textureNamespace = _namespace;
+                    if (sapling.has("texture_namespace"))
+                        textureNamespace = sapling.get("texture_namespace").getAsString();
+                    File namespace = new File(assets, File.separator + _namespace);
+                    File blockstates = new File(namespace, File.separator + "blockstates");
+                    blockstates.mkdirs();
+                    File models = new File(namespace, File.separator + "models");
+                    File block = new File(models, File.separator + "block");
+                    block.mkdirs();
+                    File item = new File(models, File.separator + "item");
+                    item.mkdirs();
+                    File _textureNamespace = new File(assets, File.separator + textureNamespace);
+                    File textures = new File(_textureNamespace, File.separator + "textures");
+                    File _block = new File(textures, File.separator + "block");
+                    _block.mkdirs();
+                    File blockModel = new File(block, File.separator + id + ".json");
+                    if (!blockModel.exists()) {
+                        try {
+                            blockModel.createNewFile();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    File blockItemModel = new File(item, File.separator + id + ".json");
+                    if (!blockItemModel.exists()) {
+                        try {
+                            blockItemModel.createNewFile();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    File blockstate = new File(blockstates, File.separator + id + ".json");
+                    if (!blockstate.exists()) {
+                        try {
+                            blockModel.createNewFile();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    try {
+                        FileWriter blockModelwriter = new FileWriter(blockModel);
+                        BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
+                        blockModelbw.write("{\n" +
+                                "  \"parent\": \"minecraft:block/cross\",\n" +
+                                "  \"textures\": {\n" +
+                                "    \"cross\": \"" + textureNamespace + ":block/" + saplingTexture + "\"\n" +
+                                "  }\n" +
+                                "}");
+                        blockModelbw.close();
+                        blockModelwriter.close();
+                    } catch (IOException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                    try {
+                        FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
+                        BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
+                        blockItemModelbw.write("{\n" +
+                                "  \"parent\": \"minecraft:item/generated\",\n" +
+                                "  \"textures\": {\n" +
+                                "    \"layer0\": \"" + textureNamespace + ":block/" + saplingTexture + "\"\n" +
+                                "  }\n" +
+                                "}");
+                        blockItemModelbw.close();
+                        blockItemModelwriter.close();
+                    } catch (IOException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                    try {
+                        FileWriter blockstatewriter = new FileWriter(blockstate);
+                        BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
+                        blockstatebw.write("{\n" +
+                                "  \"variants\": {\n" +
+                                "    \"\": {\n" +
+                                "      \"model\": \"" + _namespace + ":block/" + id + "\"\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}");
+                        blockstatebw.close();
+                        blockstatewriter.close();
+                    } catch (IOException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                    //Potted Sapling
+                    File pottedBlockstate = new File(blockstates, File.separator + "potted_" + id + ".json");
+                    if (!pottedBlockstate.exists()) {
+                        try {
+                            blockModel.createNewFile();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    try {
+                        FileWriter blockstatewriter = new FileWriter(pottedBlockstate);
+                        BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
+                        blockstatebw.write("{\n" +
+                                "  \"variants\": {\n" +
+                                "    \"\": {\n" +
+                                "      \"model\": \"" + _namespace + ":block/potted_" + id + "\"\n" +
+                                "    }\n" +
+                                "  }\n" +
+                                "}");
+                        blockstatebw.close();
+                        blockstatewriter.close();
+                    } catch (IOException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                    File pottedBlockModel = new File(block, File.separator + "potted_" + id + ".json");
+                    if (!pottedBlockModel.exists()) {
+                        try {
+                            pottedBlockModel.createNewFile();
+                        } catch (IOException exception) {
+                            exception.printStackTrace();
+                        }
+                    }
+                    try {
+                        FileWriter blockModelwriter = new FileWriter(pottedBlockModel);
+                        BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
+                        blockModelbw.write("{\n" +
+                                "  \"parent\": \"minecraft:block/flower_pot_cross\",\n" +
+                                "  \"textures\": {\n" +
+                                "    \"plant\": \"" + textureNamespace + ":block/" + saplingTexture + "\"\n" +
+                                "  }\n" +
+                                "}");
+                        blockModelbw.close();
+                        blockModelwriter.close();
+                    } catch (IOException fileNotFoundException) {
+                        fileNotFoundException.printStackTrace();
+                    }
+                }
+            }
+            return true;
+        }
+        return false;
+    }
 }
