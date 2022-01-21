@@ -254,7 +254,7 @@ public class LanguageHandler {
 				}
 			}
 			if (entity.has("has_spawn_egg") && entity.get("has_spawn_egg").getAsBoolean()) {
-				languageObject.addProperty("entity." + namespace + "." + id + "_spawn_egg", text + " Spawn Egg");
+				languageObject.addProperty("item." + namespace + "." + id + "_spawn_egg", text + " Spawn Egg");
 				if (entity.has("languages")) {
 					JsonObject languages = entity.getAsJsonObject("languages");
 					for (Map.Entry<String, JsonElement> lang : languages.getAsJsonObject("spawn_egg").entrySet()) {
