@@ -2732,7 +2732,7 @@ public class CustomResourceCreator {
 						fileNotFoundException.printStackTrace();
 					}
 					//Potted Sapling
-					File pottedBlockstate = new File(blockstates, File.separator + id + ".json");
+					File pottedBlockstate = new File(blockstates, File.separator + "potted_" + id + ".json");
 					if (!pottedBlockstate.exists()) {
 						try {
 							blockModel.createNewFile();
@@ -2755,7 +2755,7 @@ public class CustomResourceCreator {
 					} catch (IOException fileNotFoundException) {
 						fileNotFoundException.printStackTrace();
 					}
-					File pottedBlockModel = new File(block, File.separator + id + ".json");
+					File pottedBlockModel = new File(block, File.separator + "potted_" + id + ".json");
 					if (!pottedBlockModel.exists()) {
 						try {
 							pottedBlockModel.createNewFile();
