@@ -1,6 +1,7 @@
 package com.ulto.customblocks.client;
 
 import com.google.gson.JsonObject;
+import com.ulto.customblocks.CustomBlocksMod;
 import com.ulto.customblocks.util.BooleanUtils;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
@@ -45,6 +46,14 @@ public class ClientPackGenerator {
                 if (BooleanUtils.isValidFluid(fluid)) {
                     setupFluidRendering(Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())), new Identifier(fluid.get("texture").getAsString()));
                     BlockRenderLayerMap.INSTANCE.putFluids(RenderLayer.getTranslucent(), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), fluid.get("id").getAsString())), Registry.FLUID.get(new Identifier(fluid.get("namespace").getAsString(), "flowing_" + fluid.get("id").getAsString())));
+                }
+            }
+        }
+        if (pack.has("entities")) {
+            List<JsonObject> entities = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("entities"));
+            for (JsonObject entity : entities) {
+                if (BooleanUtils.isValidFluid(entity)) {
+                    if (ClientEntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
                 }
             }
         }
