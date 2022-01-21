@@ -392,13 +392,10 @@ public class GenerateCustomElements {
 				}
 				JsonObject tree = new Gson().fromJson(json.toString(), JsonObject.class);
 				if (tree.has("has_sapling")) {
-					if (tree.get("has_sapling").getAsBoolean()) BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(tree.get("namespace").getAsString(), (new Object() {
-						String getSaplingId(String id) {
-							String saplingId = id.replace("_tree", "_sapling");
-							if (!saplingId.contains("_sapling")) saplingId += "_sapling";
-							return saplingId;
-						}
-					}).getSaplingId(tree.get("id").getAsString()))), RenderLayer.getCutout());
+					if (tree.get("has_sapling").getAsBoolean()) {
+						BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(tree.get("namespace").getAsString(), TreeGenerator.getSaplingId(tree.get("id").getAsString()))), RenderLayer.getCutout());
+						BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(tree.get("namespace").getAsString(), "potted_" + TreeGenerator.getSaplingId(tree.get("id").getAsString()))), RenderLayer.getCutout());
+					}
 				}
 				test_blockReader.close();
 			} catch (IOException e) {
