@@ -3,6 +3,8 @@ package com.ulto.customblocks;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonSyntaxException;
+import com.ulto.customblocks.client.ClientEntityGenerator;
+import com.ulto.customblocks.client.ClientPackGenerator;
 import com.ulto.customblocks.event.global.GlobalEvents;
 import com.ulto.customblocks.util.BooleanUtils;
 import net.fabricmc.api.EnvType;
@@ -13,6 +15,7 @@ import net.fabricmc.fabric.api.client.render.fluid.v1.FluidRenderHandlerRegistry
 import net.fabricmc.fabric.api.event.client.ClientSpriteRegistryCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.RenderLayer;
 import net.minecraft.client.texture.Sprite;
@@ -40,6 +43,10 @@ public class GenerateCustomElements {
 	public static List<File> items = new ArrayList<>();
 	public static File fluidsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "fluids");
 	public static List<File> fluids = new ArrayList<>();
+	public static File entitiesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "entities");
+	public static List<File> entities = new ArrayList<>();
+	public static File entityModelsFolder = new File(entitiesFolder, File.separator + "models");
+	public static List<File> entityModels = new ArrayList<>();
 	public static File itemGroupsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "item_groups");
 	public static List<File> itemGroups = new ArrayList<>();
 	public static File paintingsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "paintings");
@@ -48,6 +55,8 @@ public class GenerateCustomElements {
 	public static List<File> recipes = new ArrayList<>();
 	public static File globalEventsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "global_events");
 	public static List<File> globalEvents = new ArrayList<>();
+	public static File treesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "trees");
+	public static List<File> trees = new ArrayList<>();
 	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
 	public static List<File> packs = new ArrayList<>();
 	
@@ -55,19 +64,24 @@ public class GenerateCustomElements {
 		blocksFolder.mkdirs();
 		itemsFolder.mkdirs();
 		fluidsFolder.mkdirs();
+		entityModelsFolder.mkdirs();
 		itemGroupsFolder.mkdirs();
 		paintingsFolder.mkdirs();
 		recipesFolder.mkdirs();
 		globalEventsFolder.mkdirs();
+		treesFolder.mkdirs();
 		packsFolder.mkdirs();
 		copyOldFiles();
 		listFiles(blocksFolder, blocks, ".json");
 		listFiles(itemsFolder, items, ".json");
 		listFiles(fluidsFolder, fluids, ".json");
+		listFiles(entitiesFolder, entities, ".json", "models");
+		listFiles(entityModelsFolder, entityModels, ".json");
 		listFiles(itemGroupsFolder, itemGroups, ".json");
 		listFiles(paintingsFolder, paintings, ".json");
 		listFiles(recipesFolder, recipes, ".json");
 		listFiles(globalEventsFolder, globalEvents, ".json");
+		listFiles(treesFolder, trees, ".json");
 		listFiles(packsFolder, packs, ".json");
 		LanguageHandler.setupLanguage();
 		CustomResourceCreator.setupResourcePack();
@@ -95,7 +109,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Block " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : items) {
@@ -116,7 +130,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate item " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Item " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : fluids) {
@@ -137,7 +151,28 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate fluid " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Fluid " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : entities) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (EntityGenerator.add(entity) && CustomResourceCreator.generateEntityResources(entity) && LanguageHandler.addEntityKey(entity)) {
+					CustomBlocksMod.LOGGER.info("Generated Entity " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate entity " + value.getName() + "!");
+				}
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Entity " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : itemGroups) {
@@ -158,7 +193,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate item group " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Item group " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : paintings) {
@@ -179,7 +214,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate painting " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Painting " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : recipes) {
@@ -200,7 +235,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate recipe " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Recipe " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : globalEvents) {
@@ -221,7 +256,28 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to register global event " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Global event " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : trees) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject tree = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (TreeGenerator.add(tree) && CustomResourceCreator.generateSaplingResources(tree) && LanguageHandler.addSaplingKey(tree)) {
+					CustomBlocksMod.LOGGER.info("Generated Tree " + tree.get("namespace").getAsString() + ":" + tree.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate tree " + value.getName() + "!");
+				}
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Tree " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : packs) {
@@ -244,7 +300,7 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to load pack " + value.getName() + "!");
+				CustomBlocksMod.LOGGER.error("Pack " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		LanguageHandler.saveLang();
@@ -272,7 +328,6 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
 			}
 		}
 		for (File value : fluids) {
@@ -292,11 +347,86 @@ public class GenerateCustomElements {
 			} catch (IOException e) {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
-				CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+			}
+		}
+		for (File value : entities) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject entity = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (ClientEntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
+		for (File value : entityModels) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject model = new Gson().fromJson(json.toString(), JsonObject.class);
+				EntityGenerator.entityModels.put(model.get("name").getAsString(), model);
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Entity model " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : trees) {
+			try {
+				BufferedReader test_blockReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = test_blockReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject tree = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (tree.has("has_sapling")) {
+					if (tree.get("has_sapling").getAsBoolean()) BlockRenderLayerMap.INSTANCE.putBlock(Registry.BLOCK.get(new Identifier(tree.get("namespace").getAsString(), (new Object() {
+						String getSaplingId(String id) {
+							String saplingId = id.replace("_tree", "_sapling");
+							if (!saplingId.contains("_sapling")) saplingId += "_sapling";
+							return saplingId;
+						}
+					}).getSaplingId(tree.get("id").getAsString()))), RenderLayer.getCutout());
+				}
+				test_blockReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
+		for (File value : packs) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject pack = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (pack.has("name")) {
+					ClientPackGenerator.addClient(pack);
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
 			}
 		}
 	}
 
+	@Environment(EnvType.CLIENT)
 	public static void setupFluidRendering(final Fluid still, final Fluid flowing, final Identifier textureFluidId) {
 		final Identifier stillSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_still");
 		final Identifier flowingSpriteId = new Identifier(textureFluidId.getNamespace(), "block/" + textureFluidId.getPath() + "_flow");
@@ -333,11 +463,18 @@ public class GenerateCustomElements {
 		FluidRenderHandlerRegistry.INSTANCE.register(flowing, renderHandler);
 	}
 
-	private static void listFiles(final File folder, List<File> list, String fileExtension) {
+	private static void listFiles(final File folder, List<File> list, String fileExtension, String... excludedSubfolders) {
 		if (folder.exists()) {
 			for (final File fileEntry : Objects.requireNonNull(folder.listFiles())) {
 				if (fileEntry.isDirectory()) {
-					listFiles(fileEntry, list, fileExtension);
+					boolean isExcluded = false;
+					for (String excludedName : excludedSubfolders) {
+						if (fileEntry.getName().contains(excludedName)) {
+							isExcluded = true;
+							break;
+						}
+					}
+					if (!isExcluded) listFiles(fileEntry, list, fileExtension);
 				} else {
 					if (fileEntry.getName().endsWith(fileExtension) || fileExtension.equals("*")) list.add(fileEntry);
 				}
@@ -345,12 +482,19 @@ public class GenerateCustomElements {
 		}
 	}
 
-	private static List<File> listFiles(final File folder, String fileExtension) {
+	private static List<File> listFiles(final File folder, String fileExtension, String... excludedSubfolders) {
 		List<File> list = new ArrayList<>();
 		if (folder.exists()) {
 			for (final File fileEntry : folder.listFiles()) {
 				if (fileEntry.isDirectory()) {
-					listFiles(fileEntry, list, fileExtension);
+					boolean isExcluded = false;
+					for (String excludedName : excludedSubfolders) {
+						if (fileEntry.getName().contains(excludedName)) {
+							isExcluded = true;
+							break;
+						}
+					}
+					if (!isExcluded) listFiles(fileEntry, list, fileExtension);
 				} else {
 					if (fileEntry.getName().endsWith(fileExtension) || fileExtension.equals("*")) list.add(fileEntry);
 				}
@@ -359,21 +503,27 @@ public class GenerateCustomElements {
 		return list;
 	}
 
-	public static File blocksFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "blocks");
+	public static File blocksFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "blocks");
 	public static List<File> blocksFv0 = listFiles(blocksFolderFv0, ".json");
-	public static File itemsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "items");
+	public static File itemsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "items");
 	public static List<File> itemsFv0 = listFiles(itemsFolderFv0, ".json");
-	public static File fluidsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "fluids");
+	public static File fluidsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "fluids");
 	public static List<File> fluidsFv0 = listFiles(fluidsFolderFv0, ".json");
-	public static File itemGroupsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "itemgroups");
+	public static File entitiesFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "entities");
+	public static List<File> entitiesFv0 = listFiles(entitiesFolderFv0, ".json", "models");
+	public static File entityModelsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "models");
+	public static List<File> entityModelsFv0 = listFiles(entityModelsFolderFv0, ".json");
+	public static File itemGroupsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "itemgroups");
 	public static List<File> itemGroupsFv0 = listFiles(itemGroupsFolderFv0, ".json");
-	public static File paintingsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "paintings");
+	public static File paintingsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "paintings");
 	public static List<File> paintingsFv0 = listFiles(paintingsFolderFv0, ".json");
-	public static File recipesFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "recipes");
+	public static File recipesFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "recipes");
 	public static List<File> recipesFv0 = listFiles(recipesFolderFv0, ".json");
-	public static File globalEventsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "global_events");
+	public static File globalEventsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "global_events");
 	public static List<File> globalEventsFv0 = listFiles(globalEventsFolderFv0, ".json");
-	public static File packsFolderFv0 = new File(MinecraftClient.getInstance().runDirectory, File.separator + "packs");
+	public static File treesFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "trees");
+	public static List<File> treesFv0 = listFiles(treesFolderFv0, ".json");
+	public static File packsFolderFv0 = new File(FabricLoader.getInstance().getGameDir().toFile(), File.separator + "packs");
 	public static List<File> packsFv0 = listFiles(packsFolderFv0, ".json");
 
 	private static void copyOldFiles() {
@@ -396,6 +546,22 @@ public class GenerateCustomElements {
 		for (File fv0 : fluidsFv0) {
 			try {
 				Files.copy(fv0.toPath(), fluidsFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : entitiesFv0) {
+			try {
+				Files.copy(fv0.toPath(), entitiesFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		for (File fv0 : entityModelsFv0) {
+			try {
+				Files.copy(fv0.toPath(), entityModelsFolder.toPath().resolve(fv0.getName()));
 				fv0.delete();
 			} catch (IOException e) {
 				e.printStackTrace();
@@ -433,6 +599,14 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			}
 		}
+		for (File fv0 : treesFv0) {
+			try {
+				Files.copy(fv0.toPath(), treesFolder.toPath().resolve(fv0.getName()));
+				fv0.delete();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
 		for (File fv0 : packsFv0) {
 			try {
 				Files.copy(fv0.toPath(), packsFolder.toPath().resolve(fv0.getName()));
@@ -444,10 +618,13 @@ public class GenerateCustomElements {
 		blocksFolderFv0.delete();
 		itemsFolderFv0.delete();
 		fluidsFolderFv0.delete();
+		entityModelsFolderFv0.delete();
+		entitiesFolderFv0.delete();
 		itemGroupsFolderFv0.delete();
 		paintingsFolderFv0.delete();
 		recipesFolderFv0.delete();
 		globalEventsFolderFv0.delete();
+		treesFolderFv0.delete();
 		packsFolderFv0.delete();
 	}
 }

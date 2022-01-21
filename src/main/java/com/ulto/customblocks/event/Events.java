@@ -250,28 +250,6 @@ public class Events {
                 result = ActionResult.SUCCESS;
             }
         }
-        if (event.has("block_event")) {
-            if (event.get("block_event").isJsonObject()) {
-                JsonObject eventObject = event.getAsJsonObject("block_event");
-                String blockId = eventObject.get("custom_block").getAsString();
-                String eventName = eventObject.get("event_name").getAsString();
-                for (File value : GenerateCustomElements.blocks) {
-                    try {
-                        BufferedReader blockReader = new BufferedReader(new FileReader(value));
-                        StringBuilder json = new StringBuilder();
-                        String line;
-                        while ((line = blockReader.readLine()) != null) {
-                            json.append(line);
-                        }
-                        JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
-                        if (blockId.equals(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
-                        blockReader.close();
-                    } catch (Exception e) {
-                    }
-                }
-                result = ActionResult.SUCCESS;
-            }
-        }
         if (event.has("add_effect_to_entity")) {
             if (event.get("add_effect_to_entity").isJsonArray()) {
                 for (JsonElement element : event.getAsJsonArray("add_effect_to_entity")) {
@@ -342,6 +320,40 @@ public class Events {
                 result = ActionResult.SUCCESS;
             }
         }
+        if (event.has("emit_game_event")) {
+            if (event.get("emit_game_event").isJsonPrimitive() && dependencies.containsKey("world") && dependencies.containsKey("x") && dependencies.containsKey("y") && dependencies.containsKey("z")) {
+                World world = (World) dependencies.get("world");
+                double x = dependencies.get("x") instanceof Integer ? (int) dependencies.get("x") : (double) dependencies.get("x");
+                double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
+                double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
+                Identifier gameEvent = new Identifier(event.get("emit_game_event").getAsString());
+                if (dependencies.containsKey("entity")) world.emitGameEvent((Entity) dependencies.get("entity"), Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                else world.emitGameEvent(Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                result = ActionResult.SUCCESS;
+            }
+        }
+        if (event.has("block_event")) {
+            if (event.get("block_event").isJsonObject()) {
+                JsonObject eventObject = event.getAsJsonObject("block_event");
+                String blockId = eventObject.get("custom_block").getAsString();
+                String eventName = eventObject.get("event_name").getAsString();
+                for (File value : GenerateCustomElements.blocks) {
+                    try {
+                        BufferedReader blockReader = new BufferedReader(new FileReader(value));
+                        StringBuilder json = new StringBuilder();
+                        String line;
+                        while ((line = blockReader.readLine()) != null) {
+                            json.append(line);
+                        }
+                        JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
+                        if (blockId.equals(new Identifier(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
+                        blockReader.close();
+                    } catch (Exception e) {
+                    }
+                }
+                result = ActionResult.SUCCESS;
+            }
+        }
         return result;
     }
 
@@ -398,5 +410,13 @@ public class Events {
             case FAIL -> TypedActionResult.fail(stack);
             default -> TypedActionResult.pass(stack);
         };
+    }
+
+    public static ActionResult playEntityEvent(Entity entity, @Nullable Map<String, Object> dependencies, JsonObject event) {
+        Map<String, Object> deps = new HashMap<>(Map.of("entity", entity, "x", entity.getX(), "y", entity.getY(), "z", entity.getZ(), "world", entity.world));
+        if (dependencies != null) {
+            deps.putAll(dependencies);
+        }
+        return playEvent(deps, event);
     }
 }

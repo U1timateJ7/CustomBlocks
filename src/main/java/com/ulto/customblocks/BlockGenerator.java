@@ -123,7 +123,6 @@ public class BlockGenerator {
 			Material material;
 			MapColor mapColor;
 			BlockSoundGroup sounds;
-			Tag<Item> efficientTool;
 			ItemGroup itemGroup;
 			material = switch (_material) {
 				case "wood" -> Material.WOOD;
@@ -277,14 +276,6 @@ public class BlockGenerator {
 				case "polished_deepslate" -> BlockSoundGroup.POLISHED_DEEPSLATE;
 				default -> BlockSoundGroup.STONE;
 			};
-			efficientTool = switch (breakTool) {
-				case "sword" -> FabricToolTags.SWORDS;
-				case "axe" -> FabricToolTags.AXES;
-				case "shovel" -> FabricToolTags.SHOVELS;
-				case "hoe" -> FabricToolTags.HOES;
-				case "shears" -> FabricToolTags.SHEARS;
-				default -> FabricToolTags.PICKAXES;
-			};
 			itemGroup = switch (_itemGroup) {
 				case "decorations" -> ItemGroup.DECORATIONS;
 				case "redstone" -> ItemGroup.REDSTONE;
@@ -301,7 +292,17 @@ public class BlockGenerator {
 			Block NEW_BLOCK;
 			FabricBlockSettings blockSettings = FabricBlockSettings.of(material).strength((float) _hardness, (float) _resistance).slipperiness((float) _slipperiness).mapColor(mapColor).sounds(sounds).luminance(luminance).velocityMultiplier(speedFactor).jumpVelocityMultiplier(jumpFactor);
 			if (!breakTool.equals("none")) {
-				blockSettings.breakByTool(efficientTool, harvestLevel);
+				switch (harvestLevel) {
+					case 1 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("needs_stone_tool"), "blocks", new Identifier(namespace, id)));
+					case 2 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("needs_iron_tool"), "blocks", new Identifier(namespace, id)));
+					case 3 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("needs_diamond_tool"), "blocks", new Identifier(namespace, id)));
+				}
+				switch (breakTool) {
+					case "axe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/axe"), "blocks", new Identifier(namespace, id)));
+					case "hoe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/hoe"), "blocks", new Identifier(namespace, id)));
+					case "pickaxe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/pickaxe"), "blocks", new Identifier(namespace, id)));
+					case "shovel" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/shovel"), "blocks", new Identifier(namespace, id)));
+				}
 				if (requiresTool) blockSettings.requiresTool();
 			}
 			if (!renderType.equals("opaque")) blockSettings.nonOpaque().blockVision(BlockGenerator::never).suffocates(BlockGenerator::never).solidBlock(BlockGenerator::never);
