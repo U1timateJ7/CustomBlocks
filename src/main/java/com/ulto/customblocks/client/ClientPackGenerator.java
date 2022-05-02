@@ -52,9 +52,7 @@ public class ClientPackGenerator {
         if (pack.has("entities")) {
             List<JsonObject> entities = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("entities"));
             for (JsonObject entity : entities) {
-                if (BooleanUtils.isValidFluid(entity)) {
-                    if (ClientEntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
-                }
+                if (ClientEntityGenerator.addClient(entity)) CustomBlocksMod.LOGGER.info("Created Entity Renderer for " + entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
             }
         }
         if (pack.has("trees")) {

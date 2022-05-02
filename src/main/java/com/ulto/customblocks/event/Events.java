@@ -23,6 +23,7 @@ import net.minecraft.server.function.CommandFunction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.tag.Tag;
+import net.minecraft.tag.TagKey;
 import net.minecraft.text.LiteralText;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
@@ -90,7 +91,7 @@ public class Events {
                 case "is_block_at_pos_in_tag" -> {
                     if (dependencies.containsKey("world") && condition.has("tag")) {
                         World world = (World) dependencies.get("world");
-                        Tag<Block> tag = world.getTagManager().getOrCreateTagGroup(Registry.BLOCK_KEY).getTag(new Identifier(condition.get("tag").getAsString()));
+                        TagKey<Block> tag = TagKey.of(Registry.BLOCK_KEY, new Identifier(condition.get("tag").getAsString()));
                         int x = dependencies.containsKey("x") ? (int) dependencies.get("x") : condition.has("x") ? condition.get("x").getAsInt() : 0;
                         int y = dependencies.containsKey("y") ? (int) dependencies.get("y") : condition.has("y") ? condition.get("y").getAsInt() : 0;
                         int z = dependencies.containsKey("z") ? (int) dependencies.get("z") : condition.has("z") ? condition.get("z").getAsInt() : 0;

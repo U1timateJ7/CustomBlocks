@@ -37,7 +37,7 @@ public class CustomFallingFenceBlock extends CustomFenceBlock implements Landing
     public void scheduledTick(BlockState state, ServerWorld world, BlockPos pos, Random random) {
         super.scheduledTick(state, world, pos, random);
         if (canFallThrough(world.getBlockState(pos.down())) && pos.getY() >= 0) {
-            FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(world, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, world.getBlockState(pos));
+            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.spawnFromBlock(world, pos, world.getBlockState(pos));
             this.configureFallingBlockEntity(fallingBlockEntity);
             world.spawnEntity(fallingBlockEntity);
         }

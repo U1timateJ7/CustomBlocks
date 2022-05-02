@@ -6,13 +6,19 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.CustomResourceCreator;
 import com.ulto.customblocks.GenerateCustomElements;
+import com.ulto.customblocks.util.BlockUtils;
 import com.ulto.customblocks.util.NumberConverter;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
+import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
+import net.minecraft.block.Block;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.Registry;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -25,10 +31,13 @@ public class BlockMakerGUI extends LightweightGuiDescription {
 
     public BlockMakerGUI() {
         WPlainPanel root = new WPlainPanel();
+        WPlainPanel panel = new WPlainPanel();
         root.setInsets(Insets.ROOT_PANEL);
         WScrollPanel scroll = new WScrollPanel(root);
         scroll.setHost(this);
-        setRootPanel(scroll);
+        panel.setSize(411, 224);
+        panel.add(scroll, 0, 0, 324, 224);
+        setRootPanel(panel);
         root.setSize(300, 200);
         scroll.setSize(324, 224);
         WLabel topLabel = new WLabel(new TranslatableText("gui.block_maker.label.top"));
@@ -106,7 +115,7 @@ public class BlockMakerGUI extends LightweightGuiDescription {
         WTextField rotationTypeField = new WTextField(new LiteralText("rotation type"));
         rotationTypeField.setHost(this);
         rotationTypeField.setEditable(true);
-        rotationTypeField.setMaxLength(11);
+        rotationTypeField.setMaxLength(13);
         root.add(rotationTypeField, 210, 150, 90, 20);
         WLabel rotationTypeLabel = new WLabel(new LiteralText("the rotation type of"));
         root.add(rotationTypeLabel, 210, 130, 110, 10);
@@ -124,7 +133,7 @@ public class BlockMakerGUI extends LightweightGuiDescription {
         WTextField soundsField = new WTextField(new LiteralText("block sounds"));
         soundsField.setHost(this);
         soundsField.setEditable(true);
-        soundsField.setMaxLength(10);
+        soundsField.setMaxLength(23);
         root.add(soundsField, 110, 200, 90, 20);
         WLabel soundsLabel = new WLabel(new LiteralText("the sounds the block"));
         root.add(soundsLabel, 110, 180);
@@ -242,6 +251,41 @@ public class BlockMakerGUI extends LightweightGuiDescription {
             }
         });
 
+        WListPanel<Block, WButton> presets = new WListPanel<>(Registry.BLOCK.stream().toList(), WButton::new, ((block, button) -> {
+            button.setIcon(new ItemIcon(block.asItem()));
+            button.setLabel(new TranslatableText(block.getTranslationKey()));
+            button.setOnClick(() -> {
+                materialField.setText(BlockUtils.materialNameFromMaterial(block.settings.material));
+                hardnessField.setText(String.valueOf(block.settings.hardness));
+                resistanceField.setText(String.valueOf(block.settings.resistance));
+                slipperinessField.setText(String.valueOf(block.settings.slipperiness));
+                rotationTypeField.setText(BlockUtils.rotationTypeFromBlock(block));
+                mapColorField.setText(BlockUtils.mapColorFromBlock(block));
+                soundsField.setText(BlockUtils.blockSoundGroupfromBlock(block));
+                efficientToolField.setText(BlockUtils.efficientToolFromBlock(block));
+                harvestLevelField.setText(BlockUtils.harvestLevelFromBlock(block));
+                luminanceField.setText(String.valueOf(block.settings.luminance.applyAsInt(block.getDefaultState())));
+                maxStackSizeField.setText(String.valueOf(block.asItem().getMaxCount()));
+                fireproofToggle.setToggle(block.asItem().isFireproof());
+                itemGroupField.setText(block.asItem().getGroup() != null ? block.asItem().getGroup().getName() : "none");
+            });
+        }));
+        final boolean[] showPresets = {false};
+        WButton togglePresets = new WButton(new TranslatableText("gui.block_maker.button.presets"));
+        togglePresets.setOnClick(() -> {
+            if (!showPresets[0]) {
+                panel.setSize(464, 224);
+                MinecraftClient.getInstance().setScreen(MinecraftClient.getInstance().currentScreen);
+                panel.add(presets, 324, 28, 140, 180);
+                showPresets[0] = true;
+            } else {
+                panel.remove(presets);
+                panel.setSize(411, 224);
+                MinecraftClient.getInstance().setScreen(MinecraftClient.getInstance().currentScreen);
+                showPresets[0] = false;
+            }
+        });
+        panel.add(togglePresets, 324, 7, 80, 20);
         WButton openTextureFolderButton = new WButton(new TranslatableText("gui.maker.button.textures_folder"));
         openTextureFolderButton.setOnClick(() -> {
             if (!textureNamespaceField.getText().isEmpty()) {

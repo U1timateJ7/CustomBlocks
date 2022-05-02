@@ -1,0 +1,24 @@
+accessWidener	v1 named
+accessible field net/minecraft/block/AbstractBlock settings Lnet/minecraft/block/AbstractBlock$Settings;
+accessible field net/minecraft/block/AbstractBlock$Settings material Lnet/minecraft/block/Material;
+accessible field net/minecraft/block/AbstractBlock$Settings mapColorProvider Ljava/util/function/Function;
+accessible field net/minecraft/block/AbstractBlock$Settings collidable Z
+accessible field net/minecraft/block/AbstractBlock$Settings soundGroup Lnet/minecraft/sound/BlockSoundGroup;
+accessible field net/minecraft/block/AbstractBlock$Settings luminance Ljava/util/function/ToIntFunction;
+accessible field net/minecraft/block/AbstractBlock$Settings resistance F
+accessible field net/minecraft/block/AbstractBlock$Settings hardness F
+accessible field net/minecraft/block/AbstractBlock$Settings toolRequired Z
+accessible field net/minecraft/block/AbstractBlock$Settings randomTicks Z
+accessible field net/minecraft/block/AbstractBlock$Settings slipperiness F
+accessible field net/minecraft/block/AbstractBlock$Settings velocityMultiplier F
+accessible field net/minecraft/block/AbstractBlock$Settings jumpVelocityMultiplier F
+accessible field net/minecraft/block/AbstractBlock$Settings lootTableId Lnet/minecraft/util/Identifier;
+accessible field net/minecraft/block/AbstractBlock$Settings opaque Z
+accessible field net/minecraft/block/AbstractBlock$Settings isAir Z
+accessible field net/minecraft/block/AbstractBlock$Settings allowsSpawningPredicate Lnet/minecraft/block/AbstractBlock$TypedContextPredicate;
+accessible field net/minecraft/block/AbstractBlock$Settings solidBlockPredicate Lnet/minecraft/block/AbstractBlock$ContextPredicate;
+accessible field net/minecraft/block/AbstractBlock$Settings suffocationPredicate Lnet/minecraft/block/AbstractBlock$ContextPredicate;
+accessible field net/minecraft/block/AbstractBlock$Settings blockVisionPredicate Lnet/minecraft/block/AbstractBlock$ContextPredicate;
+accessible field net/minecraft/block/AbstractBlock$Settings postProcessPredicate Lnet/minecraft/block/AbstractBlock$ContextPredicate;
+accessible field net/minecraft/block/AbstractBlock$Settings emissiveLightingPredicate Lnet/minecraft/block/AbstractBlock$ContextPredicate;
+accessible field net/minecraft/block/AbstractBlock$Settings dynamicBounds Z

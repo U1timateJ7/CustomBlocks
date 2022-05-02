@@ -38,6 +38,7 @@ public class CustomEntity extends PathAwareEntity {
 
     @Override
     public void onDeath(DamageSource source) {
+        super.onDeath(source);
         if (entity.has("on_death")) Events.playEntityEvent(this, new HashMap<>(), entity.getAsJsonObject("on_death"));
     }
 

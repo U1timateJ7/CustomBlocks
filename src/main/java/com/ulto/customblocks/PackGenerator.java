@@ -5,8 +5,8 @@ import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.fabric.api.blockrenderlayer.v1.BlockRenderLayerMap;
 import net.minecraft.advancement.criterion.InventoryChangedCriterion;
 import net.minecraft.client.render.RenderLayer;
-import net.minecraft.data.server.recipe.ShapedRecipeJsonFactory;
-import net.minecraft.data.server.recipe.ShapelessRecipeJsonFactory;
+import net.minecraft.data.server.recipe.ShapedRecipeJsonBuilder;
+import net.minecraft.data.server.recipe.ShapelessRecipeJsonBuilder;
 import net.minecraft.item.Items;
 import net.minecraft.recipe.Ingredient;
 import net.minecraft.util.Identifier;
@@ -467,13 +467,6 @@ public class PackGenerator {
                     tree.addProperty("texture_namespace", woodPack.get("texture_namespace").getAsString());
                 else tree.addProperty("texture_namespace", woodPack.get("namespace").getAsString());
                 tree.addProperty("all", woodPack.get("sapling_texture").getAsString());
-                if (TreeGenerator.add(tree) && CustomResourceCreator.generateSaplingResources(tree) && LanguageHandler.addSaplingKey(tree)) {
-                    CustomBlocksMod.LOGGER.info("Generated Tree " + tree.get("namespace").getAsString() + ":" + tree.get("id").getAsString());
-                } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate tree!");
-                }
-                Identifier saplingId = new Identifier(tree.get("namespace").getAsString(), TreeGenerator.getSaplingId(tree.get("id").getAsString()));
-                Identifier pottedSaplingId = new Identifier(saplingId.getNamespace(), "potted_" + saplingId.getPath());
                 BlockRenderLayerMap.INSTANCE.putBlocks(RenderLayer.getCutout(), Registry.BLOCK.get(doorId), Registry.BLOCK.get(trapdoorId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fence_gates"), "blocks", fenceGateId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("logs_that_burn"), "blocks", logId, woodBlockId, strippedLogId, strippedWoodBlockId));
@@ -485,8 +478,6 @@ public class PackGenerator {
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_slabs"), "blocks", slabId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_stairs"), "blocks", stairId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_trapdoors"), "blocks", trapdoorId));
-                TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("saplings"), "blocks", saplingId));
-                TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("flower_pots"), "blocks", pottedSaplingId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("logs_that_burn"), "items", logId, woodBlockId, strippedLogId, strippedWoodBlockId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("planks"), "items", planksId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_buttons"), "items", buttonId));
@@ -496,13 +487,12 @@ public class PackGenerator {
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_slabs"), "items", slabId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_stairs"), "items", stairId));
                 TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("wooden_trapdoors"), "items", trapdoorId));
-                TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("saplings"), "items", saplingId));
                 Ingredient logs = Ingredient.ofItems(Registry.BLOCK.get(logId), Registry.BLOCK.get(woodBlockId), Registry.BLOCK.get(strippedLogId), Registry.BLOCK.get(strippedWoodBlockId));
                 Ingredient logIngredient = Ingredient.ofItems(Registry.BLOCK.get(logId));
                 Ingredient strippedLogIngredient = Ingredient.ofItems(Registry.BLOCK.get(strippedLogId));
                 Ingredient plank = Ingredient.ofItems(Registry.BLOCK.get(planksId));
                 InventoryChangedCriterion.Conditions getPlanks = InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(planksId));
-                ShapelessRecipeJsonFactory.create(Registry.BLOCK.get(planksId), 4).input(logs).group("planks").criterion("obtain_logs", InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(logId), Registry.BLOCK.get(woodBlockId), Registry.BLOCK.get(strippedLogId), Registry.BLOCK.get(strippedWoodBlockId))).offerTo(recipeJsonProvider -> {
+                ShapelessRecipeJsonBuilder.create(Registry.BLOCK.get(planksId), 4).input(logs).group("planks").criterion("obtain_logs", InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(logId), Registry.BLOCK.get(woodBlockId), Registry.BLOCK.get(strippedLogId), Registry.BLOCK.get(strippedWoodBlockId))).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", planksId.getNamespace());
@@ -510,7 +500,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, planksId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(woodBlockId), 3).pattern("XX").pattern("XX").input('X', logIngredient).group("bark").criterion("obtain_log", InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(logId))).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(woodBlockId), 3).pattern("XX").pattern("XX").input('X', logIngredient).group("bark").criterion("obtain_log", InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(logId))).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", woodBlockId.getNamespace());
@@ -518,7 +508,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, woodBlockId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(strippedWoodBlockId), 3).pattern("XX").pattern("XX").input('X', strippedLogIngredient).group("bark").criterion("obtain_stripped_log", InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(strippedLogId))).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(strippedWoodBlockId), 3).pattern("XX").pattern("XX").input('X', strippedLogIngredient).group("bark").criterion("obtain_stripped_log", InventoryChangedCriterion.Conditions.items(Registry.BLOCK.get(strippedLogId))).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", strippedWoodBlockId.getNamespace());
@@ -526,7 +516,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, strippedWoodBlockId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(slabId), 6).pattern("XXX").input('X', plank).group("wooden_slab").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(slabId), 6).pattern("XXX").input('X', plank).group("wooden_slab").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", slabId.getNamespace());
@@ -534,7 +524,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, slabId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(stairId), 4).pattern("X  ").pattern("XX ").pattern("XXX").input('X', plank).group("wooden_stairs").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(stairId), 4).pattern("X  ").pattern("XX ").pattern("XXX").input('X', plank).group("wooden_stairs").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", stairId.getNamespace());
@@ -542,7 +532,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, stairId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(fenceId), 3).pattern("XIX").pattern("XIX").input('X', plank).input('I', Ingredient.ofItems(Items.STICK)).group("wooden_fence").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(fenceId), 3).pattern("XIX").pattern("XIX").input('X', plank).input('I', Ingredient.ofItems(Items.STICK)).group("wooden_fence").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", fenceId.getNamespace());
@@ -550,7 +540,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, fenceId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(fenceGateId), 1).pattern("IXI").pattern("IXI").input('I', Ingredient.ofItems(Items.STICK)).input('X', plank).group("wooden_fence_gate").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(fenceGateId), 1).pattern("IXI").pattern("IXI").input('I', Ingredient.ofItems(Items.STICK)).input('X', plank).group("wooden_fence_gate").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", fenceGateId.getNamespace());
@@ -558,7 +548,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, fenceGateId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(pressurePlateId), 1).pattern("XX").input('X', plank).group("wooden_pressure_plate").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(pressurePlateId), 1).pattern("XX").input('X', plank).group("wooden_pressure_plate").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", pressurePlateId.getNamespace());
@@ -566,7 +556,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, pressurePlateId);
-                ShapelessRecipeJsonFactory.create(Registry.BLOCK.get(buttonId), 1).input(plank).group("wooden_button").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapelessRecipeJsonBuilder.create(Registry.BLOCK.get(buttonId), 1).input(plank).group("wooden_button").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", buttonId.getNamespace());
@@ -574,7 +564,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, buttonId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(doorId), 3).pattern("XX").pattern("XX").pattern("XX").input('X', plank).group("wooden_door").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(doorId), 3).pattern("XX").pattern("XX").pattern("XX").input('X', plank).group("wooden_door").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", doorId.getNamespace());
@@ -582,7 +572,7 @@ public class PackGenerator {
                     recipe.add("custom", custom);
                     RecipeGenerator.add(recipe);
                 }, doorId);
-                ShapedRecipeJsonFactory.create(Registry.BLOCK.get(trapdoorId), 2).pattern("XXX").pattern("XXX").input('X', plank).group("wooden_trapdoor").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
+                ShapedRecipeJsonBuilder.create(Registry.BLOCK.get(trapdoorId), 2).pattern("XXX").pattern("XXX").input('X', plank).group("wooden_trapdoor").criterion("get_planks", getPlanks).offerTo(recipeJsonProvider -> {
                     JsonObject recipe = recipeJsonProvider.toJson();
                     JsonObject custom = new JsonObject();
                     custom.addProperty("namespace", trapdoorId.getNamespace());
@@ -667,16 +657,6 @@ public class PackGenerator {
                     CustomBlocksMod.LOGGER.info("Generated Recipe {}", recipe.getAsJsonObject("custom").get("namespace").getAsString() + ":" + recipe.getAsJsonObject("custom").get("id").getAsString());
                 } else {
                     CustomBlocksMod.LOGGER.error("Failed to generate recipe!");
-                }
-            }
-        }
-        if (pack.has("trees")) {
-            List<JsonObject> trees = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("trees"));
-            for (JsonObject tree : trees) {
-                if (TreeGenerator.add(tree) && CustomResourceCreator.generateSaplingResources(tree) && LanguageHandler.addSaplingKey(tree)) {
-                    CustomBlocksMod.LOGGER.info("Generated Tree {}", tree.get("namespace").getAsString() + ":" + tree.get("id").getAsString());
-                } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate tree!");
                 }
             }
         }

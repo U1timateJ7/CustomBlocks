@@ -9,7 +9,7 @@ public class PackMakerScreen extends CottonClientScreen {
     }
 
     @Override
-    public void onClose() {
+    public void close() {
         this.client.setScreen(new BlockMakerScreen(new PackTypeSelectorGUI()));
     }
 }

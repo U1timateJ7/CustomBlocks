@@ -6,13 +6,13 @@ import com.ulto.customblocks.event.Events;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.tool.attribute.v1.FabricToolTags;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.PillarBlock;
 import net.minecraft.block.ShapeContext;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.AxeItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.loot.LootTable;
 import net.minecraft.loot.LootTables;
@@ -119,7 +119,7 @@ public class CustomPillarBlock extends PillarBlock {
     public ActionResult onUse(BlockState state, World world, BlockPos pos, PlayerEntity player, Hand hand, BlockHitResult hit) {
         if (block.has("on_use")) Events.playBlockActionEvent(state, pos, world, Map.of("entity", player, "hand", hand, "blockhitresult", hit), block.getAsJsonObject("on_use"));
         if (block.has("stripped_block")) {
-            if (FabricToolTags.AXES.contains(player.getStackInHand(hand).getItem()) && state.getBlock() != null) {
+            if (player.getStackInHand(hand).getItem() instanceof AxeItem && state.getBlock() != null) {
                 BlockState _bs = Registry.BLOCK.get(new Identifier(block.get("stripped_block").getAsString())).getDefaultState().with(PillarBlock.AXIS, world.getBlockState(pos).get(PillarBlock.AXIS));
                 world.playSound(null, pos, SoundEvents.ITEM_AXE_STRIP, SoundCategory.BLOCKS, 1.0F, 1.0F);
                 if (!world.isClient) {
