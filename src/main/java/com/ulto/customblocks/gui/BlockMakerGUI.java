@@ -251,7 +251,7 @@ public class BlockMakerGUI extends LightweightGuiDescription {
             }
         });
 
-        WListPanel<Block, WButton> presets = new WListPanel<>(Registry.BLOCK.stream().toList(), WButton::new, ((block, button) -> {
+        WListPanel<Block, WButton> presets = new WListPanel<>(Registry.BLOCK.stream().toList().subList(1, Registry.BLOCK.stream().toList().size()), WButton::new, ((block, button) -> {
             button.setIcon(new ItemIcon(block.asItem()));
             button.setLabel(new TranslatableText(block.getTranslationKey()));
             button.setOnClick(() -> {
