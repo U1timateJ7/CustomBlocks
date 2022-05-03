@@ -33,6 +33,10 @@ dependencies {
 	modImplementation include("io.github.cottonmc:LibGui:4.2.3+1.17.1")
 }
 
+loom {
+	accessWidenerPath = file("src/main/resources/custom_blocks.accesswidener")
+}
+
 processResources {
 	setDuplicatesStrategy(DuplicatesStrategy.INHERIT)
 	inputs.property "version", mod_version

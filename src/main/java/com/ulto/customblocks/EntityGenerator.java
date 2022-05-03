@@ -48,6 +48,8 @@ public class EntityGenerator {
             if (entity.has("health")) health = entity.get("health").getAsFloat();
             float movementSpeed = 0.3f;
             if (entity.has("movement_speed")) movementSpeed = entity.get("movement_speed").getAsFloat();
+            float attackDamage = 1f;
+            if (entity.has("attack_damage")) attackDamage = entity.get("attack_damage").getAsFloat();
             boolean hasSpawnEgg = false;
             if (entity.has("has_spawn_egg")) hasSpawnEgg = entity.get("has_spawn_egg").getAsBoolean();
             int baseColor = 0xFFFFFF;
@@ -55,7 +57,7 @@ public class EntityGenerator {
             int dotColor = 0xFFFFFF;
             if (entity.has("egg_dot_color")) dotColor = entity.get("egg_dot_color").getAsInt();
 
-            DefaultAttributeContainer.Builder attributeBuilder = MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, health).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, movementSpeed);
+            DefaultAttributeContainer.Builder attributeBuilder = MobEntity.createMobAttributes().add(EntityAttributes.GENERIC_MAX_HEALTH, health).add(EntityAttributes.GENERIC_MOVEMENT_SPEED, movementSpeed).add(EntityAttributes.GENERIC_ATTACK_DAMAGE, attackDamage);
             EntityType.EntityFactory<? extends PathAwareEntity> factory = (t, w) -> new CustomEntity(t, w, entity);
             EntityType.EntityFactory<? extends PassiveEntity> passiveFactory = (t, w) -> new CustomPassiveEntity(t, w, entity);
             EntityType.EntityFactory<? extends HostileEntity> hostileFactory = (t, w) -> new CustomHostileEntity(t, w, entity);
@@ -90,7 +92,7 @@ public class EntityGenerator {
                 );
             });
 
-            if (hasSpawnEgg) Registry.register(Registry.ITEM, getEggId(id), new SpawnEggItem(ENTITY_TYPE, baseColor, dotColor, new Item.Settings().group(ItemGroup.MISC)));
+            if (hasSpawnEgg) Registry.register(Registry.ITEM, getEggId(id), new SpawnEggItem(entities.get(id), baseColor, dotColor, new Item.Settings().group(ItemGroup.MISC)));
             return true;
         }
         return false;

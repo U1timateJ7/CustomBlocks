@@ -11,10 +11,15 @@ import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
 import io.github.cottonmc.cotton.gui.widget.data.Insets;
 import io.github.cottonmc.cotton.gui.widget.icon.ItemIcon;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.item.BlockItem;
+import net.minecraft.item.FoodComponent;
+import net.minecraft.item.Item;
 import net.minecraft.item.Items;
 import net.minecraft.text.LiteralText;
 import net.minecraft.text.TranslatableText;
 import net.minecraft.util.Util;
+import net.minecraft.util.registry.Registry;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,20 +32,25 @@ public class ItemMakerGUI extends LightweightGuiDescription {
 
     public ItemMakerGUI() {
         WPlainPanel root = new WPlainPanel();
+        WPlainPanel panel = new WPlainPanel();
         root.setInsets(Insets.ROOT_PANEL);
         WScrollPanel scroll = new WScrollPanel(root);
+        scroll.setHost(this);
         WPlainPanel foodRoot = new WPlainPanel();
         foodRoot.setInsets(Insets.ROOT_PANEL);
         WScrollPanel foodScroll = new WScrollPanel(foodRoot);
+        foodScroll.setHost(this);
         WTabPanel main = new WTabPanel();
         main.add(new WTabPanel.Tab.Builder(scroll).title(new TranslatableText("gui.item_maker.tab.item")).icon(new ItemIcon(Items.DIAMOND)).build());
         main.add(new WTabPanel.Tab.Builder(foodScroll).title(new TranslatableText("gui.item_maker.tab.food")).icon(new ItemIcon(Items.APPLE)).build());
-        setRootPanel(main);
+        setRootPanel(panel);
         root.setSize(300, 200);
         scroll.setSize(324, 224);
         foodRoot.setSize(300, 200);
         foodScroll.setSize(324, 224);
-        main.setSize(325, 255);
+        main.setSize(324, 254);
+        panel.setSize(411, 254);
+        panel.add(main, 0, 0, 324, 254);
         WLabel topLabel = new WLabel(new TranslatableText("gui.item_maker.label.top"));
         root.add(topLabel, 120, 10);
         WLabel foodTopLabel = new WLabel(new TranslatableText("gui.item_maker.food.label.top"));
@@ -211,6 +221,48 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         foodRoot.add(foodCreateButton, 10, 300, 80, 20);
 
         //Other Widgets
+        List<Item> itemList = new ArrayList<>();
+        for (Item item : Registry.ITEM.stream().toList()) if (!(item instanceof BlockItem) && !item.getDefaultStack().isEmpty()) itemList.add(item);
+
+        WListPanel<Item, WButton> presets = new WListPanel<>(itemList, WButton::new, ((item, button) -> {
+            button.setIcon(new ItemIcon(item));
+            button.setLabel(new TranslatableText(item.getTranslationKey()));
+            button.setOnClick(() -> {
+                maxStackSizeField.setText(String.valueOf(item.getMaxCount()));
+                fireproofToggle.setToggle(item.isFireproof());
+                itemGroupField.setText(item.getGroup() != null ? item.getGroup().getName() : "none");
+                if (item.isFood()) {
+                    FoodComponent food = item.getFoodComponent();
+                    nutritionField.setText(String.valueOf(food.getHunger()));
+                    saturationField.setText(String.valueOf(food.getSaturationModifier()));
+                    isMeatToggle.setToggle(food.isMeat());
+                    eatingSpeedField.setText(food.isSnack() ? "16" : "32");
+                    alwaysEdibleToggle.setToggle(food.isAlwaysEdible());
+                } else {
+                    nutritionField.setText("");
+                    saturationField.setText("");
+                    isMeatToggle.setToggle(false);
+                    eatingSpeedField.setText("");
+                    alwaysEdibleToggle.setToggle(false);
+                }
+            });
+        }));
+        final boolean[] showPresets = {false};
+        WButton togglePresets = new WButton(new TranslatableText("gui.block_maker.button.presets"));
+        togglePresets.setOnClick(() -> {
+            if (!showPresets[0]) {
+                panel.setSize(464, 254);
+                MinecraftClient.getInstance().setScreen(MinecraftClient.getInstance().currentScreen);
+                panel.add(presets, 324, 28, 140, 180);
+                showPresets[0] = true;
+            } else {
+                panel.remove(presets);
+                panel.setSize(411, 254);
+                MinecraftClient.getInstance().setScreen(MinecraftClient.getInstance().currentScreen);
+                showPresets[0] = false;
+            }
+        });
+        panel.add(togglePresets, 324, 7, 80, 20);
         WButton openTextureFolderButton = new WButton(new TranslatableText("gui.maker.button.textures_folder"));
         openTextureFolderButton.setOnClick(() -> {
             if (!textureNamespaceField.getText().isEmpty()) {

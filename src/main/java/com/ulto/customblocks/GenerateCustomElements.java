@@ -39,8 +39,16 @@ import java.util.function.Function;
 public class GenerateCustomElements {
 	public static File blocksFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "blocks");
 	public static List<File> blocks = new ArrayList<>();
+	public static File blockModelsFolder = new File(blocksFolder, File.separator + "models");
+	public static List<File> blockModels = new ArrayList<>();
+	public static File blockstatesFolder = new File(blocksFolder, File.separator + "blockstates");
+	public static List<File> blockstates = new ArrayList<>();
+	public static File blockItemModelsFolder = new File(blocksFolder, File.separator + "item_models");
+	public static List<File> blockItemModels = new ArrayList<>();
 	public static File itemsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "items");
 	public static List<File> items = new ArrayList<>();
+	public static File itemModelsFolder = new File(itemsFolder, File.separator + "models");
+	public static List<File> itemModels = new ArrayList<>();
 	public static File fluidsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "fluids");
 	public static List<File> fluids = new ArrayList<>();
 	public static File entitiesFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "entities");
@@ -72,8 +80,12 @@ public class GenerateCustomElements {
 		treesFolder.mkdirs();
 		packsFolder.mkdirs();
 		copyOldFiles();
-		listFiles(blocksFolder, blocks, ".json");
-		listFiles(itemsFolder, items, ".json");
+		listFiles(blocksFolder, blocks, ".json", "models", "blockstates", "item_models");
+		if (blockModelsFolder.exists()) listFiles(blockModelsFolder, blockModels, ".json");
+		if (blockstatesFolder.exists()) listFiles(blockstatesFolder, blockstates, ".json");
+		if (blockItemModelsFolder.exists()) listFiles(blockItemModelsFolder, blockItemModels, ".json");
+		listFiles(itemsFolder, items, ".json", "models");
+		if (itemModelsFolder.exists()) listFiles(itemModelsFolder, itemModels, ".json");
 		listFiles(fluidsFolder, fluids, ".json");
 		listFiles(entitiesFolder, entities, ".json", "models");
 		listFiles(entityModelsFolder, entityModels, ".json");
@@ -112,6 +124,54 @@ public class GenerateCustomElements {
 				CustomBlocksMod.LOGGER.error("Block " + value.getName() + " has an invalid JSON file!");
 			}
 		}
+		for (File value : blockModels) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject blockModel = new Gson().fromJson(json.toString(), JsonObject.class);
+				CustomResourceCreator.blockModels.put(value.getName().replace(".json", ""), blockModel);
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
+		for (File value : blockstates) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject blockstate = new Gson().fromJson(json.toString(), JsonObject.class);
+				CustomResourceCreator.blockstates.put(value.getName().replace(".json", ""), blockstate);
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
+		for (File value : blockItemModels) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject blockItemModel = new Gson().fromJson(json.toString(), JsonObject.class);
+				CustomResourceCreator.blockItemModels.put(value.getName().replace(".json", ""), blockItemModel);
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+			}
+		}
 		for (File value : items) {
 			try {
 				BufferedReader itemReader = new BufferedReader(new FileReader(value));
@@ -131,6 +191,22 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
 				CustomBlocksMod.LOGGER.error("Item " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : itemModels) {
+			try {
+				BufferedReader itemReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = itemReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject itemModel = new Gson().fromJson(json.toString(), JsonObject.class);
+				CustomResourceCreator.itemModels.put(value.getName().replace(".json", ""), itemModel);
+				itemReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
 			}
 		}
 		for (File value : fluids) {

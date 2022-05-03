@@ -13,6 +13,7 @@
   "gui.block_maker.label.or" : "Or",
   "gui.block_maker.button.create": "Create",
   "gui.block_maker.button.add_to_pack": "Add to Pack",
+  "gui.block_maker.button.presets": "Presets",
   "gui.item_maker.label.top": "Item Creator",
   "gui.item_maker.tab.item": "Custom Item",
   "gui.item_maker.tab.food": "Custom Food",
