@@ -7,9 +7,6 @@ import net.minecraft.block.Material;
 import net.minecraft.sound.BlockSoundGroup;
 import net.minecraft.state.property.Properties;
 import net.minecraft.tag.BlockTags;
-import net.minecraft.tag.TagKey;
-
-import java.util.function.Consumer;
 
 public class BlockUtils {
     public static String materialNameFromMaterial(Material material) {
@@ -198,9 +195,6 @@ public class BlockUtils {
         CustomBlocksMod.LOGGER.info(block.getDefaultState().isIn(BlockTags.NEEDS_STONE_TOOL));
         CustomBlocksMod.LOGGER.info(block.getDefaultState().isIn(BlockTags.NEEDS_IRON_TOOL));
         CustomBlocksMod.LOGGER.info(block.getDefaultState().isIn(BlockTags.NEEDS_DIAMOND_TOOL));
-        block.getRegistryEntry().streamTags().forEach(blockTagKey -> {
-            CustomBlocksMod.LOGGER.info(blockTagKey.id());
-        });
         return harvestLevel;
     }
 }

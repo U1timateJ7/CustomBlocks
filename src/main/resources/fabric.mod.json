@@ -29,7 +29,7 @@
   ],
   "accessWidener" : "custom_blocks.accesswidener",
   "depends": {
-    "fabricloader": ">=0.1.12",
+    "fabricloader": ">=0.14.0",
     "fabric": "*"
   }
 }

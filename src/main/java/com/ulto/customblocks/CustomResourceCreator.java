@@ -14,7 +14,6 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Random;
 
 @SuppressWarnings("SuspiciousNameCombination")
 public class CustomResourceCreator {
@@ -85,11 +84,11 @@ public class CustomResourceCreator {
 			if (differentTextures == TriState.FALSE) texture = _block.getAsJsonObject("textures").get("all").getAsString();
 			if (_block.has("custom_model")) {
 				JsonObject customModel = _block.getAsJsonObject("custom_model");
-				if (customModel.has("block")) customBlockModel = customModel.getAsJsonObject("block").toString();
+				if (customModel.has("block")) customBlockModel = customModel.get("block").getAsString();
 				else customBlockModel = "none";
-				if (customModel.has("item")) customItemModel = customModel.getAsJsonObject("item").toString();
+				if (customModel.has("item")) customItemModel = customModel.get("item").getAsString();
 				else customItemModel = "none";
-				if (customModel.has("blockstate")) customBlockState = customModel.getAsJsonObject("blockstate").toString();
+				if (customModel.has("blockstate")) customBlockState = customModel.get("blockstate").getAsString();
 				else customBlockState = "none";
 			}
 			else {
@@ -2472,7 +2471,7 @@ public class CustomResourceCreator {
 			if (_item.has("tool_type")) toolType = _item.get("tool_type").getAsString();
 			else toolType = "none";
 			String customModel;
-			if (_item.has("custom_model")) customModel = _item.getAsJsonObject("custom_model").toString();
+			if (_item.has("custom_model")) customModel = _item.get("custom_model").getAsString();
 			else customModel = "none";
 			File namespace = new File(assets, File.separator + _namespace);
 			namespace.mkdirs();
@@ -2529,9 +2528,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter itemModelwriter = new FileWriter(itemModel);
 					BufferedWriter itemModelbw = new BufferedWriter(itemModelwriter);
-					{
-						itemModelbw.write(customModel);
-					}
+					itemModelbw.write(gson.toJson(CustomResourceCreator.itemModels.get(customModel)));
 					itemModelbw.close();
 					itemModelwriter.close();
 				} catch (IOException e) {
