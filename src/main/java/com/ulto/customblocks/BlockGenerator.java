@@ -293,12 +293,15 @@ public class BlockGenerator {
 					case 1 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("needs_stone_tool"), "blocks", new Identifier(namespace, id)));
 					case 2 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("needs_iron_tool"), "blocks", new Identifier(namespace, id)));
 					case 3 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("needs_diamond_tool"), "blocks", new Identifier(namespace, id)));
+					default -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "needs_tool_level_" + harvestLevel), "blocks", new Identifier(namespace, id)));
 				}
 				switch (breakTool) {
 					case "axe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/axe"), "blocks", new Identifier(namespace, id)));
 					case "hoe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/hoe"), "blocks", new Identifier(namespace, id)));
 					case "pickaxe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/pickaxe"), "blocks", new Identifier(namespace, id)));
 					case "shovel" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("mineable/shovel"), "blocks", new Identifier(namespace, id)));
+					case "sword" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "mineable/sword"), "blocks", new Identifier(namespace, id)));
+					case "shears" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new Identifier("fabric", "mineable/shears"), "blocks", new Identifier(namespace, id)));
 				}
 				if (requiresTool) blockSettings.requiresTool();
 			}
