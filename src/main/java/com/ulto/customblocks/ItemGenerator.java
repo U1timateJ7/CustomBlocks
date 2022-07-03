@@ -211,8 +211,7 @@ public class ItemGenerator {
                     default -> ITEM = new CustomItem(settings, tooltip, item);
                 }
             }
-            ITEM.setRegistryName(new ResourceLocation(namespace, id));
-            ForgeRegistries.ITEMS.register(ITEM);
+            ForgeRegistries.ITEMS.register(new ResourceLocation(namespace, id), ITEM);
             if (compostLevel > 0) ComposterBlock.COMPOSTABLES.put(ITEM, compostLevel);
             return true;
         }

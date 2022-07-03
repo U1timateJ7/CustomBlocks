@@ -315,67 +315,67 @@ public class BlockGenerator {
 			ResourceLocation registryName = new ResourceLocation(namespace, id);
 			switch (base) {
 				case "slab":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingSlabBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomSlabBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingSlabBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomSlabBlock(blockSettings, block));
 					break;
 				case "stairs":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingStairBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomStairBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingStairBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomStairBlock(blockSettings, block));
 					break;
 				case "wall":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingWallBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomWallBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingWallBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomWallBlock(blockSettings, block));
 					break;
 				case "fence":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingFenceBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomFenceBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingFenceBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomFenceBlock(blockSettings, block));
 					break;
 				case "fence_gate":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingFenceGateBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomFenceGateBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingFenceGateBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomFenceGateBlock(blockSettings, block));
 					break;
 				case "pane":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingPaneBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomPaneBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingPaneBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomPaneBlock(blockSettings, block));
 					break;
 				case "pressure_plate":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingPressurePlateBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomPressurePlateBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingPressurePlateBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomPressurePlateBlock(blockSettings, block));
 					break;
 				case "button":
-					NEW_BLOCK = register(new CustomButtonBlock(blockSettings, block).setRegistryName(registryName));
+					NEW_BLOCK = register(registryName, new CustomButtonBlock(blockSettings, block));
 					break;
 				case "trapdoor":
-					if (hasGravity) NEW_BLOCK = register(new CustomFallingTrapdoorBlock(blockSettings, block).setRegistryName(registryName));
-					else NEW_BLOCK = register(new CustomTrapdoorBlock(blockSettings, block).setRegistryName(registryName));
+					if (hasGravity) NEW_BLOCK = register(registryName, new CustomFallingTrapdoorBlock(blockSettings, block));
+					else NEW_BLOCK = register(registryName, new CustomTrapdoorBlock(blockSettings, block));
 					break;
 				case "door":
-					NEW_BLOCK = register(new CustomDoorBlock(blockSettings, block).setRegistryName(registryName));
+					NEW_BLOCK = register(registryName, new CustomDoorBlock(blockSettings, block));
 					break;
 				case "lever":
-					NEW_BLOCK = register(new CustomLeverBlock(blockSettings, block).setRegistryName(registryName));
+					NEW_BLOCK = register(registryName, new CustomLeverBlock(blockSettings, block));
 					break;
 				case "lichen":
-					NEW_BLOCK = register(new CustomLichenBlock(blockSettings, block).setRegistryName(registryName));
+					NEW_BLOCK = register(registryName, new CustomLichenBlock(blockSettings, block));
 					break;
 				default:
 					if (hasGravity) {
 						switch (rotationType) {
-							case "axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingPillarBlock(blockSettings, shape, block) : new CustomFallingPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
-							case "y_axis_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "y_axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							case "all_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, true, shape, block) : new CustomFallingFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "all" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, false, shape, block) : new CustomFallingFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							default -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFallingBlock(blockSettings, shape, block) : new CustomFallingBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "axis" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFallingPillarBlock(blockSettings, shape, block) : new CustomFallingPillarBlock(blockSettings, shape, block));
+							case "y_axis_player" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, true, shape, block));
+							case "y_axis" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFallingHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomFallingHorizontalFacingBlock(blockSettings, false, shape, block));
+							case "all_player" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, true, shape, block) : new CustomFallingFacingBlock(blockSettings, true, shape, block));
+							case "all" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFallingFacingBlock(blockSettings, false, shape, block) : new CustomFallingFacingBlock(blockSettings, false, shape, block));
+							default -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFallingBlock(blockSettings, shape, block) : new CustomFallingBlock(blockSettings, shape, block));
 						}
 					} else {
 						switch (rotationType) {
-							case "axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedPillarBlock(blockSettings, shape, block) : new CustomPillarBlock(blockSettings, shape, block).setRegistryName(registryName));
-							case "y_axis_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomHorizontalFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "y_axis" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomHorizontalFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							case "all_player" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, true, shape, block) : new CustomFacingBlock(blockSettings, true, shape, block).setRegistryName(registryName));
-							case "all" -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, false, shape, block) : new CustomFacingBlock(blockSettings, false, shape, block).setRegistryName(registryName));
-							default -> NEW_BLOCK = register(waterloggable ? new CustomWaterloggedBlock(blockSettings, shape, block) : new CustomBlock(blockSettings, shape, block).setRegistryName(registryName));
+							case "axis" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedPillarBlock(blockSettings, shape, block) : new CustomPillarBlock(blockSettings, shape, block));
+							case "y_axis_player" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, true, shape, block) : new CustomHorizontalFacingBlock(blockSettings, true, shape, block));
+							case "y_axis" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedHorizontalFacingBlock(blockSettings, false, shape, block) : new CustomHorizontalFacingBlock(blockSettings, false, shape, block));
+							case "all_player" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, true, shape, block) : new CustomFacingBlock(blockSettings, true, shape, block));
+							case "all" -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedFacingBlock(blockSettings, false, shape, block) : new CustomFacingBlock(blockSettings, false, shape, block));
+							default -> NEW_BLOCK = register(registryName, waterloggable ? new CustomWaterloggedBlock(blockSettings, shape, block) : new CustomBlock(blockSettings, shape, block));
 						}
 					}
 					break;
@@ -384,9 +384,9 @@ public class BlockGenerator {
 				Item.Properties itemSettings = new Item.Properties().tab(itemGroup).stacksTo(maxStackSize);
 				if (fireproof) itemSettings.fireResistant();
 				Item BLOCK_ITEM;
-				if (base.equals("door")) BLOCK_ITEM = new DoubleHighBlockItem(NEW_BLOCK, itemSettings).setRegistryName(registryName);
-				else BLOCK_ITEM = new BlockItem(NEW_BLOCK, itemSettings).setRegistryName(registryName);
-				register(BLOCK_ITEM);
+				if (base.equals("door")) BLOCK_ITEM = new DoubleHighBlockItem(NEW_BLOCK, itemSettings);
+				else BLOCK_ITEM = new BlockItem(NEW_BLOCK, itemSettings);
+				register(registryName, BLOCK_ITEM);
 			}
 			return true;
 		}
@@ -396,17 +396,15 @@ public class BlockGenerator {
 	private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CustomBlocksMod.MOD_ID);
 	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CustomBlocksMod.MOD_ID);
 
-	private static Block register(Block block) {
-		if (block.getRegistryName() == null) throw new RuntimeException("Attempted to register a block without a registry name!");
-		//BLOCKS.register(block.getRegistryName().getPath(), () -> block);
-		ForgeRegistries.BLOCKS.register(block);
+	private static Block register(ResourceLocation id, Block block) {
+		if (id == null) throw new RuntimeException("Attempted to register a block without a registry name!");
+		ForgeRegistries.BLOCKS.register(id, block);
 		return block;
 	}
 
-	private static Item register(Item item) {
-		if (item.getRegistryName() == null) throw new RuntimeException("Attempted to register an item without a registry name!");
-		//ITEMS.register(item.getRegistryName().getPath(), () -> item);
-		ForgeRegistries.ITEMS.register(item);
+	private static Item register(ResourceLocation id, Item item) {
+		if (id == null) throw new RuntimeException("Attempted to register an item without a registry name!");
+		ForgeRegistries.ITEMS.register(id, item);
 		return item;
 	}
 

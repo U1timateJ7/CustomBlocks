@@ -7,6 +7,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelAccessor;
@@ -34,7 +35,7 @@ public class CustomWaterloggedFallingBlock extends CustomWaterloggedBlock implem
         return super.updateShape(state, direction, newState, world, pos, posFrom);
     }
 
-    public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
+    public void tick(BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.tick(state, world, pos, random);
         if (isFree(world.getBlockState(pos.below())) && pos.getY() >= 0) {
             FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(world, pos, world.getBlockState(pos));

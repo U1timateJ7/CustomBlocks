@@ -2,7 +2,6 @@ package com.ulto.customblocks.util;
 
 import com.google.gson.JsonObject;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,7 +10,7 @@ public class MiscConverter {
     public static List<Component> stringListToComponentList(List<String> stringList) {
         List<Component> list = new ArrayList<>();
         for (String string : stringList) {
-            list.add(new TextComponent(string));
+            list.add(Component.literal(string));
         }
         return list;
     }

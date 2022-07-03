@@ -7,6 +7,7 @@ import net.minecraft.core.particles.BlockParticleOption;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.entity.item.FallingBlockEntity;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
@@ -32,7 +33,7 @@ public class CustomFallingFenceGateBlock extends CustomFenceGateBlock implements
         return super.updateShape(p_53226_, p_53227_, p_53228_, p_53229_, p_53230_, p_53231_);
     }
 
-    public void tick(BlockState p_53216_, ServerLevel p_53217_, BlockPos p_53218_, Random p_53219_) {
+    public void tick(BlockState p_53216_, ServerLevel p_53217_, BlockPos p_53218_, RandomSource p_53219_) {
         super.tick(p_53216_, p_53217_, p_53218_, p_53219_);
         if (isFree(p_53217_.getBlockState(p_53218_.below())) && p_53218_.getY() >= 0) {
             FallingBlockEntity fallingblockentity = FallingBlockEntity.fall(p_53217_, p_53218_, p_53217_.getBlockState(p_53218_));

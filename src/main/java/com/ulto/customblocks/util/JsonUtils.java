@@ -9,7 +9,6 @@ import net.minecraft.nbt.ListTag;
 import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -344,9 +343,9 @@ public class JsonUtils {
     }
 
     public static Component jsonElementToComponent(JsonElement element) {
-        if (element.isJsonPrimitive()) return new TextComponent(element.getAsString());
+        if (element.isJsonPrimitive()) return Component.literal(element.getAsString());
         else if (element.isJsonArray() || element.isJsonObject()) return Component.Serializer.fromJson(element);
-        return new TextComponent("");
+        return Component.literal("");
     }
 
     public static List<Component> jsonArrayToComponentList(JsonArray jsonArray) {

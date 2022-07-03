@@ -6,7 +6,6 @@ import com.mojang.realmsclient.util.JsonUtils;
 import com.ulto.customblocks.CustomBlocksMod;
 import net.minecraft.ChatFormatting;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.server.packs.FilePackResources;
 import net.minecraft.server.packs.FolderPackResources;
 import net.minecraft.server.packs.PackResources;
@@ -58,8 +57,8 @@ public class CustomResourcePackFinder implements RepositorySource {
     }
 
     static PackSource decorating(String p_10534_) {
-        Component component = new TranslatableComponent(p_10534_);
-        return (p_10539_) -> (new TranslatableComponent("pack.nameAndSource", p_10539_, component)).withStyle(ChatFormatting.GRAY);
+        Component component = Component.translatable(p_10534_);
+        return (p_10539_) -> (Component.translatable("pack.nameAndSource", p_10539_, component)).withStyle(ChatFormatting.GRAY);
     }
     
     public enum Type {

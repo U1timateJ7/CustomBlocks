@@ -72,9 +72,9 @@ public class EntityGenerator {
             });
 
             assert entities.get(id) != null;
-            ForgeRegistries.ENTITIES.register(entities.get(id).setRegistryName(id));
+            ForgeRegistries.ENTITIES.register(id, entities.get(id));
 
-            if (hasSpawnEgg) ForgeRegistries.ITEMS.register(new ForgeSpawnEggItem(() -> entities.get(id), baseColor, dotColor, new Item.Properties().tab(CreativeModeTab.TAB_MISC)).setRegistryName(getEggId(id)));
+            if (hasSpawnEgg) ForgeRegistries.ITEMS.register(getEggId(id), new ForgeSpawnEggItem(() -> entities.get(id), baseColor, dotColor, new Item.Properties().tab(CreativeModeTab.TAB_MISC)));
             return true;
         }
         return false;
@@ -102,7 +102,7 @@ public class EntityGenerator {
             AttributeSupplier.Builder attributeSupplier = AttributeSupplier.builder();
             for (Map.Entry<ResourceLocation, Double> attribute : attributes.getValue().entrySet()) attributeSupplier.add(ForgeRegistries.ATTRIBUTES.getValue(attribute.getKey()), attribute.getValue());
             event.put(entities.get(attributes.getKey()), attributeSupplier.build());
-            CustomBlocksMod.LOGGER.info(entities.get(attributes.getKey()).getRegistryName());
+            CustomBlocksMod.LOGGER.info(ForgeRegistries.ENTITIES.getKey(entities.get(attributes.getKey())));
         }
         CustomBlocksMod.LOGGER.info("Created attributes for {} entities...", attributeSuppliers.size());
     }

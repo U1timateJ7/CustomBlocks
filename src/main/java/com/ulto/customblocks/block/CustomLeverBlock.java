@@ -7,6 +7,7 @@ import com.ulto.customblocks.util.JsonUtils;
 import net.minecraft.core.BlockPos;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -82,7 +83,7 @@ public class CustomLeverBlock extends LeverBlock {
     }
 
     @Override
-    public void tick (BlockState state, ServerLevel world, BlockPos pos, Random random) {
+    public void tick (BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.tick(state, world, pos, random);
         int tickRate = 10;
         if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();

@@ -8,6 +8,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
+import net.minecraft.util.RandomSource;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.Entity;
@@ -18,6 +19,7 @@ import net.minecraft.world.level.Explosion;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.MultifaceBlock;
+import net.minecraft.world.level.block.MultifaceSpreader;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.storage.loot.BuiltInLootTables;
 import net.minecraft.world.level.storage.loot.LootContext;
@@ -36,6 +38,7 @@ import java.util.*;
 
 public class CustomLichenBlock extends MultifaceBlock {
     JsonObject block;
+    private final MultifaceSpreader spreader = new MultifaceSpreader(this);
 
     public CustomLichenBlock(Properties settings, JsonObject blockIn) {
         super(settings);
@@ -117,7 +120,7 @@ public class CustomLichenBlock extends MultifaceBlock {
     }
 
     @Override
-    public void tick (BlockState state, ServerLevel world, BlockPos pos, Random random) {
+    public void tick (BlockState state, ServerLevel world, BlockPos pos, RandomSource random) {
         super.tick(state, world, pos, random);
         int tickRate = 10;
         if (block.has("tick_rate")) tickRate = block.get("tick_rate").getAsInt();
@@ -153,5 +156,10 @@ public class CustomLichenBlock extends MultifaceBlock {
     public void stepOn(Level world, BlockPos pos, BlockState state, Entity entity) {
         super.stepOn(world, pos, state, entity);
         if (block.has("on_entity_stepped")) Events.playBlockEvent(state, pos, world, Map.of("entity", entity), block.getAsJsonObject("on_entity_stepped"));
+    }
+
+    @Override
+    public MultifaceSpreader getSpreader() {
+        return spreader;
     }
 }

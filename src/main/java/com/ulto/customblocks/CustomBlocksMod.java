@@ -39,12 +39,12 @@ public class CustomBlocksMod {
         Registry.BLOCK.unfreeze();
         Registry.ITEM.unfreeze();
         Registry.ENTITY_TYPE.unfreeze();
-        Registry.MOTIVE.unfreeze();
+        Registry.PAINTING_VARIANT.unfreeze();
         GenerateCustomElements.generate();
         Registry.BLOCK.freeze();
         Registry.ITEM.freeze();
         Registry.ENTITY_TYPE.freeze();
-        Registry.MOTIVE.freeze();
+        Registry.PAINTING_VARIANT.freeze();
     }
 
     public CustomBlocksMod() {

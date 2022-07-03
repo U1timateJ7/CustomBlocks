@@ -2,7 +2,7 @@ package com.ulto.customblocks;
 
 import com.google.gson.JsonObject;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.entity.decoration.Motive;
+import net.minecraft.world.entity.decoration.PaintingVariant;
 import net.minecraftforge.registries.ForgeRegistries;
 
 public class PaintingGenerator {
@@ -12,8 +12,8 @@ public class PaintingGenerator {
             int height = painting.get("height").getAsInt();
             String namespace = painting.get("namespace").getAsString();
             String id = painting.get("id").getAsString();
-            Motive PAINTING = new Motive(width, height).setRegistryName(new ResourceLocation(namespace, id));
-            ForgeRegistries.PAINTING_TYPES.register(PAINTING);
+            PaintingVariant PAINTING = new PaintingVariant(width, height);
+            ForgeRegistries.PAINTING_VARIANTS.register(new ResourceLocation(namespace, id), PAINTING);
             return true;
         }
         return false;
