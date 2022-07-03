@@ -10,11 +10,13 @@ import net.minecraft.nbt.StringTag;
 import net.minecraft.nbt.TagParser;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.TextComponent;
+import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.alchemy.PotionUtils;
+import net.minecraft.world.level.biome.Biome;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import net.minecraftforge.registries.ForgeRegistries;
@@ -170,6 +172,14 @@ public class JsonUtils {
         List<VoxelShape> list = new ArrayList<>();
         for (JsonObject obj : shape) {
             list.add(Shapes.box(obj.get("min_x").getAsDouble() / 16, obj.get("min_y").getAsDouble() / 16, obj.get("min_z").getAsDouble() / 16, obj.get("max_x").getAsDouble() / 16, obj.get("max_y").getAsDouble() / 16, obj.get("max_z").getAsDouble() / 16));
+        }
+        return list;
+    }
+
+    public static List<ResourceKey<Biome>> jsonArrayToBiomeRegistryKeyList(JsonArray jsonArray) {
+        List<ResourceKey<Biome>> list = new ArrayList<>();
+        for (int i = 0; i < jsonArray.size(); i++) {
+            list.add(ResourceKey.create(Registry.BIOME_REGISTRY, new ResourceLocation(jsonArray.get(i).getAsString())));
         }
         return list;
     }

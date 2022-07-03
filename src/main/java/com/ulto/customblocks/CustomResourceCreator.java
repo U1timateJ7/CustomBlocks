@@ -1,19 +1,27 @@
 package com.ulto.customblocks;
 
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
 import com.ulto.customblocks.resource.CustomResourcePackFinder;
 import com.ulto.customblocks.util.BooleanUtils;
 import com.ulto.customblocks.util.TriState;
+import net.minecraft.resources.ResourceLocation;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @SuppressWarnings("SuspiciousNameCombination")
 public class CustomResourceCreator {
+	static Gson gson = new GsonBuilder().setPrettyPrinting().create();
 	public static File assets = new File(CustomResourcePackFinder.customBlocksPath, File.separator + "assets");
 	public static File data = new File(CustomResourcePackFinder.customBlocksPath, File.separator + "data");
+
+	public static Map<String, JsonObject> blockModels = new HashMap<>(), blockstates = new HashMap<>(), blockItemModels = new HashMap<>(), itemModels = new HashMap<>();
 
 	public static void setupResourcePack() {
 		File mcmeta = new File(CustomResourcePackFinder.customBlocksPath, File.separator + "pack.mcmeta");
@@ -76,11 +84,11 @@ public class CustomResourceCreator {
 			if (differentTextures == TriState.FALSE) texture = _block.getAsJsonObject("textures").get("all").getAsString();
 			if (_block.has("custom_model")) {
 				JsonObject customModel = _block.getAsJsonObject("custom_model");
-				if (customModel.has("block")) customBlockModel = customModel.getAsJsonObject("block").toString();
+				if (customModel.has("block")) customBlockModel = customModel.get("block").getAsString();
 				else customBlockModel = "none";
-				if (customModel.has("item")) customItemModel = customModel.getAsJsonObject("item").toString();
+				if (customModel.has("item")) customItemModel = customModel.get("item").getAsString();
 				else customItemModel = "none";
-				if (customModel.has("blockstate")) customBlockState = customModel.getAsJsonObject("blockstate").toString();
+				if (customModel.has("blockstate")) customBlockState = customModel.get("blockstate").getAsString();
 				else customBlockState = "none";
 			}
 			else {
@@ -885,7 +893,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter blockModelwriter = new FileWriter(blockModel);
 					BufferedWriter blockModelbw = new BufferedWriter(blockModelwriter);
-					blockModelbw.write(customBlockModel);
+					blockModelbw.write(gson.toJson(blockModels.get(customBlockModel)));
 					blockModelbw.close();
 					blockModelwriter.close();
 				} catch (IOException e) {
@@ -992,7 +1000,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter blockItemModelwriter = new FileWriter(blockItemModel);
 					BufferedWriter blockItemModelbw = new BufferedWriter(blockItemModelwriter);
-					blockItemModelbw.write(customItemModel);
+					blockItemModelbw.write(gson.toJson(blockItemModels.get(customItemModel)));
 					blockItemModelbw.close();
 					blockItemModelwriter.close();
 				} catch (IOException e) {
@@ -2439,9 +2447,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter blockstatewriter = new FileWriter(blockState);
 					BufferedWriter blockstatebw = new BufferedWriter(blockstatewriter);
-					{
-						blockstatebw.write(customBlockState);
-					}
+					blockstatebw.write(gson.toJson(CustomResourceCreator.blockstates.get(customBlockState)));
 					blockstatebw.close();
 					blockstatewriter.close();
 				} catch (IOException e) {
@@ -2465,7 +2471,7 @@ public class CustomResourceCreator {
 			if (_item.has("tool_type")) toolType = _item.get("tool_type").getAsString();
 			else toolType = "none";
 			String customModel;
-			if (_item.has("custom_model")) customModel = _item.getAsJsonObject("custom_model").toString();
+			if (_item.has("custom_model")) customModel = _item.get("custom_model").getAsString();
 			else customModel = "none";
 			File namespace = new File(assets, File.separator + _namespace);
 			namespace.mkdirs();
@@ -2522,9 +2528,7 @@ public class CustomResourceCreator {
 				try {
 					FileWriter itemModelwriter = new FileWriter(itemModel);
 					BufferedWriter itemModelbw = new BufferedWriter(itemModelwriter);
-					{
-						itemModelbw.write(customModel);
-					}
+					itemModelbw.write(gson.toJson(CustomResourceCreator.itemModels.get(customModel)));
 					itemModelbw.close();
 					itemModelwriter.close();
 				} catch (IOException e) {
@@ -2579,6 +2583,42 @@ public class CustomResourceCreator {
 			item.addProperty("texture_namespace", resourceNamespace);
 			item.addProperty("texture", _fluid.get("bucket_texture").getAsString());
 			generateItemResources(item);
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean generateEntityResources(JsonObject _entity) {
+		if (_entity.has("namespace") && _entity.has("id")) {
+			String _namespace = (_entity.has("texture") ? new ResourceLocation(_entity.get("texture").getAsString()) : new ResourceLocation(_entity.get("namespace").getAsString(), "textures/entity/" + _entity.get("id").getAsString() + ".png")).getNamespace();
+			ResourceLocation id = new ResourceLocation(_entity.get("namespace").getAsString(), _entity.get("id").getAsString() + "_spawn_egg");
+			File namespace = new File(assets, File.separator + _namespace);
+			File textures = new File(namespace, File.separator + "textures");
+			File entity = new File(textures, File.separator + "entity");
+			entity.mkdirs();
+			File models = new File(namespace, File.separator + "models");
+			File item = new File(models, File.separator + "item");
+			item.mkdirs();
+			File itemModel = new File(item, File.separator + id.getPath() + ".json");
+			if (!itemModel.exists()) {
+				try {
+					itemModel.createNewFile();
+				} catch (IOException exception) {
+					exception.printStackTrace();
+				}
+			}
+			try {
+				FileWriter itemModelwriter = new FileWriter(itemModel);
+				BufferedWriter itemModelbw = new BufferedWriter(itemModelwriter);
+				itemModelbw.write("""
+						{
+						  "parent": "minecraft:item/template_spawn_egg"
+						}""");
+				itemModelbw.close();
+				itemModelwriter.close();
+			} catch (IOException fileNotFoundException) {
+				fileNotFoundException.printStackTrace();
+			}
 			return true;
 		}
 		return false;

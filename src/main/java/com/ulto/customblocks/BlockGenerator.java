@@ -19,6 +19,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Material;
 import net.minecraft.world.level.material.MaterialColor;
+import net.minecraftforge.registries.DeferredRegister;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.Nullable;
 
@@ -59,9 +60,15 @@ public class BlockGenerator {
 			String _sounds;
 			if (block.has("sounds")) _sounds = block.get("sounds").getAsString();
 			else _sounds = "stone";
+			String breakTool;
+			if (block.has("efficient_tool")) breakTool = block.get("efficient_tool").getAsString();
+			else breakTool = "none";
 			boolean requiresTool;
 			if (block.has("requires_tool")) requiresTool = block.get("requires_tool").getAsBoolean();
 			else requiresTool = true;
+			int harvestLevel;
+			if (block.has("harvest_level")) harvestLevel = block.get("harvest_level").getAsInt();
+			else harvestLevel = 0;
 			int luminance;
 			if (block.has("luminance")) luminance = block.get("luminance").getAsInt();
 			else luminance = 0;
@@ -287,7 +294,22 @@ public class BlockGenerator {
 			Block NEW_BLOCK;
 			final int finalLuminance = luminance;
 			BlockBehaviour.Properties blockSettings = BlockBehaviour.Properties.of(material, mapColor).strength((float) _hardness, (float) _resistance).friction((float) _slipperiness).sound(sounds).lightLevel((state) -> finalLuminance).speedFactor(speedFactor).jumpFactor(jumpFactor);
-			if (requiresTool) blockSettings.requiresCorrectToolForDrops();
+			if (!breakTool.equals("none")) {
+				switch (harvestLevel) {
+					case 0 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("forge", "needs_wood_tool"), "blocks", new ResourceLocation(namespace, id)));
+					case 1 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("needs_stone_tool"), "blocks", new ResourceLocation(namespace, id)));
+					case 2 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("needs_iron_tool"), "blocks", new ResourceLocation(namespace, id)));
+					case 3 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("needs_diamond_tool"), "blocks", new ResourceLocation(namespace, id)));
+					case 4 -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("forge", "needs_netherite_tool"), "blocks", new ResourceLocation(namespace, id)));
+				}
+				switch (breakTool) {
+					case "axe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("mineable/axe"), "blocks", new ResourceLocation(namespace, id)));
+					case "hoe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("mineable/hoe"), "blocks", new ResourceLocation(namespace, id)));
+					case "pickaxe" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("mineable/pickaxe"), "blocks", new ResourceLocation(namespace, id)));
+					case "shovel" -> TagGenerator.add(TagGenerator.generateCustomTagObject(new ResourceLocation("mineable/shovel"), "blocks", new ResourceLocation(namespace, id)));
+				}
+				if (requiresTool) blockSettings.requiresCorrectToolForDrops();
+			}
 			if (!renderType.equals("opaque")) blockSettings.noOcclusion().isViewBlocking(BlockGenerator::never).isSuffocating(BlockGenerator::never).isRedstoneConductor(BlockGenerator::never);
 			if (hasRandomTick) blockSettings.randomTicks();
 			ResourceLocation registryName = new ResourceLocation(namespace, id);
@@ -371,12 +393,19 @@ public class BlockGenerator {
 		return false;
 	}
 
+	private static final DeferredRegister<Block> BLOCKS = DeferredRegister.create(ForgeRegistries.BLOCKS, CustomBlocksMod.MOD_ID);
+	private static final DeferredRegister<Item> ITEMS = DeferredRegister.create(ForgeRegistries.ITEMS, CustomBlocksMod.MOD_ID);
+
 	private static Block register(Block block) {
+		if (block.getRegistryName() == null) throw new RuntimeException("Attempted to register a block without a registry name!");
+		//BLOCKS.register(block.getRegistryName().getPath(), () -> block);
 		ForgeRegistries.BLOCKS.register(block);
 		return block;
 	}
 
 	private static Item register(Item item) {
+		if (item.getRegistryName() == null) throw new RuntimeException("Attempted to register an item without a registry name!");
+		//ITEMS.register(item.getRegistryName().getPath(), () -> item);
 		ForgeRegistries.ITEMS.register(item);
 		return item;
 	}

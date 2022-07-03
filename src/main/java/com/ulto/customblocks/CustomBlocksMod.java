@@ -1,6 +1,8 @@
 package com.ulto.customblocks;
 
+import com.ulto.customblocks.client.CustomBlocksClient;
 import com.ulto.customblocks.resource.CustomResourcePackFinder;
+import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddPackFindersEvent;
@@ -8,6 +10,7 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
+import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -21,6 +24,28 @@ public class CustomBlocksMod {
     public static final Logger LOGGER = LogManager.getLogger("Custom Blocks Mod");
     public static final String MOD_ID = "custom_blocks";
     public static final File customBlocksConfig = new File(FMLPaths.CONFIGDIR.get().toFile(), File.separator + MOD_ID);
+
+    static {
+        customBlocksConfig.mkdirs();
+        File assets = new File(customBlocksConfig, File.separator + "assets");
+        File packMcmeta = new File(customBlocksConfig, File.separator + "pack.mcmeta");
+        try {
+            if (!CustomResourcePackFinder.customBlocksPath.exists()) CustomResourcePackFinder.customBlocksPath.mkdirs();
+            if (assets.exists()) Files.move(assets.toPath(), CustomResourceCreator.assets.toPath());
+            if (packMcmeta.exists()) Files.move(packMcmeta.toPath(), new File(CustomResourcePackFinder.customBlocksPath, File.separator + "pack.mcmeta").toPath());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        Registry.BLOCK.unfreeze();
+        Registry.ITEM.unfreeze();
+        Registry.ENTITY_TYPE.unfreeze();
+        Registry.MOTIVE.unfreeze();
+        GenerateCustomElements.generate();
+        Registry.BLOCK.freeze();
+        Registry.ITEM.freeze();
+        Registry.ENTITY_TYPE.freeze();
+        Registry.MOTIVE.freeze();
+    }
 
     public CustomBlocksMod() {
         // Register the construct method for modloading
@@ -43,17 +68,7 @@ public class CustomBlocksMod {
     }
 
     private void construct(final FMLConstructModEvent event) {
-        customBlocksConfig.mkdirs();
-        File assets = new File(customBlocksConfig, File.separator + "assets");
-        File packMcmeta = new File(customBlocksConfig, File.separator + "pack.mcmeta");
-        try {
-            if (!CustomResourcePackFinder.customBlocksPath.exists()) CustomResourcePackFinder.customBlocksPath.mkdirs();
-            if (assets.exists()) Files.move(assets.toPath(), CustomResourceCreator.assets.toPath());
-            if (packMcmeta.exists()) Files.move(packMcmeta.toPath(), new File(CustomResourcePackFinder.customBlocksPath, File.separator + "pack.mcmeta").toPath());
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        GenerateCustomElements.generate();
+
     }
 
     private void setup(final FMLCommonSetupEvent event) {
@@ -61,6 +76,7 @@ public class CustomBlocksMod {
     }
 
     private void setupClient(final FMLClientSetupEvent event) {
+        CustomBlocksClient.copyOldFiles();
         GenerateCustomElements.generateClient();
     }
 

@@ -37,7 +37,7 @@ public class CustomWaterloggedFallingPillarBlock extends CustomWaterloggedPillar
     public void tick(BlockState state, ServerLevel world, BlockPos pos, Random random) {
         super.tick(state, world, pos, random);
         if (isFree(world.getBlockState(pos.below())) && pos.getY() >= 0) {
-            FallingBlockEntity fallingBlockEntity = new FallingBlockEntity(world, (double)pos.getX() + 0.5D, pos.getY(), (double)pos.getZ() + 0.5D, world.getBlockState(pos));
+            FallingBlockEntity fallingBlockEntity = FallingBlockEntity.fall(world, pos, world.getBlockState(pos));
             this.falling(fallingBlockEntity);
             world.addFreshEntity(fallingBlockEntity);
         }

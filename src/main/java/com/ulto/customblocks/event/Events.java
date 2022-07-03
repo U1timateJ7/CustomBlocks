@@ -16,7 +16,7 @@ import net.minecraft.network.chat.TextComponent;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundSource;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.InteractionResultHolder;
 import net.minecraft.world.effect.MobEffectInstance;
@@ -87,7 +87,7 @@ public class Events {
                 case "is_block_at_pos_in_tag" -> {
                     if (dependencies.containsKey("world") && condition.has("tag")) {
                         Level world = (Level) dependencies.get("world");
-                        Tag<Block> tag = world.getTagManager().getOrEmpty(Registry.BLOCK_REGISTRY).getTag(new ResourceLocation(condition.get("tag").getAsString()));
+                        TagKey<Block> tag = ForgeRegistries.BLOCKS.tags().createOptionalTagKey(new ResourceLocation(condition.get("tag").getAsString()), Set.of());
                         int x = dependencies.containsKey("x") ? (int) dependencies.get("x") : condition.has("x") ? condition.get("x").getAsInt() : 0;
                         int y = dependencies.containsKey("y") ? (int) dependencies.get("y") : condition.has("y") ? condition.get("y").getAsInt() : 0;
                         int z = dependencies.containsKey("z") ? (int) dependencies.get("z") : condition.has("z") ? condition.get("z").getAsInt() : 0;
@@ -247,28 +247,6 @@ public class Events {
                 result = InteractionResult.SUCCESS;
             }
         }
-        if (event.has("block_event")) {
-            if (event.get("block_event").isJsonObject()) {
-                JsonObject eventObject = event.getAsJsonObject("block_event");
-                String blockId = eventObject.get("custom_block").getAsString();
-                String eventName = eventObject.get("event_name").getAsString();
-                for (File value : GenerateCustomElements.blocks) {
-                    try {
-                        BufferedReader blockReader = new BufferedReader(new FileReader(value));
-                        StringBuilder json = new StringBuilder();
-                        String line;
-                        while ((line = blockReader.readLine()) != null) {
-                            json.append(line);
-                        }
-                        JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
-                        if (blockId.equals(new ResourceLocation(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
-                        blockReader.close();
-                    } catch (Exception e) {
-                    }
-                }
-                result = InteractionResult.SUCCESS;
-            }
-        }
         if (event.has("add_effect_to_entity")) {
             if (event.get("add_effect_to_entity").isJsonArray()) {
                 for (JsonElement element : event.getAsJsonArray("add_effect_to_entity")) {
@@ -339,6 +317,40 @@ public class Events {
                 result = InteractionResult.SUCCESS;
             }
         }
+        if (event.has("emit_game_event")) {
+            if (event.get("emit_game_event").isJsonPrimitive() && dependencies.containsKey("world") && dependencies.containsKey("x") && dependencies.containsKey("y") && dependencies.containsKey("z")) {
+                Level world = (Level) dependencies.get("world");
+                double x = dependencies.get("x") instanceof Integer ? (int) dependencies.get("x") : (double) dependencies.get("x");
+                double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
+                double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
+                ResourceLocation gameEvent = new ResourceLocation(event.get("emit_game_event").getAsString());
+                if (dependencies.containsKey("entity")) world.gameEvent((Entity) dependencies.get("entity"), Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                else world.gameEvent(Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                result = InteractionResult.SUCCESS;
+            }
+        }
+        if (event.has("block_event")) {
+            if (event.get("block_event").isJsonObject()) {
+                JsonObject eventObject = event.getAsJsonObject("block_event");
+                String blockId = eventObject.get("custom_block").getAsString();
+                String eventName = eventObject.get("event_name").getAsString();
+                for (File value : GenerateCustomElements.blocks) {
+                    try {
+                        BufferedReader blockReader = new BufferedReader(new FileReader(value));
+                        StringBuilder json = new StringBuilder();
+                        String line;
+                        while ((line = blockReader.readLine()) != null) {
+                            json.append(line);
+                        }
+                        JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
+                        if (blockId.equals(new ResourceLocation(block.get("namespace").getAsString(), block.get("id").getAsString()).toString())) if (block.has(eventName)) Events.playEvent(dependencies, block.getAsJsonObject(eventName));
+                        blockReader.close();
+                    } catch (Exception e) {
+                    }
+                }
+                result = InteractionResult.SUCCESS;
+            }
+        }
         return result;
     }
 
@@ -395,5 +407,13 @@ public class Events {
             case FAIL -> InteractionResultHolder.fail(stack);
             default -> InteractionResultHolder.pass(stack);
         };
+    }
+
+    public static InteractionResult playEntityEvent(Entity entity, @Nullable Map<String, Object> dependencies, JsonObject event) {
+        Map<String, Object> deps = new HashMap<>(Map.of("entity", entity, "x", entity.getX(), "y", entity.getY(), "z", entity.getZ(), "world", entity.level));
+        if (dependencies != null) {
+            deps.putAll(dependencies);
+        }
+        return playEvent(deps, event);
     }
 }

@@ -603,6 +603,16 @@ public class PackGenerator {
                 }
             }
         }
+        if (pack.has("entities")) {
+            List<JsonObject> entities = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("entities"));
+            for (JsonObject entity : entities) {
+                if (EntityGenerator.add(entity) && CustomResourceCreator.generateEntityResources(entity) && LanguageHandler.addEntityKey(entity)) {
+                    CustomBlocksMod.LOGGER.info("Generated Entity {}", entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate entity!");
+                }
+            }
+        }
         if (pack.has("paintings")) {
             List<JsonObject> paintings = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("items"));
             for (JsonObject painting : paintings) {
