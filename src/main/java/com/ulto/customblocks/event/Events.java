@@ -22,9 +22,8 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.function.CommandFunction;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.tag.Tag;
 import net.minecraft.tag.TagKey;
-import net.minecraft.text.LiteralText;
+import net.minecraft.text.Text;
 import net.minecraft.util.ActionResult;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.TypedActionResult;
@@ -34,6 +33,7 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.GameRules;
 import net.minecraft.world.World;
+import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.explosion.Explosion;
 import org.jetbrains.annotations.Nullable;
 
@@ -142,7 +142,7 @@ public class Events {
                         if(!world.isClient()) {
                             ((ServerWorld) world).getServer().getCommandManager().execute(
                                     new ServerCommandSource(CommandOutput.DUMMY, new Vec3d(x, y, z), Vec2f.ZERO,
-                                            (ServerWorld) world, 4, "", new LiteralText(""), ((ServerWorld) world).getServer(), null).withSilent(), command);
+                                            (ServerWorld) world, 4, "", Text.literal(""), ((ServerWorld) world).getServer(), null).withSilent(), command);
                         }
                         result = ActionResult.SUCCESS;
                     }
@@ -156,7 +156,7 @@ public class Events {
                 if(!world.isClient()) {
                     ((ServerWorld) world).getServer().getCommandManager().execute(
                             new ServerCommandSource(CommandOutput.DUMMY, new Vec3d(x, y, z), Vec2f.ZERO,
-                                    (ServerWorld) world, 4, "", new LiteralText(""), ((ServerWorld) world).getServer(), null).withSilent(), command);
+                                    (ServerWorld) world, 4, "", Text.literal(""), ((ServerWorld) world).getServer(), null).withSilent(), command);
                 }
                 result = ActionResult.SUCCESS;
             }
@@ -176,7 +176,7 @@ public class Events {
                                 CommandFunction commandFunction = optionalCommandFunction.get();
                                 ((ServerWorld) world).getServer().getCommandFunctionManager().execute(commandFunction,
                                         new ServerCommandSource(CommandOutput.DUMMY, new Vec3d(x, y, z), Vec2f.ZERO,
-                                                (ServerWorld) world, 4, "", new LiteralText(""), ((ServerWorld) world).getServer(), null));
+                                                (ServerWorld) world, 4, "", Text.literal(""), ((ServerWorld) world).getServer(), null));
                             }
                         }
                         result = ActionResult.SUCCESS;
@@ -194,7 +194,7 @@ public class Events {
                         CommandFunction commandFunction = optionalCommandFunction.get();
                         ((ServerWorld) world).getServer().getCommandFunctionManager().execute(commandFunction,
                                 new ServerCommandSource(CommandOutput.DUMMY, new Vec3d(x, y, z), Vec2f.ZERO,
-                                        (ServerWorld) world, 4, "", new LiteralText(""), ((ServerWorld) world).getServer(), null));
+                                        (ServerWorld) world, 4, "", Text.literal(""), ((ServerWorld) world).getServer(), null));
                     }
                 }
                 result = ActionResult.SUCCESS;
@@ -329,7 +329,7 @@ public class Events {
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                 Identifier gameEvent = new Identifier(event.get("emit_game_event").getAsString());
                 if (dependencies.containsKey("entity")) world.emitGameEvent((Entity) dependencies.get("entity"), Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
-                else world.emitGameEvent(Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z));
+                else world.emitGameEvent(Registry.GAME_EVENT.get(gameEvent), new BlockPos((int) x, (int) y, (int) z), GameEvent.Emitter.of(world.getBlockState(new BlockPos((int) x, (int) y, (int) z))));
                 result = ActionResult.SUCCESS;
             }
         }

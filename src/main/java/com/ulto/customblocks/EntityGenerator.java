@@ -23,10 +23,12 @@ import net.minecraft.util.registry.Registry;
 import net.minecraft.world.Heightmap;
 
 import java.util.HashMap;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Objects;
 import java.util.function.Supplier;
 
+@SuppressWarnings("unchecked")
 public class EntityGenerator {
     public static Map<Identifier, EntityType<? extends PathAwareEntity>> entities = new HashMap<>();
     public static Map<Identifier, JsonObject> entityJSONs = new HashMap<>();
@@ -39,7 +41,7 @@ public class EntityGenerator {
             String base = "path_aware";
             if (entity.has("base")) base = entity.get("base").getAsString();
             SpawnGroup spawnGroup = SpawnGroup.CREATURE;
-            if (entity.has("spawn_group")) spawnGroup = SpawnGroup.byName(entity.get("spawn_group").getAsString());
+            if (entity.has("spawn_group")) spawnGroup = SpawnGroup.valueOf(entity.get("spawn_group").getAsString().toUpperCase(Locale.ROOT));
             float width = 0.6f;
             if (entity.has("width")) width = entity.get("width").getAsFloat();
             float height = 1.8f;
@@ -198,21 +200,13 @@ public class EntityGenerator {
             return this;
         }
 
-        /**
-         * @deprecated use {@link PathAware#trackRangeBlocks(int)}, {@link PathAware#trackedUpdateRate(int)} and {@link PathAware#forceTrackedVelocityUpdates(boolean)}
-         */
         @Override
-        @Deprecated
         public PathAware<T> trackable(int trackRangeBlocks, int trackedUpdateRate) {
             super.trackable(trackRangeBlocks, trackedUpdateRate);
             return this;
         }
 
-        /**
-         * @deprecated use {@link PathAware#trackRangeBlocks(int)}, {@link PathAware#trackedUpdateRate(int)} and {@link PathAware#forceTrackedVelocityUpdates(boolean)}
-         */
         @Override
-        @Deprecated
         public PathAware<T> trackable(int trackRangeBlocks, int trackedUpdateRate, boolean forceTrackedVelocityUpdates) {
             super.trackable(trackRangeBlocks, trackedUpdateRate, forceTrackedVelocityUpdates);
             return this;
@@ -254,13 +248,6 @@ public class EntityGenerator {
             return this;
         }
 
-        /**
-         * Registers a spawn restriction for this entity.
-         *
-         * <p>This is used by mobs to determine whether Minecraft should spawn an entity within a certain context.
-         *
-         * @return this builder for chaining.
-         */
         public PathAware<T> spawnRestriction(SpawnRestriction.Location location, Heightmap.Type heightmap, SpawnRestriction.SpawnPredicate<T> spawnPredicate) {
             this.restrictionLocation = Objects.requireNonNull(location, "Location cannot be null.");
             this.restrictionHeightmap = Objects.requireNonNull(heightmap, "Heightmap type cannot be null.");

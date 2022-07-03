@@ -6,8 +6,9 @@ import com.ulto.customblocks.event.Events;
 import com.ulto.customblocks.util.JsonUtils;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.minecraft.block.AbstractLichenBlock;
 import net.minecraft.block.BlockState;
+import net.minecraft.block.LichenGrower;
+import net.minecraft.block.MultifaceGrowthBlock;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
@@ -24,6 +25,7 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.hit.BlockHitResult;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldAccess;
@@ -32,7 +34,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
 
-public class CustomLichenBlock extends AbstractLichenBlock {
+public class CustomLichenBlock extends MultifaceGrowthBlock {
+    private final LichenGrower grower = new LichenGrower(this);
     JsonObject block;
 
     public CustomLichenBlock(Settings settings, JsonObject blockIn) {
@@ -160,5 +163,10 @@ public class CustomLichenBlock extends AbstractLichenBlock {
     public void onSteppedOn(World world, BlockPos pos, BlockState state, Entity entity) {
         super.onSteppedOn(world, pos, state, entity);
         if (block.has("on_entity_stepped")) Events.playBlockEvent(state, pos, world, Map.of("entity", entity), block.getAsJsonObject("on_entity_stepped"));
+    }
+
+    @Override
+    public LichenGrower getGrower() {
+        return grower;
     }
 }

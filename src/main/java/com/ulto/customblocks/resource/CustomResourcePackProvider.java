@@ -4,7 +4,7 @@ import com.ulto.customblocks.CustomBlocksMod;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.resource.*;
 import net.minecraft.text.Text;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -32,8 +32,8 @@ public record CustomResourcePackProvider(Type type) implements ResourcePackProvi
     }
 
     static ResourcePackSource nameAndSource(String source) {
-        Text text = new TranslatableText(source);
-        return (name) -> (new TranslatableText("pack.nameAndSource", name, text)).formatted(Formatting.GRAY);
+        Text text = Text.translatable(source);
+        return (name) -> (Text.translatable("pack.nameAndSource", name, text)).formatted(Formatting.GRAY);
     }
 
     public enum Type {

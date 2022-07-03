@@ -16,8 +16,7 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.FoodComponent;
 import net.minecraft.item.Item;
 import net.minecraft.item.Items;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Util;
 import net.minecraft.util.registry.Registry;
 
@@ -41,8 +40,8 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         WScrollPanel foodScroll = new WScrollPanel(foodRoot);
         foodScroll.setHost(this);
         WTabPanel main = new WTabPanel();
-        main.add(new WTabPanel.Tab.Builder(scroll).title(new TranslatableText("gui.item_maker.tab.item")).icon(new ItemIcon(Items.DIAMOND)).build());
-        main.add(new WTabPanel.Tab.Builder(foodScroll).title(new TranslatableText("gui.item_maker.tab.food")).icon(new ItemIcon(Items.APPLE)).build());
+        main.add(new WTabPanel.Tab.Builder(scroll).title(Text.translatable("gui.item_maker.tab.item")).icon(new ItemIcon(Items.DIAMOND)).build());
+        main.add(new WTabPanel.Tab.Builder(foodScroll).title(Text.translatable("gui.item_maker.tab.food")).icon(new ItemIcon(Items.APPLE)).build());
         setRootPanel(panel);
         root.setSize(300, 200);
         scroll.setSize(324, 224);
@@ -51,76 +50,76 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         main.setSize(324, 254);
         panel.setSize(411, 254);
         panel.add(main, 0, 0, 324, 254);
-        WLabel topLabel = new WLabel(new TranslatableText("gui.item_maker.label.top"));
+        WLabel topLabel = new WLabel(Text.translatable("gui.item_maker.label.top"));
         root.add(topLabel, 120, 10);
-        WLabel foodTopLabel = new WLabel(new TranslatableText("gui.item_maker.food.label.top"));
+        WLabel foodTopLabel = new WLabel(Text.translatable("gui.item_maker.food.label.top"));
         foodRoot.add(foodTopLabel, 120, 10);
-        WButton openFolderButton = new WButton(new TranslatableText("gui.maker.button.open_folder"));
+        WButton openFolderButton = new WButton(Text.translatable("gui.maker.button.open_folder"));
         openFolderButton.setOnClick(() -> Util.getOperatingSystem().open(GenerateCustomElements.itemsFolder));
         root.add(openFolderButton, 0, 0, 70, 20);
 
         //Widgets
-        WTextField namespaceField = new WTextField(new LiteralText("namespace"));
+        WTextField namespaceField = new WTextField(Text.literal("namespace"));
         namespaceField.setHost(this);
         namespaceField.setEditable(true);
         namespaceField.setMaxLength(50);
         root.add(namespaceField, 10, 50, 90, 20);
-        WLabel namespaceLabel = new WLabel(new LiteralText("(like \"minecraft\" in"));
+        WLabel namespaceLabel = new WLabel(Text.literal("(like \"minecraft\" in"));
         root.add(namespaceLabel, 10, 30);
-        WLabel namespaceLabel2 = new WLabel(new LiteralText("\"minecraft:apple\")"));
+        WLabel namespaceLabel2 = new WLabel(Text.literal("\"minecraft:apple\")"));
         root.add(namespaceLabel2, 10, 40);
-        WTextField idField = new WTextField(new LiteralText("id"));
+        WTextField idField = new WTextField(Text.literal("id"));
         idField.setHost(this);
         idField.setEditable(true);
         idField.setMaxLength(50);
         root.add(idField, 110, 50, 90, 20);
-        WLabel idLabel = new WLabel(new LiteralText("(like \"apple\" in"));
+        WLabel idLabel = new WLabel(Text.literal("(like \"apple\" in"));
         root.add(idLabel, 110, 30);
-        WLabel idLabel2 = new WLabel(new LiteralText("\"minecraft:apple\")"));
+        WLabel idLabel2 = new WLabel(Text.literal("\"minecraft:apple\")"));
         root.add(idLabel2, 110, 40);
-        WTextField displayNameField = new WTextField(new LiteralText("display name"));
+        WTextField displayNameField = new WTextField(Text.literal("display name"));
         displayNameField.setHost(this);
         displayNameField.setEditable(true);
         displayNameField.setMaxLength(50);
         root.add(displayNameField, 210, 50, 90, 20);
-        WLabel displayNameLabel = new WLabel(new LiteralText("the display name"));
+        WLabel displayNameLabel = new WLabel(Text.literal("the display name"));
         root.add(displayNameLabel, 210, 30);
-        WLabel displayNameLabel2 = new WLabel(new LiteralText("of the item"));
+        WLabel displayNameLabel2 = new WLabel(Text.literal("of the item"));
         root.add(displayNameLabel2, 210, 40);
-        WTextField maxStackSizeField = new WTextField(new LiteralText("max stack size"));
+        WTextField maxStackSizeField = new WTextField(Text.literal("max stack size"));
         maxStackSizeField.setHost(this);
         maxStackSizeField.setEditable(true);
         maxStackSizeField.setMaxLength(2);
         root.add(maxStackSizeField, 10, 100, 90, 20);
-        WLabel maxStackSizeLabel = new WLabel(new LiteralText("the max stack size"));
+        WLabel maxStackSizeLabel = new WLabel(Text.literal("the max stack size"));
         root.add(maxStackSizeLabel, 10, 80);
-        WLabel maxStackSizeLabel2 = new WLabel(new LiteralText("of the item"));
+        WLabel maxStackSizeLabel2 = new WLabel(Text.literal("of the item"));
         root.add(maxStackSizeLabel2, 10, 90);
-        WToggleButton fireproofToggle = new WToggleButton(new LiteralText("fireproof"));
+        WToggleButton fireproofToggle = new WToggleButton(Text.literal("fireproof"));
         root.add(fireproofToggle, 110, 100, 20, 20);
-        WLabel fireproofLabel = new WLabel(new LiteralText("is the item"));
+        WLabel fireproofLabel = new WLabel(Text.literal("is the item"));
         root.add(fireproofLabel, 110, 80);
-        WLabel fireproofLabel2 = new WLabel(new LiteralText("fireproof"));
+        WLabel fireproofLabel2 = new WLabel(Text.literal("fireproof"));
         root.add(fireproofLabel2, 110, 90);
-        WTextField itemGroupField = new WTextField(new LiteralText("item group"));
+        WTextField itemGroupField = new WTextField(Text.literal("item group"));
         itemGroupField.setHost(this);
         itemGroupField.setEditable(true);
         itemGroupField.setMaxLength(15);
         root.add(itemGroupField, 210, 100, 90, 20);
-        WLabel itemGroupLabel = new WLabel(new LiteralText("the tab that the"));
+        WLabel itemGroupLabel = new WLabel(Text.literal("the tab that the"));
         root.add(itemGroupLabel, 210, 80);
-        WLabel itemGroupLabel2 = new WLabel(new LiteralText("item is in"));
+        WLabel itemGroupLabel2 = new WLabel(Text.literal("item is in"));
         root.add(itemGroupLabel2, 210, 90);
-        WTextField textureNamespaceField = new WTextField(new LiteralText("texture namespace"));
+        WTextField textureNamespaceField = new WTextField(Text.literal("texture namespace"));
         textureNamespaceField.setHost(this);
         textureNamespaceField.setEditable(true);
         textureNamespaceField.setMaxLength(50);
         root.add(textureNamespaceField, 10, 150, 100, 20);
-        WLabel textureNamespaceLabel = new WLabel(new LiteralText("the namespace that"));
+        WLabel textureNamespaceLabel = new WLabel(Text.literal("the namespace that"));
         root.add(textureNamespaceLabel, 10, 130);
-        WLabel textureNamespaceLabel2 = new WLabel(new LiteralText("the texture uses"));
+        WLabel textureNamespaceLabel2 = new WLabel(Text.literal("the texture uses"));
         root.add(textureNamespaceLabel2, 10, 140);
-        WTextField textureField = new WTextField(new LiteralText("texture"));
+        WTextField textureField = new WTextField(Text.literal("texture"));
         textureField.setHost(this);
         textureField.setEditable(true);
         textureField.setMaxLength(50);
@@ -152,46 +151,46 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         foodRoot.add(textureField, 120, 150, 90, 20);
 
         //Food Specific Widgets
-        WTextField nutritionField = new WTextField(new LiteralText("nutrition"));
+        WTextField nutritionField = new WTextField(Text.literal("nutrition"));
         nutritionField.setHost(this);
         nutritionField.setEditable(true);
         nutritionField.setMaxLength(2);
         foodRoot.add(nutritionField, 210, 150, 90, 20);
-        WLabel nutritionLabel = new WLabel(new LiteralText("the amount of hunger"));
+        WLabel nutritionLabel = new WLabel(Text.literal("the amount of hunger"));
         foodRoot.add(nutritionLabel, 210, 130);
-        WLabel nutritionLabel2 = new WLabel(new LiteralText("points the food gives"));
+        WLabel nutritionLabel2 = new WLabel(Text.literal("points the food gives"));
         foodRoot.add(nutritionLabel2, 210, 140);
-        WTextField saturationField = new WTextField(new LiteralText("saturation"));
+        WTextField saturationField = new WTextField(Text.literal("saturation"));
         saturationField.setHost(this);
         saturationField.setEditable(true);
         saturationField.setMaxLength(10);
         foodRoot.add(saturationField, 10, 200, 90, 20);
-        WLabel saturationLabel = new WLabel(new LiteralText("the saturation"));
+        WLabel saturationLabel = new WLabel(Text.literal("the saturation"));
         foodRoot.add(saturationLabel, 10, 180);
-        WLabel saturationLabel2 = new WLabel(new LiteralText("given (ex: 1.2)"));
+        WLabel saturationLabel2 = new WLabel(Text.literal("given (ex: 1.2)"));
         foodRoot.add(saturationLabel2, 10, 190);
-        WToggleButton isMeatToggle = new WToggleButton(new LiteralText("is meat"));
+        WToggleButton isMeatToggle = new WToggleButton(Text.literal("is meat"));
         foodRoot.add(isMeatToggle, 110, 200, 90, 20);
-        WLabel isMeatLabel = new WLabel(new LiteralText("can you feed this"));
+        WLabel isMeatLabel = new WLabel(Text.literal("can you feed this"));
         foodRoot.add(isMeatLabel, 110, 180);
-        WLabel isMeatLabel2 = new WLabel(new LiteralText("food to dogs"));
+        WLabel isMeatLabel2 = new WLabel(Text.literal("food to dogs"));
         foodRoot.add(isMeatLabel2, 110, 190);
-        WTextField eatingSpeedField = new WTextField(new LiteralText("eating speed"));
+        WTextField eatingSpeedField = new WTextField(Text.literal("eating speed"));
         eatingSpeedField.setHost(this);
         eatingSpeedField.setEditable(true);
         eatingSpeedField.setMaxLength(2);
         foodRoot.add(eatingSpeedField, 210, 200, 90, 20);
-        WLabel eatingSpeedLabel = new WLabel(new LiteralText("the speed in ticks"));
+        WLabel eatingSpeedLabel = new WLabel(Text.literal("the speed in ticks"));
         foodRoot.add(eatingSpeedLabel, 210, 180);
-        WLabel eatingSpeedLabel2 = new WLabel(new LiteralText("of eating (default: 32)"));
+        WLabel eatingSpeedLabel2 = new WLabel(Text.literal("of eating (default: 32)"));
         foodRoot.add(eatingSpeedLabel2, 210, 190);
-        WToggleButton alwaysEdibleToggle = new WToggleButton(new LiteralText("always edible"));
+        WToggleButton alwaysEdibleToggle = new WToggleButton(Text.literal("always edible"));
         foodRoot.add(alwaysEdibleToggle, 110, 250, 90, 20);
-        WLabel alwaysEdibleLabel = new WLabel(new LiteralText("is this always edible"));
+        WLabel alwaysEdibleLabel = new WLabel(Text.literal("is this always edible"));
         foodRoot.add(alwaysEdibleLabel, 110, 230);
-        WLabel alwaysEdibleLabel2 = new WLabel(new LiteralText(""));
+        WLabel alwaysEdibleLabel2 = new WLabel(Text.literal(""));
         foodRoot.add(alwaysEdibleLabel2, 110, 240);
-        WButton foodCreateButton = new WButton(new TranslatableText("gui.block_maker.button.create"));
+        WButton foodCreateButton = new WButton(Text.translatable("gui.block_maker.button.create"));
         foodCreateButton.setOnClick(() -> {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");
             try {
@@ -226,7 +225,7 @@ public class ItemMakerGUI extends LightweightGuiDescription {
 
         WListPanel<Item, WButton> presets = new WListPanel<>(itemList, WButton::new, ((item, button) -> {
             button.setIcon(new ItemIcon(item));
-            button.setLabel(new TranslatableText(item.getTranslationKey()));
+            button.setLabel(Text.translatable(item.getTranslationKey()));
             button.setOnClick(() -> {
                 maxStackSizeField.setText(String.valueOf(item.getMaxCount()));
                 fireproofToggle.setToggle(item.isFireproof());
@@ -247,8 +246,9 @@ public class ItemMakerGUI extends LightweightGuiDescription {
                 }
             });
         }));
+        presets.getScrollBar().setHost(this);
         final boolean[] showPresets = {false};
-        WButton togglePresets = new WButton(new TranslatableText("gui.block_maker.button.presets"));
+        WButton togglePresets = new WButton(Text.translatable("gui.block_maker.button.presets"));
         togglePresets.setOnClick(() -> {
             if (!showPresets[0]) {
                 panel.setSize(464, 254);
@@ -263,7 +263,7 @@ public class ItemMakerGUI extends LightweightGuiDescription {
             }
         });
         panel.add(togglePresets, 324, 7, 80, 20);
-        WButton openTextureFolderButton = new WButton(new TranslatableText("gui.maker.button.textures_folder"));
+        WButton openTextureFolderButton = new WButton(Text.translatable("gui.maker.button.textures_folder"));
         openTextureFolderButton.setOnClick(() -> {
             if (!textureNamespaceField.getText().isEmpty()) {
                 File destination = CustomResourceCreator.assets.toPath().resolve(textureNamespaceField.getText()).resolve("textures").resolve("item").toFile();
@@ -278,7 +278,7 @@ public class ItemMakerGUI extends LightweightGuiDescription {
         });
         root.add(openTextureFolderButton, 210, 0, 100, 20);
         foodRoot.add(openTextureFolderButton, 210, 0, 100, 20);
-        WButton createButton = new WButton(new TranslatableText("gui.block_maker.button.create"));
+        WButton createButton = new WButton(Text.translatable("gui.block_maker.button.create"));
         createButton.setOnClick(() -> {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");
             try {
@@ -299,12 +299,12 @@ public class ItemMakerGUI extends LightweightGuiDescription {
             }
         });
         root.add(createButton, 10, 200, 80, 20);
-        WTextField packNameField = new WTextField(new LiteralText("Pack Name"));
+        WTextField packNameField = new WTextField(Text.literal("Pack Name"));
         packNameField.setHost(this);
         packNameField.setEditable(true);
         packNameField.setMaxLength(50);
         root.add(packNameField, 200, 200, 100, 20);
-        WButton addToPackButton = new WButton(new TranslatableText("gui.block_maker.button.add_to_pack"));
+        WButton addToPackButton = new WButton(Text.translatable("gui.block_maker.button.add_to_pack"));
         addToPackButton.setOnClick(() -> {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");
             List<File> packs = new ArrayList<>();
@@ -343,16 +343,16 @@ public class ItemMakerGUI extends LightweightGuiDescription {
             }
         });
         root.add(addToPackButton, 110, 200, 80, 20);
-        WLabel orLabel = new WLabel(new TranslatableText("gui.block_maker.label.or"));
+        WLabel orLabel = new WLabel(Text.translatable("gui.block_maker.label.or"));
         root.add(orLabel, 95, 205);
-        WTextField foodPackNameField = new WTextField(new LiteralText("Pack Name"));
+        WTextField foodPackNameField = new WTextField(Text.literal("Pack Name"));
         foodPackNameField.setHost(this);
         foodPackNameField.setEditable(true);
         foodPackNameField.setMaxLength(50);
         foodRoot.add(foodPackNameField, 200, 300, 100, 20);
-        WLabel foodOrLabel = new WLabel(new TranslatableText("gui.block_maker.label.or"));
+        WLabel foodOrLabel = new WLabel(Text.translatable("gui.block_maker.label.or"));
         foodRoot.add(foodOrLabel, 95, 305);
-        WButton foodAddToPackButton = new WButton(new TranslatableText("gui.block_maker.button.add_to_pack"));
+        WButton foodAddToPackButton = new WButton(Text.translatable("gui.block_maker.button.add_to_pack"));
         foodAddToPackButton.setOnClick(() -> {
             itemFile = new File(GenerateCustomElements.itemsFolder.getName() + File.separator + idField.getText() + ".json");
             List<File> packs = new ArrayList<>();

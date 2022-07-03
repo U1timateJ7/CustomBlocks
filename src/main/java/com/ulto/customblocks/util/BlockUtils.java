@@ -1,6 +1,7 @@
 package com.ulto.customblocks.util;
 
 import com.ulto.customblocks.CustomBlocksMod;
+import net.fabricmc.fabric.api.mininglevel.v1.FabricMineableTags;
 import net.minecraft.block.Block;
 import net.minecraft.block.MapColor;
 import net.minecraft.block.Material;
@@ -184,6 +185,8 @@ public class BlockUtils {
         if (block.getDefaultState().isIn(BlockTags.PICKAXE_MINEABLE)) tool = "pickaxe";
         if (block.getDefaultState().isIn(BlockTags.SHOVEL_MINEABLE)) tool = "shovel";
         if (block.getDefaultState().isIn(BlockTags.HOE_MINEABLE)) tool = "hoe";
+        if (block.getDefaultState().isIn(FabricMineableTags.SWORD_MINEABLE)) tool = "sword";
+        if (block.getDefaultState().isIn(FabricMineableTags.SHEARS_MINEABLE)) tool = "shears";
         return tool;
     }
 

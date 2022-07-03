@@ -1,7 +1,6 @@
 package com.ulto.customblocks.util;
 
 import com.google.gson.JsonObject;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 
 import java.util.ArrayList;
@@ -11,7 +10,7 @@ public class MiscConverter {
     public static List<Text> stringListToTextList(List<String> stringList) {
         List<Text> list = new ArrayList<>();
         for (String string : stringList) {
-            list.add(new LiteralText(string));
+            list.add(Text.literal(string));
         }
         return list;
     }

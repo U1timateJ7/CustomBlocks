@@ -6,8 +6,7 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.GenerateCustomElements;
 import io.github.cottonmc.cotton.gui.client.LightweightGuiDescription;
 import io.github.cottonmc.cotton.gui.widget.*;
-import net.minecraft.text.LiteralText;
-import net.minecraft.text.TranslatableText;
+import net.minecraft.text.Text;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -24,26 +23,26 @@ public class BlockItemPackMakerGUI extends LightweightGuiDescription {
         setRootPanel(scroll);
         root.setSize(300, 150);
         scroll.setSize(310, 160);
-        WLabel topLabel = new WLabel(new TranslatableText("gui.block_item_pack_maker.label.top"));
+        WLabel topLabel = new WLabel(Text.translatable("gui.block_item_pack_maker.label.top"));
         root.add(topLabel, 120, 10);
 
         //Widgets
-        WTextField nameField = new WTextField(new LiteralText("name"));
+        WTextField nameField = new WTextField(Text.literal("name"));
         nameField.setHost(this);
         nameField.setEditable(true);
         nameField.setMaxLength(50);
         root.add(nameField, 100, 50, 100, 20);
-        WLabel nameLabel = new WLabel(new LiteralText("the name of"));
+        WLabel nameLabel = new WLabel(Text.literal("the name of"));
         root.add(nameLabel, 100, 30);
-        WLabel nameLabel2 = new WLabel(new LiteralText("the pack."));
+        WLabel nameLabel2 = new WLabel(Text.literal("the pack."));
         root.add(nameLabel2, 100, 40);
 
-        WLabel helpLabel = new WLabel(new LiteralText("You can add blocks/items to this pack by clicking"));
+        WLabel helpLabel = new WLabel(Text.literal("You can add blocks/items to this pack by clicking"));
         root.add(helpLabel, 0, 80);
-        WLabel helpLabel2 = new WLabel(new LiteralText("\"Add to Pack\" after putting in the name"));
+        WLabel helpLabel2 = new WLabel(Text.literal("\"Add to Pack\" after putting in the name"));
         root.add(helpLabel2, 0, 90);
 
-        WButton createButton = new WButton(new TranslatableText("gui.block_maker.button.create"));
+        WButton createButton = new WButton(Text.translatable("gui.block_maker.button.create"));
         createButton.setOnClick(() -> {
             packFile = new File(GenerateCustomElements.packsFolder + File.separator + nameField.getText() + ".json");
             try {

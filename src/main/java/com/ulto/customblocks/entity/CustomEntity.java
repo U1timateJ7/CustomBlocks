@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import com.ulto.customblocks.EntityGenerator;
 import com.ulto.customblocks.event.Events;
 import net.minecraft.block.BlockState;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.mob.PathAwareEntity;
@@ -25,6 +27,11 @@ public class CustomEntity extends PathAwareEntity {
         if (!world.isClient) {
             EntityGenerator.addGoals(goalSelector, targetSelector, this.entity, this);
         }
+    }
+
+    @Override
+    protected float getActiveEyeHeight(EntityPose pose, EntityDimensions dimensions) {
+        return entity.has("eye_height") ? entity.get("eye_height").getAsFloat() : super.getActiveEyeHeight(pose, dimensions);
     }
 
     public Identifier getTexture() {

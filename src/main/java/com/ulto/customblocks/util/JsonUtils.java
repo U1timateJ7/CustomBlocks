@@ -11,7 +11,6 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.nbt.NbtString;
 import net.minecraft.nbt.StringNbtReader;
 import net.minecraft.potion.PotionUtil;
-import net.minecraft.text.LiteralText;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.registry.Registry;
@@ -353,9 +352,9 @@ public class JsonUtils {
     }
 
     public static Text jsonElementToText(JsonElement element) {
-        if (element.isJsonPrimitive()) return new LiteralText(element.getAsString());
+        if (element.isJsonPrimitive()) return Text.literal(element.getAsString());
         else if (element.isJsonArray() || element.isJsonObject()) return Text.Serializer.fromJson(element);
-        return new LiteralText("");
+        return Text.literal("");
     }
 
     public static List<Text> jsonArrayToTextList(JsonArray jsonArray) {
