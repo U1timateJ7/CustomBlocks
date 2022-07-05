@@ -41,7 +41,7 @@ public class TagGenerator {
                 tags.mkdirs();
                 File typeDir = new File(tags, File.separator + type);
                 typeDir.mkdirs();
-                File tagFile = new File(typeDir, File.separator + custom.get("id").getAsString() + ".json");
+                File tagFile = getTagFile(typeDir, custom.get("id").getAsString());
                 JsonArray values = new JsonArray();
                 if (!tagFile.exists()) {
                     try {
@@ -70,6 +70,30 @@ public class TagGenerator {
                             break;
                         case "entity_types":
                             if (!Registry.ENTITY_TYPE.getIds().contains(new Identifier(value.getAsString())))
+                                values.remove(value);
+                            break;
+                        case "game_events":
+                            if (!Registry.GAME_EVENT.getIds().contains(new Identifier(value.getAsString())))
+                                values.remove(value);
+                            break;
+                        case "painting_variant":
+                            if (!Registry.PAINTING_VARIANT.getIds().contains(new Identifier(value.getAsString())))
+                                values.remove(value);
+                            break;
+                        case "banner_pattern":
+                            if (!Registry.BANNER_PATTERN.getIds().contains(new Identifier(value.getAsString())))
+                                values.remove(value);
+                            break;
+                        case "cat_variant":
+                            if (!Registry.CAT_VARIANT.getIds().contains(new Identifier(value.getAsString())))
+                                values.remove(value);
+                            break;
+                        case "instrument":
+                            if (!Registry.INSTRUMENT.getIds().contains(new Identifier(value.getAsString())))
+                                values.remove(value);
+                            break;
+                        case "point_of_interest_type":
+                            if (!Registry.POINT_OF_INTEREST_TYPE.getIds().contains(new Identifier(value.getAsString())))
                                 values.remove(value);
                             break;
                         default:
@@ -142,5 +166,24 @@ public class TagGenerator {
         for (Identifier id : valuesIn) values.add(id.toString());
         tag.add("values", values);
         return tag;
+    }
+
+    private static File getTagFile(File typeDir, String id) {
+        if (id.contains("/")) {
+            String[] files = id.split("/");
+            File[] latestFiles = new File[files.length];
+            for (int i = 0; i < files.length; i++) {
+                if (i == 0) {
+                    latestFiles[0] = new File(typeDir, File.separator + files[0]);
+                    latestFiles[0].mkdirs();
+                }
+                else if (i < files.length - 1) {
+                    latestFiles[i] = new File(latestFiles[i - 1], File.separator + files[i]);
+                    latestFiles[i].mkdirs();
+                }
+                else return new File(latestFiles[latestFiles.length - 2], File.separator + files[files.length - 1] + ".json");
+            }
+        }
+        return new File(typeDir, File.separator + id + ".json");
     }
 }

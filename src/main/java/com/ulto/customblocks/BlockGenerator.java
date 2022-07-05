@@ -584,10 +584,10 @@ public class BlockGenerator {
 				javaBlock.addProperty("base", base);
 				javaBlock.add("textures", textures);
 				if (add(javaBlock) && CustomResourceCreator.generateBlockResources(javaBlock) && LanguageHandler.addBlockKey(javaBlock)) {
-					CustomBlocksMod.LOGGER.info("Generated Block " + javaBlock.get("namespace").getAsString() + ":" + javaBlock.get("id").getAsString());
+					CustomBlocksMod.LOGGER.info("Generated Bedrock Edition Block " + javaBlock.get("namespace").getAsString() + ":" + javaBlock.get("id").getAsString());
 				} else {
-					if (file != null) CustomBlocksMod.LOGGER.error("Failed to generate block " + file.getName() + "!");
-					else CustomBlocksMod.LOGGER.error("Failed to generate block!");
+					if (file != null) CustomBlocksMod.LOGGER.error("Failed to generate bedrock edition block " + file.getName() + "!");
+					else CustomBlocksMod.LOGGER.error("Failed to generate bedrock edition block!");
 				}
 				return true;
 			}

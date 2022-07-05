@@ -63,6 +63,10 @@ public class GenerateCustomElements {
 	public static List<File> recipes = new ArrayList<>();
 	public static File globalEventsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "global_events");
 	public static List<File> globalEvents = new ArrayList<>();
+	public static File bannerPatternFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "banner_patterns");
+	public static List<File> bannerPatterns = new ArrayList<>();
+	public static File catVariantFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "cat_variants");
+	public static List<File> catVariants = new ArrayList<>();
 	public static File packsFolder = new File(CustomBlocksMod.customBlocksConfig, File.separator + "packs");
 	public static List<File> packs = new ArrayList<>();
 
@@ -75,6 +79,8 @@ public class GenerateCustomElements {
 		paintingsFolder.mkdirs();
 		recipesFolder.mkdirs();
 		globalEventsFolder.mkdirs();
+		bannerPatternFolder.mkdirs();
+		catVariantFolder.mkdirs();
 		packsFolder.mkdirs();
 		copyOldFiles();
 		listFiles(blocksFolder, blocks, ".json", "models", "blockstates", "item_models");
@@ -90,6 +96,8 @@ public class GenerateCustomElements {
 		listFiles(paintingsFolder, paintings, ".json");
 		listFiles(recipesFolder, recipes, ".json");
 		listFiles(globalEventsFolder, globalEvents, ".json");
+		listFiles(bannerPatternFolder, bannerPatterns, ".json");
+		listFiles(catVariantFolder, catVariants, ".json");
 		listFiles(packsFolder, packs, ".json");
 		LanguageHandler.setupLanguage();
 		CustomResourceCreator.setupResourcePack();
@@ -104,7 +112,7 @@ public class GenerateCustomElements {
 				JsonObject block = new Gson().fromJson(json.toString(), JsonObject.class);
 				if (block.has("format_version")) {
 					if (!BlockGenerator.addBedrock(block, value)) {
-						CustomBlocksMod.LOGGER.error("Failed to generate block " + value.getName() + "!");
+						CustomBlocksMod.LOGGER.error("Failed to generate bedrock edition block " + value.getName() + "!");
 					}
 				} else {
 					if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
@@ -329,6 +337,48 @@ public class GenerateCustomElements {
 				e.printStackTrace();
 			} catch (JsonSyntaxException e) {
 				CustomBlocksMod.LOGGER.error("Global event " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : bannerPatterns) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject bannerPattern = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (BannerPatternGenerator.add(bannerPattern) && CustomResourceCreator.generateBannerPatternResources(bannerPattern) && LanguageHandler.addBannerPatternKey(bannerPattern)) {
+					CustomBlocksMod.LOGGER.info("Generated Banner Pattern {}", bannerPattern.get("namespace").getAsString() + ":" + bannerPattern.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate banner pattern {}!", value.getName());
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Banner pattern " + value.getName() + " has an invalid JSON file!");
+			}
+		}
+		for (File value : catVariants) {
+			try {
+				BufferedReader packReader = new BufferedReader(new FileReader(value));
+				StringBuilder json = new StringBuilder();
+				String line;
+				while ((line = packReader.readLine()) != null) {
+					json.append(line);
+				}
+				JsonObject catVariant = new Gson().fromJson(json.toString(), JsonObject.class);
+				if (CatVariantGenerator.add(catVariant) && CustomResourceCreator.generateCatVariantResources(catVariant)) {
+					CustomBlocksMod.LOGGER.info("Generated Cat Variant {}", catVariant.get("namespace").getAsString() + ":" + catVariant.get("id").getAsString());
+				} else {
+					CustomBlocksMod.LOGGER.error("Failed to generate cat variant {}!", value.getName());
+				}
+				packReader.close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			} catch (JsonSyntaxException e) {
+				CustomBlocksMod.LOGGER.error("Cat variant " + value.getName() + " has an invalid JSON file!");
 			}
 		}
 		for (File value : packs) {

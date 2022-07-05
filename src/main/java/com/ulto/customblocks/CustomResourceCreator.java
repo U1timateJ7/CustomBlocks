@@ -2637,4 +2637,62 @@ public class CustomResourceCreator {
 		}
 		return false;
 	}
+
+	public static boolean generateBannerPatternResources(JsonObject bannerPattern) {
+		if (bannerPattern.has("namespace") && bannerPattern.has("id")) {
+			Identifier id = new Identifier(bannerPattern.get("namespace").getAsString(), bannerPattern.get("id").getAsString() + "_banner_pattern");
+			boolean needsItem = false;
+			if (bannerPattern.has("needs_item")) needsItem = bannerPattern.get("needs_item").getAsBoolean();
+			File namespace = new File(assets, File.separator + id.getNamespace());
+			File textures = new File(namespace, File.separator + "textures");
+			File entity = new File(textures, File.separator + "entity");
+			File banner = new File(entity, File.separator + "banner");
+			banner.mkdirs();
+			File shield = new File(entity, File.separator + "shield");
+			shield.mkdirs();
+			if (needsItem) {
+				File models = new File(namespace, File.separator + "models");
+				File item = new File(models, File.separator + "item");
+				item.mkdirs();
+				File itemTextures = new File(textures, File.separator + "item");
+				itemTextures.mkdirs();
+				File itemModel = new File(item, File.separator + id.getPath() + ".json");
+				if (!itemModel.exists()) {
+					try {
+						itemModel.createNewFile();
+					} catch (IOException exception) {
+						exception.printStackTrace();
+					}
+				}
+				try {
+					FileWriter itemModelwriter = new FileWriter(itemModel);
+					BufferedWriter itemModelbw = new BufferedWriter(itemModelwriter);
+					itemModelbw.write("{\n" +
+							"  \"parent\": \"minecraft:item/generated\",\n" +
+							"  \"textures\": {\n" +
+							"    \"layer0\": \"" + id.getNamespace() + ":item/" + id.getPath() + "\"\n" +
+							"  }\n" +
+							"}");
+					itemModelbw.close();
+					itemModelwriter.close();
+				} catch (IOException fileNotFoundException) {
+					fileNotFoundException.printStackTrace();
+				}
+			}
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean generateCatVariantResources(JsonObject catVariant) {
+		if (catVariant.has("namespace") && catVariant.has("id")) {
+			File namespace = new File(assets, File.separator + catVariant.get("namespace").getAsString());
+			File textures = new File(namespace, File.separator + "textures");
+			File entity = new File(textures, File.separator + "entity");
+			File cat = new File(entity, File.separator + "cat");
+			cat.mkdirs();
+			return true;
+		}
+		return false;
+	}
 }

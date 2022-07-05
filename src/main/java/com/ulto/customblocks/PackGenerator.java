@@ -589,13 +589,13 @@ public class PackGenerator {
             for (JsonObject block : blocks) {
                 if (block.has("format_version")) {
                     if (!BlockGenerator.addBedrock(block, null)) {
-                        CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                        CustomBlocksMod.LOGGER.error("Failed to generate bedrock edition block in pack {}!" + pack.get("name").getAsString());
                     }
                 } else {
                     if (BlockGenerator.add(block) && CustomResourceCreator.generateBlockResources(block) && LanguageHandler.addBlockKey(block)) {
                         CustomBlocksMod.LOGGER.info("Generated Block " + block.get("namespace").getAsString() + ":" + block.get("id").getAsString());
                     } else {
-                        CustomBlocksMod.LOGGER.error("Failed to generate block!");
+                        CustomBlocksMod.LOGGER.error("Failed to generate block in pack {}!" + pack.get("name").getAsString());
                     }
                 }
             }
@@ -606,7 +606,7 @@ public class PackGenerator {
                 if (ItemGenerator.add(item) && CustomResourceCreator.generateItemResources(item) && LanguageHandler.addItemKey(item)) {
                     CustomBlocksMod.LOGGER.info("Generated Item " + item.get("namespace").getAsString() + ":" + item.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate item!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate item in pack {}!" + pack.get("name").getAsString());
                 }
             }
         }
@@ -616,7 +616,7 @@ public class PackGenerator {
                 if (FluidGenerator.add(fluid) && CustomResourceCreator.generateFluidResources(fluid) && LanguageHandler.addFluidKeys(fluid)) {
                     CustomBlocksMod.LOGGER.info("Generated Fluid {}", fluid.get("namespace").getAsString() + ":" + fluid.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate fluid!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate fluid in pack {}!" + pack.get("name").getAsString());
                 }
             }
         }
@@ -626,7 +626,7 @@ public class PackGenerator {
                 if (EntityGenerator.add(entity) && CustomResourceCreator.generateEntityResources(entity) && LanguageHandler.addEntityKey(entity)) {
                     CustomBlocksMod.LOGGER.info("Generated Entity {}", entity.get("namespace").getAsString() + ":" + entity.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate entity!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate entity in pack {}!" + pack.get("name").getAsString());
                 }
             }
         }
@@ -636,7 +636,7 @@ public class PackGenerator {
                 if (ItemGroupGenerator.add(itemGroup) && LanguageHandler.addItemGroupKey(itemGroup)) {
                     CustomBlocksMod.LOGGER.info("Generated Item Group " + itemGroup.get("namespace").getAsString() + ":" + itemGroup.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate item group!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate item group in pack {}!" + pack.get("name").getAsString());
                 }
             }
         }
@@ -646,7 +646,7 @@ public class PackGenerator {
                 if (PaintingGenerator.add(painting) && CustomResourceCreator.generatePaintingResources(painting)) {
                     CustomBlocksMod.LOGGER.info("Generated Painting " + painting.get("namespace").getAsString() + ":" + painting.get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate painting!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate painting in pack {}!" + pack.get("name").getAsString());
                 }
             }
         }
@@ -656,7 +656,27 @@ public class PackGenerator {
                 if (RecipeGenerator.add(recipe)) {
                     CustomBlocksMod.LOGGER.info("Generated Recipe {}", recipe.getAsJsonObject("custom").get("namespace").getAsString() + ":" + recipe.getAsJsonObject("custom").get("id").getAsString());
                 } else {
-                    CustomBlocksMod.LOGGER.error("Failed to generate recipe!");
+                    CustomBlocksMod.LOGGER.error("Failed to generate recipe in pack {}!" + pack.get("name").getAsString());
+                }
+            }
+        }
+        if (pack.has("banner_patterns")) {
+            List<JsonObject> bannerPatterns = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("banner_patterns"));
+            for (JsonObject bannerPattern : bannerPatterns) {
+                if (BannerPatternGenerator.add(bannerPattern) && CustomResourceCreator.generateBannerPatternResources(bannerPattern) && LanguageHandler.addBannerPatternKey(bannerPattern)) {
+                    CustomBlocksMod.LOGGER.info("Generated Banner Pattern {}", bannerPattern.get("namespace").getAsString() + ":" + bannerPattern.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate banner pattern in pack {}!" + pack.get("name").getAsString());
+                }
+            }
+        }
+        if (pack.has("cat_variants")) {
+            List<JsonObject> catVariants = JsonUtils.jsonArrayToJsonObjectList(pack.getAsJsonArray("cat_variants"));
+            for (JsonObject catVariant : catVariants) {
+                if (CatVariantGenerator.add(catVariant) && CustomResourceCreator.generateCatVariantResources(catVariant)) {
+                    CustomBlocksMod.LOGGER.info("Generated Cat Variant {}", catVariant.get("namespace").getAsString() + ":" + catVariant.get("id").getAsString());
+                } else {
+                    CustomBlocksMod.LOGGER.error("Failed to generate cat variant in pack {}!" + pack.get("name").getAsString());
                 }
             }
         }

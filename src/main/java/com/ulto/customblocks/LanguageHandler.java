@@ -161,39 +161,6 @@ public class LanguageHandler {
 		return false;
 	}
 
-	public static boolean addSaplingKey(JsonObject sapling) {
-		if (sapling.has("namespace") && sapling.has("id")) {
-			String namespace = sapling.get("namespace").getAsString();
-			String id = (new Object() {
-				String getSaplingId(String id) {
-					String saplingId = id.replace("_tree", "_sapling");
-					if (!saplingId.contains("_sapling")) saplingId += "_sapling";
-					return saplingId;
-				}
-			}).getSaplingId(sapling.get("id").getAsString());
-			StringBuilder text = new StringBuilder();
-			String[] words = id.split("_");
-			for (int i = 0; i < words.length; i++) {
-				String word = words[i];
-				String firstChar = String.valueOf(word.charAt(0)).toUpperCase(Locale.ROOT);
-				StringBuilder otherChars = new StringBuilder();
-				for (int j = 1; j < word.length(); j++) {
-					otherChars.append(word.charAt(j));
-				}
-				if (i > 0) text.append(" ");
-				text.append(firstChar).append(otherChars);
-			}
-			languageObject.addProperty("block." + namespace + "." + id, text.toString());
-			if (sapling.has("languages")) {
-				for (Map.Entry<String, JsonElement> lang : sapling.getAsJsonObject("languages").entrySet()) {
-					languageObjects.get(lang.getKey()).addProperty("block." + namespace + "." + id, lang.getValue().getAsString());
-				}
-			}
-			return true;
-		}
-		return false;
-	}
-
 	public static boolean addItemKey(JsonObject item) {
 		if (item.has("namespace") && item.has("id") && item.has("display_name")) {
 			String namespace = item.get("namespace").getAsString();
@@ -278,6 +245,34 @@ public class LanguageHandler {
 					languageObjects.get(lang.getKey()).addProperty("item." + namespace + "." + id, lang.getValue().getAsString());
 				}
 			}
+			return true;
+		}
+		return false;
+	}
+
+	public static boolean addBannerPatternKey(JsonObject bannerPattern) {
+		if (bannerPattern.has("namespace") && bannerPattern.has("id") && bannerPattern.has("display_name")) {
+			String namespace = bannerPattern.get("namespace").getAsString();
+			String id = bannerPattern.get("id").getAsString();
+			String text = bannerPattern.get("display_name").getAsString();
+			languageObject.addProperty("item." + namespace + "." + id + "_banner_pattern", "Banner Pattern");
+			languageObject.addProperty("item." + namespace + "." + id + "_banner_pattern.desc", text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".black", "Black " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".red", "Red " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".green", "Green " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".brown", "Brown " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".blue", "Blue " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".purple", "Purple " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".cyan", "Cyan " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".light_gray", "Light Gray " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".gray", "Gray " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".pink", "Pink " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".lime", "Lime " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".yellow", "Yellow " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".light_blue", "Light Blue " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".magenta", "Magenta " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".orange", "Orange " + text);
+			languageObject.addProperty("block.minecraft.banner." + namespace + "." + id + ".white", "White " + text);
 			return true;
 		}
 		return false;
