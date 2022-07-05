@@ -2,15 +2,17 @@ package com.ulto.customblocks;
 
 import com.ulto.customblocks.client.CustomBlocksClient;
 import com.ulto.customblocks.resource.CustomResourcePackFinder;
+import net.minecraft.core.MappedRegistry;
 import net.minecraft.core.Registry;
 import net.minecraft.server.packs.PackType;
+import net.minecraft.world.entity.animal.CatVariant;
+import net.minecraft.world.level.block.entity.BannerPattern;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.AddPackFindersEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.*;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import net.minecraftforge.fml.loading.FMLPaths;
-import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -40,11 +42,15 @@ public class CustomBlocksMod {
         Registry.ITEM.unfreeze();
         Registry.ENTITY_TYPE.unfreeze();
         Registry.PAINTING_VARIANT.unfreeze();
+        ((MappedRegistry<BannerPattern>) Registry.BANNER_PATTERN).unfreeze();
+        ((MappedRegistry<CatVariant>) Registry.CAT_VARIANT).unfreeze();
         GenerateCustomElements.generate();
         Registry.BLOCK.freeze();
         Registry.ITEM.freeze();
         Registry.ENTITY_TYPE.freeze();
         Registry.PAINTING_VARIANT.freeze();
+        Registry.BANNER_PATTERN.freeze();
+        Registry.CAT_VARIANT.freeze();
     }
 
     public CustomBlocksMod() {
