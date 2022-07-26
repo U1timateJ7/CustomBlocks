@@ -32,7 +32,6 @@ import java.util.Map;
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class EntityGenerator {
     public static Map<ResourceLocation, EntityType<? extends PathfinderMob>> entities = new HashMap<>();
-    @OnlyIn(Dist.CLIENT)
     public static Map<String, JsonObject> entityModels = new HashMap<>();
 
     private static final Map<ResourceLocation, Map<ResourceLocation, Double>> attributeSuppliers = new HashMap<>();
