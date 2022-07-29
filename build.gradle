@@ -16,7 +16,7 @@ apply plugin: 'maven-publish'
 version = '1.6.0-forge'
 group = 'com.ulto' // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = 'CustomBlocks'
-String minecraftVersion = '1.19'
+String minecraftVersion = '1.19.1'
 
 // Mojang ships Java 17 to end users in 1.18+ instead of Java 16 in 1.17 and Java 8 in 1.16 and lower, so your mod should target Java 17.
 java.toolchain.languageVersion = JavaLanguageVersion.of(17)
@@ -131,7 +131,7 @@ dependencies {
     // Specify the version of Minecraft to use. If this is any group other than 'net.minecraft', it is assumed
     // that the dep is a ForgeGradle 'patcher' dependency, and its patches will be applied.
     // The userdev artifact is a special name and will get all sorts of transformations applied to it.
-    minecraft 'net.minecraftforge:forge:1.19-41.0.63'
+    minecraft 'net.minecraftforge:forge:1.19.1-42.0.0'
 
     // Real mod deobf dependency examples - these get remapped to your current mappings
     // compileOnly fg.deobf("mezz.jei:jei-${mc_version}:${jei_version}:api") // Adds JEI API as a compile dependency

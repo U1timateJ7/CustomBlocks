@@ -7,7 +7,6 @@ import com.ulto.customblocks.client.ClientEntityGenerator;
 import com.ulto.customblocks.client.ClientPackGenerator;
 import com.ulto.customblocks.event.global.GlobalEvents;
 import com.ulto.customblocks.util.BooleanUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -19,7 +18,6 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -402,7 +400,7 @@ public class GenerateCustomElements {
 					json.append(line);
 				}
 				JsonObject model = new Gson().fromJson(json.toString(), JsonObject.class);
-				EntityGenerator.entityModels.put(model.get("name").getAsString(), model);
+				ClientEntityGenerator.entityModels.put(model.get("name").getAsString(), model);
 				itemReader.close();
 			} catch (IOException e) {
 				e.printStackTrace();
