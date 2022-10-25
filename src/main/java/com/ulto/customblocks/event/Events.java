@@ -137,7 +137,7 @@ public class Events {
                         double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                         double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                         if(!world.isClientSide()) {
-                            ((ServerLevel) world).getServer().getCommands().performCommand(
+                            ((ServerLevel) world).getServer().getCommands().performCommandPrefixed(
                                     new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO,
                                             (ServerLevel) world, 4, "", Component.literal(""), ((ServerLevel) world).getServer(), null).withSuppressedOutput(), command);
                         }
@@ -151,7 +151,7 @@ public class Events {
                 double y = dependencies.get("y") instanceof Integer ? (int) dependencies.get("y") : (double) dependencies.get("y");
                 double z = dependencies.get("z") instanceof Integer ? (int) dependencies.get("z") : (double) dependencies.get("z");
                 if(!world.isClientSide()) {
-                    ((ServerLevel) world).getServer().getCommands().performCommand(
+                    ((ServerLevel) world).getServer().getCommands().performCommandPrefixed(
                             new CommandSourceStack(CommandSource.NULL, new Vec3(x, y, z), Vec2.ZERO,
                                     (ServerLevel) world, 4, "", Component.literal(""), ((ServerLevel) world).getServer(), null).withSuppressedOutput(), command);
                 }
